@@ -11,56 +11,100 @@ import GameplayKit
 
 class GameScene: SKScene {
     
-    private var label : SKLabelNode?
-    private var spinnyNode : SKShapeNode?
+    let DNA=SKSpriteNode(imageNamed: "DNA_2")
+    let blob=SKSpriteNode(imageNamed: "blob01")
+    
+    let minBlobScale:CGFloat=0.9
+    let maxBlobScale:CGFloat=1.1
+    
+    var pulseScale:CGFloat=1.0
+    var pulseMod:CGFloat = 0.0025
     
     override func didMove(to view: SKView) {
+
+        drawDNAStrand()
+        blob.colorBlendFactor=1.0
+        let blobR=random(min: 0, max: 1)
+        let blobG=random(min: 0, max: 1)
+        let blobB=random(min: 0, max: 1)
         
-        // Get label node from scene and store it for use later
-        self.label = self.childNode(withName: "//helloLabel") as? SKLabelNode
-        if let label = self.label {
-            label.alpha = 0.0
-            label.run(SKAction.fadeIn(withDuration: 2.0))
+        blob.color=NSColor(calibratedRed: blobR, green: blobG, blue: blobB, alpha: 1.0)
+        
+        addChild(blob)
+    }
+    
+    func drawDNAStrand()
+    {
+        //remove existing DNA Strand
+        for node in self.children
+        {
+            if node.name=="DNA"
+            {
+                node.removeFromParent()
+            }
         }
         
-        // Create shape node to use during mouse interaction
-        let w = (self.size.width + self.size.height) * 0.05
-        self.spinnyNode = SKShapeNode.init(rectOf: CGSize.init(width: w, height: w), cornerRadius: w * 0.3)
-        
-        if let spinnyNode = self.spinnyNode {
-            spinnyNode.lineWidth = 2.5
+        for i in 1...20
+        {
+            let dna=SKSpriteNode(imageNamed: "DNA_2")
+            dna.name="DNA"
+            dna.position.y=size.height*0.4
+            dna.position.x = -size.width*0.3+(CGFloat(i)*dna.size.width*0.55)
+            dna.colorBlendFactor=1.0
+            let col=random(min: 0, max: 1.9999999)
+            if col < 1
+            {
+                dna.color=NSColor.blue
+            }
+            if col >= 1
+            {
+                dna.color=NSColor.red
+            }
+            addChild(dna)
             
-            spinnyNode.run(SKAction.repeatForever(SKAction.rotate(byAngle: CGFloat(Double.pi), duration: 1)))
-            spinnyNode.run(SKAction.sequence([SKAction.wait(forDuration: 0.5),
-                                              SKAction.fadeOut(withDuration: 0.5),
-                                              SKAction.removeFromParent()]))
+            let dna2=SKSpriteNode(imageNamed: "DNA_2")
+            dna2.name="DNA"
+            dna2.position.y=size.height*0.34
+            dna2.position.x = -size.width*0.3+(CGFloat(i)*dna.size.width*0.55)
+            dna2.zRotation=CGFloat.pi
+            dna2.colorBlendFactor=1.0
+            let col2=random(min: 0, max: 1.9999999)
+            if col2 < 1
+            {
+                dna2.color=NSColor.yellow
+            }
+            else
+            {
+                dna2.color=NSColor.green
+            }
+            
+            addChild(dna2)
         }
     }
     
+    func changeBlobColor()
+    {
+        let blobR=random(min: 0, max: 1)
+        let blobG=random(min: 0, max: 1)
+        let blobB=random(min: 0, max: 1)
+        
+        blob.color=NSColor(calibratedRed: blobR, green: blobG, blue: blobB, alpha: 1.0)
+        
+        
+    }
     
     func touchDown(atPoint pos : CGPoint) {
-        if let n = self.spinnyNode?.copy() as! SKShapeNode? {
-            n.position = pos
-            n.strokeColor = SKColor.green
-            self.addChild(n)
-        }
+
     }
     
     func touchMoved(toPoint pos : CGPoint) {
-        if let n = self.spinnyNode?.copy() as! SKShapeNode? {
-            n.position = pos
-            n.strokeColor = SKColor.blue
-            self.addChild(n)
-        }
+
     }
     
     func touchUp(atPoint pos : CGPoint) {
-        if let n = self.spinnyNode?.copy() as! SKShapeNode? {
-            n.position = pos
-            n.strokeColor = SKColor.red
-            self.addChild(n)
-        }
+
     }
+    
     
     override func mouseDown(with event: NSEvent) {
         self.touchDown(atPoint: event.location(in: self))
@@ -76,17 +120,35 @@ class GameScene: SKScene {
     
     override func keyDown(with event: NSEvent) {
         switch event.keyCode {
-        case 0x31:
-            if let label = self.label {
-                label.run(SKAction.init(named: "Pulse")!, withKey: "fadeInOut")
-            }
+        case 49:
+            changeBlobColor()
+            drawDNAStrand()
         default:
             print("keyDown: \(event.characters!) keyCode: \(event.keyCode)")
         }
     }
     
+    func pulseBlob()
+    {
+        if pulseScale > maxBlobScale
+        {
+            pulseMod *= -1
+            pulseScale=maxBlobScale
+        }
+        if pulseScale < minBlobScale
+        {
+            pulseMod *= -1
+            pulseScale=minBlobScale
+        }
+
+        pulseScale += pulseMod
+        blob.setScale(pulseScale)
+    }
+    
+    
     
     override func update(_ currentTime: TimeInterval) {
         // Called before each frame is rendered
+        pulseBlob()
     }
 }
