@@ -1,0 +1,588 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		F4D136742217639800CE24A3 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4D136732217639800CE24A3 /* AppDelegate.swift */; };
+		F4D136762217639800CE24A3 /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = F4D136752217639800CE24A3 /* GameScene.sks */; };
+		F4D136782217639800CE24A3 /* Actions.sks in Resources */ = {isa = PBXBuildFile; fileRef = F4D136772217639800CE24A3 /* Actions.sks */; };
+		F4D1367A2217639800CE24A3 /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4D136792217639800CE24A3 /* GameScene.swift */; };
+		F4D1367C2217639800CE24A3 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4D1367B2217639800CE24A3 /* ViewController.swift */; };
+		F4D1367E221763A200CE24A3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F4D1367D221763A200CE24A3 /* Assets.xcassets */; };
+		F4D13681221763A200CE24A3 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F4D1367F221763A200CE24A3 /* Main.storyboard */; };
+		F4D1368D221763A200CE24A3 /* BlobvolveTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4D1368C221763A200CE24A3 /* BlobvolveTests.swift */; };
+		F4D13698221763A200CE24A3 /* BlobvolveUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4D13697221763A200CE24A3 /* BlobvolveUITests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		F4D13689221763A200CE24A3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F4D136682217639800CE24A3 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F4D1366F2217639800CE24A3;
+			remoteInfo = Blobvolve;
+		};
+		F4D13694221763A200CE24A3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F4D136682217639800CE24A3 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F4D1366F2217639800CE24A3;
+			remoteInfo = Blobvolve;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		F4D136702217639800CE24A3 /* Blobvolve.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Blobvolve.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F4D136732217639800CE24A3 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		F4D136752217639800CE24A3 /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
+		F4D136772217639800CE24A3 /* Actions.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Actions.sks; sourceTree = "<group>"; };
+		F4D136792217639800CE24A3 /* GameScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameScene.swift; sourceTree = "<group>"; };
+		F4D1367B2217639800CE24A3 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		F4D1367D221763A200CE24A3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		F4D13680221763A200CE24A3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		F4D13682221763A200CE24A3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F4D13683221763A200CE24A3 /* Blobvolve.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Blobvolve.entitlements; sourceTree = "<group>"; };
+		F4D13688221763A200CE24A3 /* BlobvolveTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BlobvolveTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		F4D1368C221763A200CE24A3 /* BlobvolveTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlobvolveTests.swift; sourceTree = "<group>"; };
+		F4D1368E221763A200CE24A3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F4D13693221763A200CE24A3 /* BlobvolveUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BlobvolveUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		F4D13697221763A200CE24A3 /* BlobvolveUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlobvolveUITests.swift; sourceTree = "<group>"; };
+		F4D13699221763A200CE24A3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		F4D1366D2217639800CE24A3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F4D13685221763A200CE24A3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F4D13690221763A200CE24A3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		F4D136672217639800CE24A3 = {
+			isa = PBXGroup;
+			children = (
+				F4D136722217639800CE24A3 /* Blobvolve */,
+				F4D1368B221763A200CE24A3 /* BlobvolveTests */,
+				F4D13696221763A200CE24A3 /* BlobvolveUITests */,
+				F4D136712217639800CE24A3 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		F4D136712217639800CE24A3 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F4D136702217639800CE24A3 /* Blobvolve.app */,
+				F4D13688221763A200CE24A3 /* BlobvolveTests.xctest */,
+				F4D13693221763A200CE24A3 /* BlobvolveUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F4D136722217639800CE24A3 /* Blobvolve */ = {
+			isa = PBXGroup;
+			children = (
+				F4D136732217639800CE24A3 /* AppDelegate.swift */,
+				F4D136752217639800CE24A3 /* GameScene.sks */,
+				F4D136772217639800CE24A3 /* Actions.sks */,
+				F4D136792217639800CE24A3 /* GameScene.swift */,
+				F4D1367B2217639800CE24A3 /* ViewController.swift */,
+				F4D1367D221763A200CE24A3 /* Assets.xcassets */,
+				F4D1367F221763A200CE24A3 /* Main.storyboard */,
+				F4D13682221763A200CE24A3 /* Info.plist */,
+				F4D13683221763A200CE24A3 /* Blobvolve.entitlements */,
+			);
+			path = Blobvolve;
+			sourceTree = "<group>";
+		};
+		F4D1368B221763A200CE24A3 /* BlobvolveTests */ = {
+			isa = PBXGroup;
+			children = (
+				F4D1368C221763A200CE24A3 /* BlobvolveTests.swift */,
+				F4D1368E221763A200CE24A3 /* Info.plist */,
+			);
+			path = BlobvolveTests;
+			sourceTree = "<group>";
+		};
+		F4D13696221763A200CE24A3 /* BlobvolveUITests */ = {
+			isa = PBXGroup;
+			children = (
+				F4D13697221763A200CE24A3 /* BlobvolveUITests.swift */,
+				F4D13699221763A200CE24A3 /* Info.plist */,
+			);
+			path = BlobvolveUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		F4D1366F2217639800CE24A3 /* Blobvolve */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F4D1369C221763A200CE24A3 /* Build configuration list for PBXNativeTarget "Blobvolve" */;
+			buildPhases = (
+				F4D1366C2217639800CE24A3 /* Sources */,
+				F4D1366D2217639800CE24A3 /* Frameworks */,
+				F4D1366E2217639800CE24A3 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Blobvolve;
+			productName = Blobvolve;
+			productReference = F4D136702217639800CE24A3 /* Blobvolve.app */;
+			productType = "com.apple.product-type.application";
+		};
+		F4D13687221763A200CE24A3 /* BlobvolveTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F4D1369F221763A200CE24A3 /* Build configuration list for PBXNativeTarget "BlobvolveTests" */;
+			buildPhases = (
+				F4D13684221763A200CE24A3 /* Sources */,
+				F4D13685221763A200CE24A3 /* Frameworks */,
+				F4D13686221763A200CE24A3 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				F4D1368A221763A200CE24A3 /* PBXTargetDependency */,
+			);
+			name = BlobvolveTests;
+			productName = BlobvolveTests;
+			productReference = F4D13688221763A200CE24A3 /* BlobvolveTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		F4D13692221763A200CE24A3 /* BlobvolveUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F4D136A2221763A200CE24A3 /* Build configuration list for PBXNativeTarget "BlobvolveUITests" */;
+			buildPhases = (
+				F4D1368F221763A200CE24A3 /* Sources */,
+				F4D13690221763A200CE24A3 /* Frameworks */,
+				F4D13691221763A200CE24A3 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				F4D13695221763A200CE24A3 /* PBXTargetDependency */,
+			);
+			name = BlobvolveUITests;
+			productName = BlobvolveUITests;
+			productReference = F4D13693221763A200CE24A3 /* BlobvolveUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		F4D136682217639800CE24A3 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 1010;
+				LastUpgradeCheck = 1010;
+				ORGANIZATIONNAME = "Tom Shiflet";
+				TargetAttributes = {
+					F4D1366F2217639800CE24A3 = {
+						CreatedOnToolsVersion = 10.1;
+					};
+					F4D13687221763A200CE24A3 = {
+						CreatedOnToolsVersion = 10.1;
+						TestTargetID = F4D1366F2217639800CE24A3;
+					};
+					F4D13692221763A200CE24A3 = {
+						CreatedOnToolsVersion = 10.1;
+						TestTargetID = F4D1366F2217639800CE24A3;
+					};
+				};
+			};
+			buildConfigurationList = F4D1366B2217639800CE24A3 /* Build configuration list for PBXProject "Blobvolve" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = F4D136672217639800CE24A3;
+			productRefGroup = F4D136712217639800CE24A3 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				F4D1366F2217639800CE24A3 /* Blobvolve */,
+				F4D13687221763A200CE24A3 /* BlobvolveTests */,
+				F4D13692221763A200CE24A3 /* BlobvolveUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		F4D1366E2217639800CE24A3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F4D136762217639800CE24A3 /* GameScene.sks in Resources */,
+				F4D1367E221763A200CE24A3 /* Assets.xcassets in Resources */,
+				F4D136782217639800CE24A3 /* Actions.sks in Resources */,
+				F4D13681221763A200CE24A3 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F4D13686221763A200CE24A3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F4D13691221763A200CE24A3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		F4D1366C2217639800CE24A3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F4D1367C2217639800CE24A3 /* ViewController.swift in Sources */,
+				F4D1367A2217639800CE24A3 /* GameScene.swift in Sources */,
+				F4D136742217639800CE24A3 /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F4D13684221763A200CE24A3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F4D1368D221763A200CE24A3 /* BlobvolveTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F4D1368F221763A200CE24A3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F4D13698221763A200CE24A3 /* BlobvolveUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		F4D1368A221763A200CE24A3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F4D1366F2217639800CE24A3 /* Blobvolve */;
+			targetProxy = F4D13689221763A200CE24A3 /* PBXContainerItemProxy */;
+		};
+		F4D13695221763A200CE24A3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F4D1366F2217639800CE24A3 /* Blobvolve */;
+			targetProxy = F4D13694221763A200CE24A3 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		F4D1367F221763A200CE24A3 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				F4D13680221763A200CE24A3 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		F4D1369A221763A200CE24A3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		F4D1369B221763A200CE24A3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+			};
+			name = Release;
+		};
+		F4D1369D221763A200CE24A3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Blobvolve/Blobvolve.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = Blobvolve/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = TJS.Blobvolve;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.2;
+			};
+			name = Debug;
+		};
+		F4D1369E221763A200CE24A3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Blobvolve/Blobvolve.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = Blobvolve/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = TJS.Blobvolve;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.2;
+			};
+			name = Release;
+		};
+		F4D136A0221763A200CE24A3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = BlobvolveTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = TJS.BlobvolveTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.2;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Blobvolve.app/Contents/MacOS/Blobvolve";
+			};
+			name = Debug;
+		};
+		F4D136A1221763A200CE24A3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = BlobvolveTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = TJS.BlobvolveTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.2;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Blobvolve.app/Contents/MacOS/Blobvolve";
+			};
+			name = Release;
+		};
+		F4D136A3221763A200CE24A3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = BlobvolveUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = TJS.BlobvolveUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.2;
+				TEST_TARGET_NAME = Blobvolve;
+			};
+			name = Debug;
+		};
+		F4D136A4221763A200CE24A3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = BlobvolveUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = TJS.BlobvolveUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.2;
+				TEST_TARGET_NAME = Blobvolve;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		F4D1366B2217639800CE24A3 /* Build configuration list for PBXProject "Blobvolve" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F4D1369A221763A200CE24A3 /* Debug */,
+				F4D1369B221763A200CE24A3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F4D1369C221763A200CE24A3 /* Build configuration list for PBXNativeTarget "Blobvolve" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F4D1369D221763A200CE24A3 /* Debug */,
+				F4D1369E221763A200CE24A3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F4D1369F221763A200CE24A3 /* Build configuration list for PBXNativeTarget "BlobvolveTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F4D136A0221763A200CE24A3 /* Debug */,
+				F4D136A1221763A200CE24A3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F4D136A2221763A200CE24A3 /* Build configuration list for PBXNativeTarget "BlobvolveUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F4D136A3221763A200CE24A3 /* Debug */,
+				F4D136A4221763A200CE24A3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = F4D136682217639800CE24A3 /* Project object */;
+}
