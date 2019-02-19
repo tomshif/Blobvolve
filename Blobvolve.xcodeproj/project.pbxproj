@@ -17,6 +17,12 @@
 		F4D1368D221763A200CE24A3 /* BlobvolveTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4D1368C221763A200CE24A3 /* BlobvolveTests.swift */; };
 		F4D13698221763A200CE24A3 /* BlobvolveUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4D13697221763A200CE24A3 /* BlobvolveUITests.swift */; };
 		F4D136A62217656E00CE24A3 /* random.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4D136A52217656E00CE24A3 /* random.swift */; };
+		F4FD45AF2217A0A700E8D307 /* BlobClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4FD45AE2217A0A700E8D307 /* BlobClass.swift */; };
+		F4FD45B322187D6A00E8D307 /* screenClutter.sks in Resources */ = {isa = PBXBuildFile; fileRef = F4FD45B222187D6A00E8D307 /* screenClutter.sks */; };
+		F4FD45B5221991FA00E8D307 /* electricField.sks in Resources */ = {isa = PBXBuildFile; fileRef = F4FD45B4221991FA00E8D307 /* electricField.sks */; };
+		F4FD45B7221A1E5600E8D307 /* smokeEffect01.sks in Resources */ = {isa = PBXBuildFile; fileRef = F4FD45B6221A1E5600E8D307 /* smokeEffect01.sks */; };
+		F4FD45B9221B09B500E8D307 /* magicEffect.sks in Resources */ = {isa = PBXBuildFile; fileRef = F4FD45B8221B09B500E8D307 /* magicEffect.sks */; };
+		F4FD45BB221B25C000E8D307 /* fireFlyEffect.sks in Resources */ = {isa = PBXBuildFile; fileRef = F4FD45BA221B25C000E8D307 /* fireFlyEffect.sks */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -54,6 +60,12 @@
 		F4D13697221763A200CE24A3 /* BlobvolveUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlobvolveUITests.swift; sourceTree = "<group>"; };
 		F4D13699221763A200CE24A3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F4D136A52217656E00CE24A3 /* random.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = random.swift; sourceTree = "<group>"; };
+		F4FD45AE2217A0A700E8D307 /* BlobClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlobClass.swift; sourceTree = "<group>"; };
+		F4FD45B222187D6A00E8D307 /* screenClutter.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = screenClutter.sks; sourceTree = "<group>"; };
+		F4FD45B4221991FA00E8D307 /* electricField.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = electricField.sks; sourceTree = "<group>"; };
+		F4FD45B6221A1E5600E8D307 /* smokeEffect01.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = smokeEffect01.sks; sourceTree = "<group>"; };
+		F4FD45B8221B09B500E8D307 /* magicEffect.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = magicEffect.sks; sourceTree = "<group>"; };
+		F4FD45BA221B25C000E8D307 /* fireFlyEffect.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = fireFlyEffect.sks; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -114,6 +126,12 @@
 				F4D1367F221763A200CE24A3 /* Main.storyboard */,
 				F4D13682221763A200CE24A3 /* Info.plist */,
 				F4D13683221763A200CE24A3 /* Blobvolve.entitlements */,
+				F4FD45AE2217A0A700E8D307 /* BlobClass.swift */,
+				F4FD45B222187D6A00E8D307 /* screenClutter.sks */,
+				F4FD45B4221991FA00E8D307 /* electricField.sks */,
+				F4FD45B6221A1E5600E8D307 /* smokeEffect01.sks */,
+				F4FD45B8221B09B500E8D307 /* magicEffect.sks */,
+				F4FD45BA221B25C000E8D307 /* fireFlyEffect.sks */,
 			);
 			path = Blobvolve;
 			sourceTree = "<group>";
@@ -242,8 +260,13 @@
 			files = (
 				F4D136762217639800CE24A3 /* GameScene.sks in Resources */,
 				F4D1367E221763A200CE24A3 /* Assets.xcassets in Resources */,
+				F4FD45B7221A1E5600E8D307 /* smokeEffect01.sks in Resources */,
+				F4FD45BB221B25C000E8D307 /* fireFlyEffect.sks in Resources */,
 				F4D136782217639800CE24A3 /* Actions.sks in Resources */,
+				F4FD45B9221B09B500E8D307 /* magicEffect.sks in Resources */,
 				F4D13681221763A200CE24A3 /* Main.storyboard in Resources */,
+				F4FD45B322187D6A00E8D307 /* screenClutter.sks in Resources */,
+				F4FD45B5221991FA00E8D307 /* electricField.sks in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -269,6 +292,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F4D136A62217656E00CE24A3 /* random.swift in Sources */,
+				F4FD45AF2217A0A700E8D307 /* BlobClass.swift in Sources */,
 				F4D1367C2217639800CE24A3 /* ViewController.swift in Sources */,
 				F4D1367A2217639800CE24A3 /* GameScene.swift in Sources */,
 				F4D136742217639800CE24A3 /* AppDelegate.swift in Sources */,
