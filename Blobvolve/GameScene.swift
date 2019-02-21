@@ -37,6 +37,14 @@ class GameScene: SKScene {
     var save02=SKSpriteNode(imageNamed: "blob00")
     var save03=SKSpriteNode(imageNamed: "blob00")
     
+    var blob1Level=SKLabelNode(text: "Level")
+    var blob2Level=SKLabelNode(text: "Level")
+    var babyLevel=SKLabelNode(text: "Baby Level")
+    var moneyLabel=SKLabelNode(text: "Money")
+    var breedCostLabel=SKLabelNode(text: "Breeding Cost")
+    
+    var lastMoneyGain=NSDate()
+    
     var blobBaseSize:CGFloat=1.0
     var minBlobScale:CGFloat=0.9
     var maxBlobScale:CGFloat=1.1
@@ -49,6 +57,8 @@ class GameScene: SKScene {
     let MOVESPEED:CGFloat=5
     
     var selected:Int=0
+    
+    var money:Int=50000
     
     override func didMove(to view: SKView) {
 
@@ -104,12 +114,38 @@ class GameScene: SKScene {
         save03.name="save03"
         save03.zPosition=22
         
+        blob1Level.position.x = -size.width*0.35
+        blob1Level.position.y = size.height*0.25
+        blob1Level.zPosition=25
+        blob1Level.name="blob1Level"
+        addChild(blob1Level)
+        
+        blob2Level.position.x = size.width*0.35
+        blob2Level.position.y = size.height*0.25
+        blob2Level.zPosition=25
+        blob2Level.name="blob2Level"
+        addChild(blob2Level)
+        
+        babyLevel.position.y = size.height*0.25
+        babyLevel.name="babyLevel"
+        babyLevel.zPosition=25
+        addChild(babyLevel)
         
         let frame2=SKSpriteNode(imageNamed: "DNAFrame")
         frame2.position.y = size.height*0.4
         frame2.zPosition=8
         frame2.name="Frame"
         addChild(frame2)
+        
+        moneyLabel.zPosition=10
+        moneyLabel.position.y = -size.height*0.38
+        moneyLabel.name="moneyLabel"
+        addChild(moneyLabel)
+        
+        breedCostLabel.zPosition=10
+        breedCostLabel.name="breedCostLabel"
+        breedCostLabel.position.y = -size.height*0.3
+        addChild(breedCostLabel)
         
         selectArrow.zPosition=12
         selectArrow.position.y = -size.height*0.25
@@ -122,7 +158,7 @@ class GameScene: SKScene {
         bg.name="bg"
         addChild(bg)
         
-        drawDNAStrand()
+
         
         addChild(blob.sprite)
         addChild(blob2.sprite)
@@ -133,8 +169,10 @@ class GameScene: SKScene {
         blob.sprite.position.x = -size.width*0.35
         blob2.sprite.position.x = size.width*0.35
         baby.sprite.isHidden=true
-
         
+        blob.generateByLevel(level: 0)
+        blob2.generateByLevel(level: 0)
+        drawDNAStrand()
     }
     
 
@@ -260,6 +298,18 @@ class GameScene: SKScene {
             dna.zPosition=10
             addChild(dna)
             
+            // for number label
+            if i%3==1
+            {
+                let geneNum=Int(i/3)
+                let geneLabel=SKLabelNode(text: "\(geneNum)")
+                geneLabel.name="DNALabel"
+                geneLabel.position.y=size.height*0.445
+                geneLabel.fontColor=NSColor.white
+                geneLabel.zPosition=12
+                geneLabel.position.x=strandOffset+(CGFloat(i)*dna.size.width*0.6)+(CGFloat(i/3)*20)
+                addChild(geneLabel)
+            }
         } // for each chromosome
         
         let coded2=blob2.DNA
@@ -298,7 +348,7 @@ class GameScene: SKScene {
             let dna=SKSpriteNode(imageNamed: "DNA_2")
             dna.name=String(format: "DNA%03d",i)
             dna.setScale(0.65)
-            dna.position.y = -size.height*0.4
+            dna.position.y = -size.height*0.425
             dna.position.x = strandOffset+(CGFloat(i)*dna.size.width*0.6)+(CGFloat(i/3)*20)
             dna.colorBlendFactor=1.0
             
@@ -319,6 +369,10 @@ class GameScene: SKScene {
             } // switch
             addChild(dna)
             dna.zPosition=10
+            
+            blob1Level.text="Level: \(blob.computeLevel())"
+            blob2Level.text="Level: \(blob2.computeLevel())"
+            babyLevel.text="Level: \(baby.computeLevel())"
         }
         
     } // func drawDNAStrand
@@ -448,6 +502,29 @@ class GameScene: SKScene {
             baby.resetSprite()
             drawDNAStrand()
             baby.sprite.isHidden=false
+            let levels=blob.computeLevel()+blob2.computeLevel()
+            money -= (levels*100)+1000
+            let chance=random(min: 0, max: 1)
+            if chance > 0.95
+            {
+                baby.sprite.texture=blendTextures(first: blob, second: blob2)
+            }
+            
+        case 30:    // ] - Limit blob 2 to less than level 10
+
+            blob2.genNewDNA()
+            blob2.generateByLevel(level: 10)
+            baby.sprite.isHidden=true
+            drawDNAStrand()
+            money -= 1000
+            
+        case 33:    // [ - Limit blob 1 to less than level 10
+
+            blob.genNewDNA()
+            blob.generateByLevel(level: 10)
+            baby.sprite.isHidden=true
+            drawDNAStrand()
+            money -= 1000
             
         case 18:
             if saveFrame.isHidden
@@ -456,6 +533,7 @@ class GameScene: SKScene {
                 blob.resetSprite()
                 baby.sprite.isHidden=true
                 drawDNAStrand()
+                money -= 2500
             } // if not saving
             else
             {
@@ -475,6 +553,7 @@ class GameScene: SKScene {
                 blob2.resetSprite()
                 baby.sprite.isHidden=true
                 drawDNAStrand()
+                money -= 2500
             } // if not saving
             else
             {
@@ -497,6 +576,12 @@ class GameScene: SKScene {
                 savesPreview[2]=temp!
                 save03.texture=savesPreview[2]
             }
+            
+        case 34:
+            print("Baby Speed: \(baby.moveSpeed)")
+            print("Baby Health: \(baby.blobHealth)")
+            print("Baby Damage: \(baby.blobDamage)")
+            print("Baby Level: \(baby.computeLevel())")
         case 36:
             if saveFrame.isHidden
             {
@@ -512,23 +597,50 @@ class GameScene: SKScene {
             baby.resetSprite()
             drawDNAStrand()
             
+        case 46:        // M - spawn baby with blended texture
+            let temp=blob.breed(with: blob2)
+            baby.DNA=temp.DNA
+            baby.resetSprite()
+            drawDNAStrand()
+            baby.sprite.isHidden=false
+            baby.sprite.texture=blendTextures(first: blob, second: blob2)
+
+            
+            let levels=blob.computeLevel()+blob2.computeLevel()
+            money -= (levels*100)+1000
+            
         case 49:
             blob.genNewDNA()
             blob2.genNewDNA()
             baby.sprite.isHidden=true
             //changeBlobColor()
             drawDNAStrand()
+            money -= 5000
+            
+
         case 123:
+            
             blob.DNA=baby.DNA
             baby.sprite.isHidden=true
+            let tempTexture=baby.sprite.texture!
             blob.resetSprite()
             drawDNAStrand()
+            blob.sprite.texture=tempTexture
         case 124:
             blob2.DNA=baby.DNA
             baby.sprite.isHidden=true
             blob2.resetSprite()
+            let tempTexture=baby.sprite.texture!
             drawDNAStrand()
             
+            blob2.sprite.texture=tempTexture
+            
+        case 126:       // up arrow - sell baby
+            if !baby.sprite.isHidden
+            {
+                money += baby.computeLevel()*100
+                baby.sprite.isHidden=true
+            }
         default:
             print("keyDown: \(event.characters!) keyCode: \(event.keyCode)")
         } // switch
@@ -586,12 +698,98 @@ class GameScene: SKScene {
         {
             selectArrow.position.x = size.width*0.35
         }
+        if baby.sprite.isHidden
+        {
+            babyLevel.isHidden=true
+        }
+        else
+        {
+            babyLevel.isHidden=false
+        }
+        moneyLabel.text="$\(money)"
+        if money < 0
+        {
+            moneyLabel.fontColor=NSColor.red
+        }
+        else
+        {
+            moneyLabel.fontColor=NSColor.white
+        }
+        let cost=(blob.computeLevel()+blob2.computeLevel())*250+1000
+        breedCostLabel.text="Breeding Cost: $\(cost)"
     }
     
+    func blendTextures(first: BlobClass, second: BlobClass) -> SKTexture
+    {
+        
+        var firstNode=SKSpriteNode()
+        var secondNode=SKSpriteNode()
+        
+        let chance=random(min: 0, max: 1)
+        if chance > 0.5
+        {
+            let firstAlpha=first.sprite.alpha
+            let secondAlpha=second.sprite.alpha
+            let firstColor=first.sprite.color
+            let secondColor=first.sprite.color
+            first.sprite.alpha=1.0
+            second.sprite.alpha=1.0
+            first.sprite.color=NSColor.white
+            second.sprite.color=NSColor.white
+            firstNode=SKSpriteNode(texture: first.sprite.texture!)
+            secondNode=SKSpriteNode(texture: second.sprite.texture!)
+            first.sprite.alpha=firstAlpha
+            second.sprite.alpha=secondAlpha
+            first.sprite.color=firstColor
+            second.sprite.color=secondColor
+            
+        }
+        else
+        {
+            let firstAlpha=first.sprite.alpha
+            let secondAlpha=second.sprite.alpha
+            let firstColor=first.sprite.color
+            let secondColor=first.sprite.color
+            first.sprite.alpha=1.0
+            second.sprite.alpha=1.0
+            first.sprite.color=NSColor.white
+            second.sprite.color=NSColor.white
+            firstNode=SKSpriteNode(texture: second.sprite.texture!)
+            secondNode=SKSpriteNode(texture: first.sprite.texture!)
+            first.sprite.alpha=firstAlpha
+            second.sprite.alpha=secondAlpha
+            first.sprite.color=firstColor
+            second.sprite.color=secondColor
+        }
+        let tempNode=SKSpriteNode()
+        let alphaRatio=random(min: 0.25, max: 0.75)
+        tempNode.blendMode=SKBlendMode.add
+        tempNode.position=CGPoint(x: size.width*10, y: size.height*10)
+
+        //let solidNode=SKSpriteNode(texture: SKTexture(imageNamed: "blob00"))
+        //tempNode.addChild(solidNode)
+        firstNode.alpha=alphaRatio
+        firstNode.blendMode=SKBlendMode.add
+        tempNode.addChild(firstNode)
+
+        secondNode.alpha=1.0-alphaRatio
+        secondNode.blendMode=SKBlendMode.add
+        tempNode.addChild(secondNode)
+        let retText=self.view!.texture(from: tempNode)
+        tempNode.removeFromParent()
+
+        return retText!
+    }
     
     override func update(_ currentTime: TimeInterval) {
         // Called before each frame is rendered
         checkKeys()
         updateUI()
+        
+        if -lastMoneyGain.timeIntervalSinceNow > 5
+        {
+            money += 1000
+            lastMoneyGain=NSDate()
+        }
     }
 }

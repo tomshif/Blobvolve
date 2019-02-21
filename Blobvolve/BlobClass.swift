@@ -14,9 +14,10 @@ import SpriteKit
 class BlobClass
 {
     //Genetic Constants
-    let GENECOUNT:Int=32
+    let GENECOUNT:Int=42
     let GENESIZE:Int=3
     
+    var coreStats=[Int]()
     
     var sprite=SKSpriteNode()
     var spot1=SKSpriteNode(imageNamed: "spot01")
@@ -59,6 +60,16 @@ class BlobClass
     var blobOuter2Shape:Int=0
     var blobOuter2RGB=NSColor()
     var blobOuter2Action:Int=0
+    var blobHealth:CGFloat=0        // Core Stat
+    var spike1RGB=NSColor()
+    var blobDamage:CGFloat=0        // Core Stat
+    var blobColor2Chance:Int=0
+    var blobColor2RGB=NSColor()
+    var blobColor2Action:Int=0
+    var blobOuterColor2Chance:Int=0
+    var blobOuterColor2RGB=NSColor()
+    var blobOuterColor3Chance:Int=0
+    var blobOuterColor3RGB=NSColor()
     
     
     
@@ -84,14 +95,18 @@ class BlobClass
     let SPOTMAXSCALE:CGFloat=0.75
     let SPOTBASESCALE:CGFloat=0.5
     let NUMSPOTTEXTURES:Int=10
-    let NUMBLOBCIRCLETEXTURES:Int=14
-    let NUMOUTERTEXTURES=15
+    let NUMBLOBCIRCLETEXTURES:Int=17
+    let NUMOUTERTEXTURES=18
     let NUMSPIKETYPES:Int=2
     
     // Core stat constants
-    let NUMCORESTATS:Int=1
+    let NUMCORESTATS:Int=3
     let MOVESPEEDBASE:CGFloat=7.5
     let MOVESPEEDLEVEL:CGFloat=0.75
+    let HEALTHBASE:CGFloat=100
+    let HEALTHLEVEL:CGFloat=7.5
+    let DAMAGEBASE:CGFloat=12.5
+    let DAMAGELEVEL:CGFloat=2.5
     
     struct SpecialType
     {
@@ -103,6 +118,11 @@ class BlobClass
     
     init()
     {
+        // fill core stats array
+        coreStats.append(24)
+        coreStats.append(32)
+        coreStats.append(34)
+        
         
         // fill spot texture array
         for i in 0..<NUMSPOTTEXTURES
@@ -324,6 +344,41 @@ class BlobClass
         // Blob outer #2 Action - gene 31
         blobOuter2Action=tripToDec(trip: getGene(num: 31))
         
+        // Blob Health - gene 32
+        let blobHealthDec=tripToDec(trip: getGene(num: 32))
+        blobHealth=HEALTHBASE+(CGFloat(blobHealthDec)*HEALTHLEVEL)
+        
+        // Spike 1 RGB - gene 33
+        let spike1RGBDec=tripToDec(trip: getGene(num: 33))
+        spike1RGB=getRGB(col: spike1RGBDec)
+        
+        // Blob Damage - gene 34
+        let damageDec=tripToDec(trip: getGene(num: 34))
+        blobDamage=DAMAGEBASE+(CGFloat(damageDec)*DAMAGELEVEL)
+        
+        // Blob Color 2 Chance - gene 35
+        blobColor2Chance=tripToDec(trip: getGene(num: 35))
+        
+        // Blob Color 2 RGB - gene 36
+        let blobColor2RGBDec=tripToDec(trip: getGene(num: 36))
+        blobColor2RGB=getRGB(col: blobColor2RGBDec)
+        
+        // Blob Color 2 action - gene 37
+        blobColor2Action=tripToDec(trip: getGene(num: 37))
+        
+        // Blob Outer Color 2 Chnce - gene 38
+        blobOuterColor2Chance=tripToDec(trip: getGene(num: 38))
+        
+        // Blob Outer Color 2 RGB - gene 39
+        let blobOuterColor2RGBDec=tripToDec(trip: getGene(num: 39))
+        blobOuterColor2RGB=getRGB(col: blobOuterColor2RGBDec)
+        
+        // Blob Outer Color 3 Chance - gene 40
+        blobOuterColor3Chance=tripToDec(trip: getGene(num: 40))
+        
+        // Blob Outer Color 3 RGB - gene 41
+        let blobOuterColor3RGBDec=tripToDec(trip: getGene(num: 41))
+        blobOuterColor3RGB=getRGB(col: blobOuterColor3RGBDec)
         
         //////////////////////////////////////////////
         // END OF GENE SEQUENCE //////////////////////
@@ -351,6 +406,15 @@ class BlobClass
         blobCircle.colorBlendFactor=1.0
         blobCircle.color=blobCircleRGB
         blobCircle.name="blobCircle"
+        
+        // Setup blob color 2
+        if blobColor2Chance % 8 == 24
+        {
+            let action=getColor2Action(dec: blobColor2Action)
+            sprite.run(SKAction.repeatForever(action))
+        }
+        
+        
         blobCircle.alpha=blobCircleAlpha
         blobCircle.zPosition=10
         blobCircle.zRotation=blobCircleRotation
@@ -358,6 +422,8 @@ class BlobClass
         blobCircle.removeAllActions()
         blobCircle.run(SKAction.repeatForever(getAction(dec: blobCircleAction)))
     
+        
+
         
         // Add outer
         blobOuter.zPosition=11
@@ -384,6 +450,20 @@ class BlobClass
         blobOuter2.removeAllActions()
         blobOuter2.run(SKAction.repeatForever(getOuterAction(dec: blobOuter2Action)))
         
+        // Add out color actions
+        if blobOuterColor2Chance % 10 == 0 && blobOuterColor3Chance % 20 != 0
+        {
+            let action=SKAction.sequence([SKAction.colorize(with: blobOuterColor2RGB, colorBlendFactor: 1.0, duration: 1.0), SKAction.colorize(with: blobOuterRGB, colorBlendFactor: 1.0, duration: 1.0)])
+            blobOuter.run(SKAction.repeatForever(action))
+            
+        } // if only color #2
+        if blobOuterColor2Chance % 10 == 0 && blobOuterColor3Chance % 20 == 0
+        {
+            let action=SKAction.sequence([SKAction.colorize(with: blobOuterColor2RGB, colorBlendFactor: 1.0, duration: 1.0), SKAction.colorize(with: blobOuterColor3RGB, colorBlendFactor: 1.0, duration: 1.0), SKAction.colorize(with: blobOuterRGB, colorBlendFactor: 1.0, duration: 1.0)])
+            blobOuter.run(SKAction.repeatForever(action))
+            
+        } // if both colors 2 and 3
+        
         
         // Add spike 1
         let dx=cos(spike1Rotation)*sprite.size.width*0.425
@@ -393,7 +473,8 @@ class BlobClass
         spike1.name="spike1"
         spike1.zPosition=10
         spike1.zRotation=spike1Rotation
-
+        spike1.colorBlendFactor=1.0
+        spike1.color=spike1RGB
         
         // add Spots
         if spot1Shape < NUMSPOTTEXTURES
@@ -430,6 +511,36 @@ class BlobClass
         
     } // init()
     
+    private func getColor2Action(dec: Int) -> SKAction
+    {
+        var action=SKAction()
+        switch dec
+        {
+        case 0:
+            action=SKAction.sequence([SKAction.colorize(with: blobColor2RGB, colorBlendFactor: 1.0, duration: 0.5), SKAction.colorize(with: NSColor(calibratedRed: spriteRed, green: spriteGreen, blue: spriteBlue, alpha: 1.0), colorBlendFactor: 1.0, duration: 1.5)])
+            
+        case 12:
+            action=SKAction.sequence([SKAction.colorize(with: blobColor2RGB, colorBlendFactor: 1.0, duration: 3.0), SKAction.colorize(with: NSColor(calibratedRed: spriteRed, green: spriteGreen, blue: spriteBlue, alpha: 1.0), colorBlendFactor: 1.0, duration: 3.0)])
+            
+        case 22:
+            action=SKAction.sequence([SKAction.colorize(with: NSColor.black, colorBlendFactor: 1.0, duration: 1.0), SKAction.colorize(with: NSColor(calibratedRed: spriteRed, green: spriteGreen, blue: spriteGreen, alpha: 1.0), colorBlendFactor: 1.0, duration: 1.0)])
+            
+        case 29:
+            action=SKAction.sequence([SKAction.colorize(with:NSColor.gray, colorBlendFactor: 1.0, duration: 1.0), SKAction.colorize(with: NSColor(calibratedRed: spriteRed, green: spriteGreen, blue: spriteBlue, alpha: 1.0), colorBlendFactor: 1.0, duration: 1.0)])
+            
+            
+        case 34:
+            action=SKAction.sequence([SKAction.colorize(with: blobColor2RGB, colorBlendFactor: 1.0, duration: 8.0), SKAction.colorize(with: NSColor(calibratedRed: spriteRed, green: spriteGreen, blue: spriteBlue, alpha: 1.0), colorBlendFactor: 1.0, duration: 8.0)])
+            
+        case 42:
+            action=SKAction.sequence([SKAction.colorize(with: NSColor.gray, colorBlendFactor: 1.0, duration: 3.0), SKAction.colorize(with: blobColor2RGB, colorBlendFactor: 1.0, duration: 3.0), SKAction.colorize(with: NSColor.gray, colorBlendFactor: 1.0, duration: 3.0), SKAction.colorize(with: NSColor(calibratedRed: spriteRed, green: spriteGreen, blue: spriteBlue, alpha: 1.0), colorBlendFactor: 1.0, duration: 8.0)])
+        default:
+            action=SKAction.sequence([SKAction.colorize(with: blobColor2RGB, colorBlendFactor: 1.0, duration: 1.0), SKAction.colorize(with: NSColor(calibratedRed: spriteRed, green: spriteGreen, blue: spriteBlue, alpha: 1.0), colorBlendFactor: 1.0, duration: 1.0)])
+        }
+        
+        return action
+    
+    }
     
 
     private func getOuterAction(dec: Int) -> SKAction
@@ -445,15 +556,23 @@ class BlobClass
             retAction=SKAction.sequence([SKAction.rotate(byAngle: CGFloat.pi, duration: 1.5)])
         case 16:
             retAction=SKAction.sequence([SKAction.rotate(byAngle: CGFloat.pi, duration: 2.5)])
-            
+        case 19:
+            retAction=SKAction.sequence([SKAction.rotate(byAngle:  CGFloat.pi/8, duration: 0.15), SKAction.rotate(byAngle: -CGFloat.pi/4, duration: 0.3),SKAction.wait(forDuration: 0.3)])
         case 22:
             retAction=SKAction.sequence([SKAction.rotate(byAngle: CGFloat.pi/2, duration: 1.5), SKAction.rotate(byAngle: -CGFloat.pi, duration: 1.5)])
             
         case 27:
             retAction=SKAction.sequence([SKAction.rotate(byAngle: CGFloat.pi, duration: 1.5), SKAction.rotate(byAngle: -CGFloat.pi, duration: 1.5)])
+            
+        case 30:
+            let flashAction=SKAction.sequence([SKAction.fadeOut(withDuration: 0.25),SKAction.fadeIn(withDuration: 0.25)])
+            let rotateAction=SKAction.rotate(byAngle: -CGFloat.pi, duration: 0.75)
+            retAction=SKAction.group([flashAction, rotateAction])
         case 33:
             retAction=SKAction.sequence([SKAction.rotate(byAngle: CGFloat.pi, duration: 3.5)])
             
+        case 35:
+            retAction=SKAction.sequence([SKAction.rotate(byAngle: CGFloat.pi/2, duration: 1.0),SKAction.rotate(byAngle: CGFloat.pi, duration: 1.0),SKAction.rotate(byAngle: CGFloat.pi, duration: 0.5), SKAction.rotate(byAngle: CGFloat.pi/2, duration: 2.0)])
         case 38:
             retAction=SKAction.sequence([SKAction.fadeOut(withDuration: 1.5), SKAction.fadeIn(withDuration: 1.5)])
             
@@ -465,13 +584,20 @@ class BlobClass
         case 48:
             retAction=SKAction.sequence([SKAction.rotate(byAngle: -CGFloat.pi, duration: 1.0)])
 
+        case 49:
+            let flashAction=SKAction.sequence([SKAction.fadeOut(withDuration: 0.25),SKAction.wait(forDuration: 0.25),SKAction.fadeIn(withDuration: 0.25), SKAction.wait(forDuration: 0.25)])
+            let rotateAction=SKAction.rotate(byAngle: -CGFloat.pi, duration: 0.75)
+            retAction=SKAction.group([flashAction, rotateAction])
+            
         case 52:
             retAction=SKAction.sequence([SKAction.fadeOut(withDuration: 1.5), SKAction.fadeIn(withDuration: 1.5)])
         case 59:
             retAction=SKAction.sequence([SKAction.rotate(byAngle: -CGFloat.pi/2, duration: 1.5), SKAction.rotate(byAngle: CGFloat.pi, duration: 1.5)])
+        case 62:
+            retAction=SKAction.sequence([SKAction.scale(to: 1.05, duration: 0.5), SKAction.scale(by: 0.95, duration: 0.5)])
         default:
             retAction=SKAction.sequence([SKAction.fadeAlpha(to: 1.0, duration: 1.5)])
-            
+ 
         } // switch
         
         return retAction
@@ -653,6 +779,15 @@ class BlobClass
         
     } // func getAction
     
+    func computeLevel() -> Int
+    {
+        let levelTotal=tripToDec(trip: getGene(num: 34))+tripToDec(trip: getGene(num: 32))+tripToDec(trip: getGene(num: 24))
+        
+        let level=levelTotal/NUMCORESTATS
+        return level
+        
+    }
+    
     private func getRGB(col: Int) -> NSColor
     {
         var r:CGFloat=0
@@ -709,7 +844,7 @@ class BlobClass
         for i in 0..<GENECOUNT
         {
             let chance=random(min: 0, max: 1)
-            if chance < 0.49
+            if chance < 0.495
             {
                 offspring.replaceGene(at: i, with: self.getGene(num: i))
                 if getGene(num: i) == with.getGene(num: i)
@@ -721,8 +856,8 @@ class BlobClass
                         print("Inbreeding mutation at gene #\(i) ")
                     }
                 } // if the genes match give a high chance to mutate
-            }
-            else if chance < 0.98
+            } // if inheriting our gene
+            else if chance < 0.995
             {
                 offspring.replaceGene(at: i, with: with.getGene(num: i))
                 if getGene(num: i) == with.getGene(num: i)
@@ -734,20 +869,17 @@ class BlobClass
                         print("Inbreeding mutation at gene #\(i) ")
                     }
                 } // if the genes match give a high chance to mutate
-            }
+            } // if if inheriting from the partner
             else
             {
                 let temp=genNewGeneString()
                 offspring.replaceGene(at: i, with: temp)
                 print("Mutation at gene #\(i) ")
             }
-        }
-        
-        
-        
-        
+        } // for each gene
+    
         return offspring
-    }
+    } // func breed
     
     public func getGene(num: Int) -> String
     {
@@ -755,11 +887,36 @@ class BlobClass
         let end = DNA.index(DNA.startIndex, offsetBy: (num*3)+3)
         let range = start..<end
         
-        let mySubstring = DNA[range]  // play
+        let mySubstring = DNA[range]  
         
         return String(mySubstring)
         
     } // func getGene
+    
+    public func generateByLevel(level: Int)
+    {
+        genNewDNA()
+        
+        for i in 0..<coreStats.count
+        {
+            var quit=false
+            var gene:String=""
+            while !quit
+            {
+                let temp=genNewGeneString()
+                if tripToDec(trip: temp) <= level
+                {
+                    gene=temp
+                    quit=true
+                }
+            } // while
+            replaceGene(at: coreStats[i], with: gene)
+        } // for each core stat gene
+        
+        resetSprite()
+        
+    } // func generateByLevel
+    
     
     public func generateNewGene(at: Int)
     {
@@ -837,7 +994,9 @@ class BlobClass
     public func resetSprite()
     {
         sprite.setScale(1.0)
-        // reset size
+        
+        
+        // reset size - gene 0
         let sizeString=getGene(num: 0)
         let sizeCoded=sizeString
         let sizeDec=tripToDec(trip: sizeCoded)
@@ -846,7 +1005,7 @@ class BlobClass
         let blobBaseSize=0.75+blobSize
         let minBlobScale = blobBaseSize * 0.9
         let maxBlobScale = blobBaseSize * 1.1
-        sprite.run(SKAction.stop())
+        sprite.removeAllActions()
 
         
         // Color | Red Channel - gene 1
@@ -1016,6 +1175,10 @@ class BlobClass
             {
                 blobOuter2.texture=SKTexture(imageNamed: String(format: "blobOuter%02d",blobOuter2ShapeDec))
             }
+            else
+            {
+                blobOuter2.texture=SKTexture(imageNamed: "blobOuter64")
+            }
             
         }
         else
@@ -1030,17 +1193,56 @@ class BlobClass
         // Blob outer #2 Action - gene 31
         blobOuter2Action=tripToDec(trip: getGene(num: 31))
         
+        // Blob Health - gene 32
+        let blobHealthDec=tripToDec(trip: getGene(num: 32))
+        blobHealth=HEALTHBASE+(CGFloat(blobHealthDec)*HEALTHLEVEL)
+        
+        // Spike 1 RGB - gene 33
+        let spike1RGBDec=tripToDec(trip: getGene(num: 33))
+        spike1RGB=getRGB(col: spike1RGBDec)
+        
+        // Blob Color 2 Chance - gene 35
+        blobColor2Chance=tripToDec(trip: getGene(num: 35))
+        
+        // Blob Color 2 RGB - gene 36
+        let blobColor2RGBDec=tripToDec(trip: getGene(num: 36))
+        blobColor2RGB=getRGB(col: blobColor2RGBDec)
+        
+        // Blob Color 2 action - gene 37
+        blobColor2Action=tripToDec(trip: getGene(num: 37))
+        
+        // Blob Outer Color 2 Chnce - gene 38
+        blobOuterColor2Chance=tripToDec(trip: getGene(num: 38))
+        
+        // Blob Outer Color 2 RGB - gene 39
+        let blobOuterColor2RGBDec=tripToDec(trip: getGene(num: 39))
+        blobOuterColor2RGB=getRGB(col: blobOuterColor2RGBDec)
+        
+        // Blob Outer Color 3 Chance - gene 40
+        blobOuterColor3Chance=tripToDec(trip: getGene(num: 40))
+        
+        // Blob Outer Color 3 RGB - gene 41
+        let blobOuterColor3RGBDec=tripToDec(trip: getGene(num: 41))
+        blobOuterColor3RGB=getRGB(col: blobOuterColor3RGBDec)
         
         
         
         
+        /////////////////////////////////////////////
+        // End of gene sequence
+        /////////////////////////////////////////////
         
         
         sprite.color=NSColor(calibratedRed: spriteRed, green: spriteGreen, blue: spriteBlue, alpha: 1.0)
         let pulseAction=SKAction.sequence([SKAction.scale(to: maxBlobScale, duration: pulseSpeed),SKAction.scale(to: minBlobScale, duration: pulseSpeed)])
         sprite.run(SKAction.repeatForever(pulseAction))
         sprite.alpha=spriteAlpha
-        
+        // Setup blob color 2
+        if blobColor2Chance % 24 == 0
+        {
+            let action=getColor2Action(dec: blobColor2Action)
+            sprite.run(SKAction.repeatForever(action))
+        }
         
         blobOuter.color=blobOuterRGB
         // Add outer action
@@ -1059,6 +1261,20 @@ class BlobClass
         blobOuter2.alpha=1.0
         blobOuter2.removeAllActions()
         blobOuter2.run(SKAction.repeatForever(getOuterAction(dec: blobOuter2Action)))
+        
+        // Add out color actions
+        if blobOuterColor2Chance % 10 == 0 && blobOuterColor3Chance % 20 != 0
+        {
+            let action=SKAction.sequence([SKAction.colorize(with: blobOuterColor2RGB, colorBlendFactor: 1.0, duration: 1.0), SKAction.colorize(with: blobOuterRGB, colorBlendFactor: 1.0, duration: 1.0)])
+            blobOuter.run(SKAction.repeatForever(action))
+            
+        } // if only color #2
+        if blobOuterColor2Chance % 10 == 0 && blobOuterColor3Chance % 20 == 0
+        {
+            let action=SKAction.sequence([SKAction.colorize(with: blobOuterColor2RGB, colorBlendFactor: 1.0, duration: 1.0), SKAction.colorize(with: blobOuterColor3RGB, colorBlendFactor: 1.0, duration: 1.0), SKAction.colorize(with: blobOuterRGB, colorBlendFactor: 1.0, duration: 1.0)])
+            blobOuter.run(SKAction.repeatForever(action))
+            
+        } // if both colors 2 and 3
         
         // Add blob circle
         print("blobCircle: \(blobCircleShape)")
@@ -1086,7 +1302,7 @@ class BlobClass
         let dy=sin(spike1Rotation)*sprite.size.width*0.425
         spike1.position=CGPoint(x: dx, y: dy)
         spike1.zRotation=spike1Rotation
-        
+        spike1.color=spike1RGB
         
         if spot1Shape < NUMSPOTTEXTURES
         {
@@ -1119,7 +1335,7 @@ class BlobClass
         }
     }
     
-    private func tripToDec(trip: String) -> Int
+    public func tripToDec(trip: String) -> Int
     {
         var num:Int=0
         var digit:Int=2
