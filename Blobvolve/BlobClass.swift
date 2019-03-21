@@ -10,6 +10,7 @@
 
 import Foundation
 import SpriteKit
+import GameplayKit
 
 class BlobClass
 {
@@ -26,6 +27,9 @@ class BlobClass
     var blobOuter2=SKSpriteNode(imageNamed: "blobOuter64")
     var DNA=String()
     var spike1=SKSpriteNode(imageNamed: "spike64")
+    
+    var scene:SKScene?
+    
     
     // Genetic Characteristics
     var baseSize:Int=0
@@ -71,6 +75,7 @@ class BlobClass
     var blobOuterColor3Chance:Int=0
     var blobOuterColor3RGB=NSColor()
     
+    var GeneStrings=["Size", "RGB-R", "RGB-G", "RGB-B", "PlsSpd", "Alpha", "Sp1Ang", "Sp1Dst", "Sp1Alpha", "Sp1RGB", "Sp1Size", "Sp1Rot", "Spec1Typ", "Spec2Typ", "Sp1Shp", "CrcShp", "CrcRGB", "CrcAlpha", "CrcAct", "Sprite", "Spec1RGB", "OuterShp", "OuterRGB", "OutAct", "MoveSpd", "Spk1Typ", "Spk1Ang", "Spk1Rot", "Out2Prsnt", "Out2Shp", "Out2RGB", "Out2Act", "Health", "Spk1RGB", "Damage", "Color2%", "Color2RGB", "Color2Act", "OutClr2%", "OutClr2RGB", "OutColor3%", "OutColor3RGB"]
     
     
     // Computed Core Stats
@@ -509,6 +514,7 @@ class BlobClass
             sprite.addChild(spot1)
         }
         addSpecials()
+        
         
     } // init()
     
@@ -1326,6 +1332,7 @@ class BlobClass
             spot1.texture=SKTexture(imageNamed: "spot64")
         }
         addSpecials()
+        
     }
     
     public func genNewDNA()

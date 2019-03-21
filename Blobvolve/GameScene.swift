@@ -30,6 +30,8 @@ class GameScene: SKScene {
     
     var leftPressed:Bool=false
     var rightPressed:Bool=false
+    var showGeneName:Bool=false
+    
     
     var saves=[String]()
     var savesPreview=[SKTexture]()
@@ -173,7 +175,7 @@ class GameScene: SKScene {
         blob.generateByLevel(level: 0)
         blob2.generateByLevel(level: 0)
         drawDNAStrand()
-    }
+    } // didMove()
     
 
     func toDNA(code: String) -> String
@@ -205,7 +207,7 @@ class GameScene: SKScene {
             }
         }
         return coded
-    }
+    } // toDNA()
     
     func toBase(dec: Int, b:Int) -> String {
         guard b > 1 && b < 11 else {
@@ -219,7 +221,7 @@ class GameScene: SKScene {
         }
             while num > 0
         return str
-    }
+    } //toBase()
     
     
     /*
@@ -302,13 +304,38 @@ class GameScene: SKScene {
             if i%3==1
             {
                 let geneNum=Int(i/3)
-                let geneLabel=SKLabelNode(text: "\(geneNum)")
-                geneLabel.name="DNALabel"
-                geneLabel.position.y=size.height*0.445
-                geneLabel.fontColor=NSColor.white
-                geneLabel.zPosition=12
-                geneLabel.position.x=strandOffset+(CGFloat(i)*dna.size.width*0.6)+(CGFloat(i/3)*20)
-                addChild(geneLabel)
+                var geneLabel=SKLabelNode()
+                //let geneLabel=SKLabelNode(text: "\(geneNum)")
+                
+                if (showGeneName)
+                {
+                    if geneNum < blob.GeneStrings.count
+                    {
+                        geneLabel=SKLabelNode(text: blob.GeneStrings[geneNum])
+                    }
+                    else
+                    {
+                       geneLabel=SKLabelNode(text: "\(geneNum)")
+                    }
+                    geneLabel.name="DNALabel"
+                    geneLabel.position.y=size.height*0.445
+                    geneLabel.fontColor=NSColor.white
+                    geneLabel.fontSize=14
+                    geneLabel.zPosition=12
+                    geneLabel.position.x=strandOffset+(CGFloat(i)*dna.size.width*0.6)+(CGFloat(i/3)*20)
+                    addChild(geneLabel)
+                } // if showGeneName is on
+                else
+                {
+                    geneLabel=SKLabelNode(text: "\(geneNum)")
+                    geneLabel.name="DNALabel"
+                    geneLabel.position.y=size.height*0.445
+                    geneLabel.fontColor=NSColor.white
+                    geneLabel.fontSize=14
+                    geneLabel.zPosition=12
+                    geneLabel.position.x=strandOffset+(CGFloat(i)*dna.size.width*0.6)+(CGFloat(i/3)*20)
+                    addChild(geneLabel)
+                } // if showGeneName is Off
             }
         } // for each chromosome
         
@@ -342,39 +369,79 @@ class GameScene: SKScene {
         }
         
         // draw baby DNA
-        let coded3=baby.DNA
-        for i in 0..<baby.GENECOUNT*baby.GENESIZE
+        if !baby.sprite.isHidden
         {
-            let dna=SKSpriteNode(imageNamed: "DNA_2")
-            dna.name=String(format: "DNA%03d",i)
-            dna.setScale(0.65)
-            dna.position.y = -size.height*0.425
-            dna.position.x = strandOffset+(CGFloat(i)*dna.size.width*0.6)+(CGFloat(i/3)*20)
-            dna.colorBlendFactor=1.0
-            
-            let thisChar=coded3[coded3.index(coded3.startIndex, offsetBy: i)]
-            switch (thisChar)
+            let coded3=baby.DNA
+            for i in 0..<baby.GENECOUNT*baby.GENESIZE
             {
-            case "R":
-                dna.color=NSColor.red
-            case "G":
-                dna.color=NSColor.green
-            case "B":
-                dna.color=NSColor.blue
-            case "Y":
-                dna.color=NSColor.yellow
-            default:
-                break
+                let dna=SKSpriteNode(imageNamed: "DNA_2")
+                dna.name=String(format: "DNA%03d",i)
+                dna.setScale(0.65)
+                dna.position.y = -size.height*0.425
+                dna.position.x = strandOffset+(CGFloat(i)*dna.size.width*0.6)+(CGFloat(i/3)*20)
+                dna.colorBlendFactor=1.0
                 
-            } // switch
-            addChild(dna)
-            dna.zPosition=10
-            
-            blob1Level.text="Level: \(blob.computeLevel())"
-            blob2Level.text="Level: \(blob2.computeLevel())"
-            babyLevel.text="Level: \(baby.computeLevel())"
-        }
-        
+                let thisChar=coded3[coded3.index(coded3.startIndex, offsetBy: i)]
+                switch (thisChar)
+                {
+                case "R":
+                    dna.color=NSColor.red
+                case "G":
+                    dna.color=NSColor.green
+                case "B":
+                    dna.color=NSColor.blue
+                case "Y":
+                    dna.color=NSColor.yellow
+                default:
+                    break
+                    
+                } // switch
+                addChild(dna)
+                dna.zPosition=10
+                
+                blob1Level.text="Level: \(blob.computeLevel())"
+                blob2Level.text="Level: \(blob2.computeLevel())"
+                babyLevel.text="Level: \(baby.computeLevel())"
+                
+                // for number label
+                if i%3==1
+                {
+                    let geneNum=Int(i/3)
+                    var geneLabel=SKLabelNode()
+                    //let geneLabel=SKLabelNode(text: "\(geneNum)")
+                    
+                    if (showGeneName)
+                    {
+                        if geneNum < blob.GeneStrings.count
+                        {
+                            geneLabel=SKLabelNode(text: blob.GeneStrings[geneNum])
+                        }
+                        else
+                        {
+                            geneLabel=SKLabelNode(text: "\(geneNum)")
+                        }
+                        geneLabel.name="DNALabel"
+                        geneLabel.position.y = -size.height*0.47
+                        geneLabel.fontColor=NSColor.white
+                        geneLabel.fontSize=14
+                        geneLabel.zPosition=12
+                        geneLabel.position.x=strandOffset+(CGFloat(i)*dna.size.width*0.6)+(CGFloat(i/3)*20)
+                        addChild(geneLabel)
+                    } // if showGeneName is on
+                    else
+                    {
+                        geneLabel=SKLabelNode(text: "\(geneNum)")
+                        geneLabel.name="DNALabel"
+                        geneLabel.position.y = -size.height*0.47
+                        geneLabel.fontColor=NSColor.white
+                        geneLabel.fontSize=14
+                        geneLabel.zPosition=12
+                        geneLabel.position.x=strandOffset+(CGFloat(i)*dna.size.width*0.6)+(CGFloat(i/3)*20)
+                        addChild(geneLabel)
+                    } // if showGeneName is Off
+                }
+            } // for each gene
+        }// if baby isn't hidden
     } // func drawDNAStrand
     
 
@@ -403,7 +470,7 @@ class GameScene: SKScene {
                 drawDNAStrand()
                 baby.sprite.isHidden=true
                 
-            }
+            } // if node is DNA
             if thisNode.name!.contains("blob00")
             {
                 selected=0
@@ -510,6 +577,18 @@ class GameScene: SKScene {
                 baby.sprite.texture=blendTextures(first: blob, second: blob2)
             }
             
+        case 29:
+            if showGeneName
+            {
+                showGeneName = false
+                drawDNAStrand()
+            }
+            else
+            {
+                showGeneName=true
+                drawDNAStrand()
+            }
+            print("showGeneName is \(showGeneName)")
         case 30:    // ] - Limit blob 2 to less than level 10
 
             blob2.genNewDNA()
@@ -582,6 +661,17 @@ class GameScene: SKScene {
             print("Baby Health: \(baby.blobHealth)")
             print("Baby Damage: \(baby.blobDamage)")
             print("Baby Level: \(baby.computeLevel())")
+        
+        case 35:
+            
+            blob.genNewDNA()
+            blob2.genNewDNA()
+            baby.sprite.isHidden=true
+            //changeBlobColor()
+            drawDNAStrand()
+            money -= 5000
+            blob.sprite.texture=createProcTexture()
+            blob2.sprite.texture=createProcTexture()
         case 36:
             if saveFrame.isHidden
             {
@@ -616,7 +706,7 @@ class GameScene: SKScene {
             //changeBlobColor()
             drawDNAStrand()
             money -= 5000
-            
+
 
         case 123:
             
@@ -731,7 +821,7 @@ class GameScene: SKScene {
             let firstAlpha=first.sprite.alpha
             let secondAlpha=second.sprite.alpha
             let firstColor=first.sprite.color
-            let secondColor=first.sprite.color
+            let secondColor=second.sprite.color
             first.sprite.alpha=1.0
             second.sprite.alpha=1.0
             first.sprite.color=NSColor.white
@@ -746,9 +836,9 @@ class GameScene: SKScene {
         }
         else
         {
-            let firstAlpha=first.sprite.alpha
-            let secondAlpha=second.sprite.alpha
-            let firstColor=first.sprite.color
+            let firstAlpha=second.sprite.alpha
+            let secondAlpha=first.sprite.alpha
+            let firstColor=second.sprite.color
             let secondColor=first.sprite.color
             first.sprite.alpha=1.0
             second.sprite.alpha=1.0
@@ -756,29 +846,80 @@ class GameScene: SKScene {
             second.sprite.color=NSColor.white
             firstNode=SKSpriteNode(texture: second.sprite.texture!)
             secondNode=SKSpriteNode(texture: first.sprite.texture!)
-            first.sprite.alpha=firstAlpha
-            second.sprite.alpha=secondAlpha
-            first.sprite.color=firstColor
-            second.sprite.color=secondColor
+            first.sprite.alpha=secondAlpha
+            second.sprite.alpha=firstAlpha
+            first.sprite.color=secondColor
+            second.sprite.color=firstColor
         }
         let tempNode=SKSpriteNode()
-        let alphaRatio=random(min: 0.25, max: 0.75)
+        let alphaRatio=random(min: 0.3, max: 1)
         tempNode.blendMode=SKBlendMode.add
         tempNode.position=CGPoint(x: size.width*10, y: size.height*10)
 
         //let solidNode=SKSpriteNode(texture: SKTexture(imageNamed: "blob00"))
         //tempNode.addChild(solidNode)
-        firstNode.alpha=alphaRatio
+        firstNode.alpha=1.0
         firstNode.blendMode=SKBlendMode.add
         tempNode.addChild(firstNode)
 
         secondNode.alpha=1.0-alphaRatio
         secondNode.blendMode=SKBlendMode.add
         tempNode.addChild(secondNode)
+        tempNode.alpha=1.0
         let retText=self.view!.texture(from: tempNode)
         tempNode.removeFromParent()
-
+        
         return retText!
+    }
+    
+    public func createProcTexture() -> SKTexture
+    {
+        //let noise = GKNoise(GKBillowNoiseSource(frequency: 0.015, octaveCount: 2, persistence: 0.2, lacunarity: 0.005, seed: Int32(random(min: 0, max: 25000))))
+        var noise=GKNoise()
+        var mapCenter=vector_double2()
+        mapCenter.x=0
+        mapCenter.y=0
+        var mapSize=vector_double2()
+        mapSize.x=256
+        mapSize.y=256
+        let type=Int(random(min: 0, max: 3))
+        switch type
+        {
+        case 0:
+            noise=GKNoise(GKVoronoiNoiseSource(frequency: Double(random(min: 0.001, max: 0.005)), displacement: Double(random(min: 0.5, max: 2.5)), distanceEnabled: false, seed: Int32(random(min: 0, max: 25000))))
+        case 1:
+            noise=GKNoise(GKCylindersNoiseSource(frequency: Double(random(min: 0.01, max: 0.25))))
+            mapCenter.x=Double(random(min: CGFloat(-mapSize.x*0.9), max: CGFloat(mapSize.x*0.9)))
+            mapCenter.y=Double(random(min: CGFloat(-mapSize.x*0.9), max: CGFloat(mapSize.x*0.9)))
+        default:
+            noise = GKNoise(GKBillowNoiseSource(frequency: Double(random(min: 0.01, max: 0.025)), octaveCount: 2, persistence: 0.2, lacunarity: 0.005, seed: Int32(random(min: 0, max: 25000))))
+        }
+
+        
+
+
+        var mapSamples=vector_int2()
+        mapSamples.x=256
+        mapSamples.y=256
+        let noiseMap = GKNoiseMap(noise, size: mapSize, origin: mapCenter, sampleCount: mapSamples, seamless: false)
+        
+        let text=SKTexture(noiseMap: noiseMap)
+        let thisNode=SKSpriteNode()
+        let cropNode=SKSpriteNode(imageNamed: "blob00")
+        cropNode.blendMode=SKBlendMode.multiply
+        let tempNode=SKSpriteNode(texture: text)
+        tempNode.blendMode=SKBlendMode.alpha
+        tempNode.zPosition=1
+        cropNode.zPosition=2
+        thisNode.addChild(tempNode)
+        thisNode.name="DNACrop"
+        thisNode.addChild(cropNode)
+        addChild(thisNode)
+        let retText=scene!.view!.texture(from: thisNode)
+        thisNode.removeFromParent()
+        
+        return retText!
+        
     }
     
     override func update(_ currentTime: TimeInterval) {
