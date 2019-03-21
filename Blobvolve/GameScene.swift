@@ -882,17 +882,21 @@ class GameScene: SKScene {
         var mapSize=vector_double2()
         mapSize.x=256
         mapSize.y=256
-        let type=Int(random(min: 0, max: 3))
+        var type=Int(random(min: 0, max: 3.9999999))
+        print("Type: \(type)")
+        //type=0
         switch type
         {
         case 0:
-            noise=GKNoise(GKVoronoiNoiseSource(frequency: Double(random(min: 0.001, max: 0.005)), displacement: Double(random(min: 0.5, max: 2.5)), distanceEnabled: false, seed: Int32(random(min: 0, max: 25000))))
+            noise=GKNoise(GKVoronoiNoiseSource(frequency: Double(random(min: 0.01, max: 0.025)), displacement: Double(random(min: 0.5, max: 3.5)), distanceEnabled: false, seed: Int32(random(min: 0, max: 25000))))
         case 1:
-            noise=GKNoise(GKCylindersNoiseSource(frequency: Double(random(min: 0.01, max: 0.25))))
+            noise=GKNoise(GKCylindersNoiseSource(frequency: Double(random(min: 0.01, max: 0.15))))
             mapCenter.x=Double(random(min: CGFloat(-mapSize.x*0.9), max: CGFloat(mapSize.x*0.9)))
             mapCenter.y=Double(random(min: CGFloat(-mapSize.x*0.9), max: CGFloat(mapSize.x*0.9)))
+        case 2:
+            noise=GKNoise(GKVoronoiNoiseSource(frequency: Double(random(min: 0.01, max: 0.025)), displacement: Double(random(min: 0.5, max: 3.5)), distanceEnabled: true, seed: Int32(random(min: 0, max: 25000))))
         default:
-            noise = GKNoise(GKBillowNoiseSource(frequency: Double(random(min: 0.01, max: 0.025)), octaveCount: 2, persistence: 0.2, lacunarity: 0.005, seed: Int32(random(min: 0, max: 25000))))
+            noise = GKNoise(GKBillowNoiseSource(frequency: Double(random(min: 0.01, max: 0.025)), octaveCount: Int(random(min: 1, max: 4.9999)), persistence: 0.2, lacunarity: 0.5, seed: Int32(random(min: 0, max: 25000))))
         }
 
         
