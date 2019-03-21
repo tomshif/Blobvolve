@@ -80,7 +80,7 @@ class BlobClass
     
     // Constants
 
-    let NUMBLOBTEXTURES:Int=32
+    let NUMBLOBTEXTURES:Int=40
     
     let MINSIZE:CGFloat=0.0
     let MAXSIZE:CGFloat=0.5
@@ -123,13 +123,14 @@ class BlobClass
         coreStats.append(32)
         coreStats.append(34)
         
-        
+        /*
         // fill spot texture array
         for i in 0..<NUMSPOTTEXTURES
         {
-            let tempTex=SKTexture(imageNamed: "spot0\(i)")
+            let tempTex=SKTexture(imageNamed: String(format: "blob%02d",blobCircleShape))
             
         }
+ */
         // generate random DNA strand
         for i in 0..<GENECOUNT*GENESIZE
         {
