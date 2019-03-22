@@ -15,7 +15,7 @@ import GameplayKit
 class BlobClass
 {
     //Genetic Constants
-    let GENECOUNT:Int=42
+    let GENECOUNT:Int=47
     let GENESIZE:Int=3
     
     var coreStats=[Int]()
@@ -74,8 +74,15 @@ class BlobClass
     var blobOuterColor2RGB=NSColor()
     var blobOuterColor3Chance:Int=0
     var blobOuterColor3RGB=NSColor()
+    var spriteRotation:CGFloat=0
+    var outer1GapActive:Bool=false
+    var outer1GapDist:CGFloat=0
+    var outer2GapActive:Bool=false
+    var outer2GapDist:CGFloat=0
     
-    var GeneStrings=["Size", "RGB-R", "RGB-G", "RGB-B", "PlsSpd", "Alpha", "Sp1Ang", "Sp1Dst", "Sp1Alpha", "Sp1RGB", "Sp1Size", "Sp1Rot", "Spec1Typ", "Spec2Typ", "Sp1Shp", "CrcShp", "CrcRGB", "CrcAlpha", "CrcAct", "Sprite", "Spec1RGB", "OuterShp", "OuterRGB", "OutAct", "MoveSpd", "Spk1Typ", "Spk1Ang", "Spk1Rot", "Out2Prsnt", "Out2Shp", "Out2RGB", "Out2Act", "Health", "Spk1RGB", "Damage", "Color2%", "Color2RGB", "Color2Act", "OutClr2%", "OutClr2RGB", "OutColor3%", "OutColor3RGB"]
+    
+    
+    var GeneStrings=["Size", "RGB-R", "RGB-G", "RGB-B", "PlsSpd", "Alpha", "Sp1Ang", "Sp1Dst", "Sp1Alpha", "Sp1RGB", "Sp1Size", "Sp1Rot", "Spec1Typ", "Spec2Typ", "Sp1Shp", "CrcShp", "CrcRGB", "CrcAlpha", "CrcAct", "Sprite", "Spec1RGB", "OuterShp", "OuterRGB", "OutAct", "MoveSpd", "Spk1Typ", "Spk1Ang", "Spk1Rot", "Out2Prsnt", "Out2Shp", "Out2RGB", "Out2Act", "Health", "Spk1RGB", "Damage", "Color2%", "Color2RGB", "Color2Act", "OutClr2%", "OutClr2RGB", "OutColor3%", "OutColor3RGB", "SpriteRot", "Out1GapOn","Out1GapDist", "Out2GapOn","Out2GapDist"]
     
     
     // Computed Core Stats
@@ -112,7 +119,7 @@ class BlobClass
     let HEALTHLEVEL:CGFloat=7.5
     let DAMAGEBASE:CGFloat=12.5
     let DAMAGELEVEL:CGFloat=2.5
-    
+    let OUTERMAXDIST:CGFloat=0.8
     struct SpecialType
     {
         public static let ELECTRICFIELD:Int=16
@@ -386,6 +393,35 @@ class BlobClass
         let blobOuterColor3RGBDec=tripToDec(trip: getGene(num: 41))
         blobOuterColor3RGB=getRGB(col: blobOuterColor3RGBDec)
         
+        // Blob Sprite Rotation - gene 42
+        let blobSpriteRotDec=tripToDec(trip: getGene(num: 42))
+        let blobSpriteRotRatio=CGFloat(blobSpriteRotDec)/63
+        spriteRotation=blobSpriteRotRatio*CGFloat.pi*2
+        
+        // Blob Outer 1 Gap Present - gene 43
+        let blobOuterGapOnDec=tripToDec(trip: getGene(num: 43))
+        if blobOuterGapOnDec%17==0
+        {
+            outer1GapActive=true
+        }
+        
+        // Blob Outer 1 Gap Dist - gene 44
+        let blobOuterGapDistDec=tripToDec(trip: getGene(num: 44))
+        let blobOuterGapDistRatio=CGFloat(blobOuterGapDistDec)/63
+        outer1GapDist=1+(blobOuterGapDistRatio*OUTERMAXDIST)
+        
+        // Blob Outer 2 Gap Present - gene 45
+        let blobOuter2GapOnDec=tripToDec(trip: getGene(num: 45))
+        if blobOuter2GapOnDec%19==0
+        {
+            outer2GapActive=true
+        }
+        
+        // Blob Outer 2 Gap Dist - gene 46
+        let blobOuter2GapDistDec=tripToDec(trip: getGene(num: 46))
+        let blobOuter2GapDistRatio=CGFloat(blobOuter2GapDistDec)/63
+        outer2GapDist=1+(blobOuter2GapDistRatio*OUTERMAXDIST)
+        
         //////////////////////////////////////////////
         // END OF GENE SEQUENCE //////////////////////
         //////////////////////////////////////////////
@@ -399,7 +435,7 @@ class BlobClass
         sprite.color=NSColor(calibratedRed: spriteRed, green: spriteGreen, blue: spriteBlue, alpha: 1.0)
         sprite.alpha=spriteAlpha
         sprite.zPosition=9
-
+        sprite.zRotation=spriteRotation
         // Add blob circle
         if blobCircleShape < NUMBLOBCIRCLETEXTURES
         {
@@ -438,6 +474,15 @@ class BlobClass
         blobOuter.colorBlendFactor=1.0
         blobOuter.color=blobOuterRGB
         blobOuter.alpha=1.0
+        blobOuter.setScale(1.0)
+        if outer1GapActive
+        {
+            blobOuter.setScale(outer1GapDist)
+        }
+        else
+        {
+            outer1GapActive=false
+        }
         
         // Add outer #2
         blobOuter2.zPosition=11
@@ -446,7 +491,14 @@ class BlobClass
         blobOuter2.colorBlendFactor=1.0
         blobOuter2.color=blobOuter2RGB
         blobOuter2.alpha=1.0
-        
+        if outer1GapActive
+        {
+            blobOuter2.setScale(outer2GapDist)
+        }
+        else
+        {
+            outer2GapActive=false
+        }
         
         // Add outer action
         blobOuter.removeAllActions()
@@ -1232,6 +1284,40 @@ class BlobClass
         let blobOuterColor3RGBDec=tripToDec(trip: getGene(num: 41))
         blobOuterColor3RGB=getRGB(col: blobOuterColor3RGBDec)
         
+        // Blob Sprite Rotation - gene 42
+        let blobSpriteRotDec=tripToDec(trip: getGene(num: 42))
+        let blobSpriteRotRatio=CGFloat(blobSpriteRotDec)/63
+        spriteRotation=blobSpriteRotRatio*CGFloat.pi*2
+        
+        
+        // Blob Outer 1 Gap Present - gene 43
+        let blobOuterGapOnDec=tripToDec(trip: getGene(num: 43))
+        if blobOuterGapOnDec%17==0
+        {
+            outer1GapActive=true
+        }
+        else
+        {
+            outer1GapActive=false
+        }
+        
+        // Blob Outer 1 Gap Dist - gene 44
+        let blobOuterGapDistDec=tripToDec(trip: getGene(num: 44))
+        let blobOuterGapDistRatio=CGFloat(blobOuterGapDistDec)/63
+        outer1GapDist=1+(blobOuterGapDistRatio*OUTERMAXDIST)
+        
+        // Blob Outer 2 Gap Present - gene 45
+        let blobOuter2GapOnDec=tripToDec(trip: getGene(num: 45))
+        if blobOuter2GapOnDec%19==0
+        {
+            outer2GapActive=true
+        }
+        
+        // Blob Outer 2 Gap Dist - gene 46
+        let blobOuter2GapDistDec=tripToDec(trip: getGene(num: 46))
+        let blobOuter2GapDistRatio=CGFloat(blobOuter2GapDistDec)/63
+        outer2GapDist=1+(blobOuter2GapDistRatio*OUTERMAXDIST)
+        
         
         
         
@@ -1244,6 +1330,8 @@ class BlobClass
         let pulseAction=SKAction.sequence([SKAction.scale(to: maxBlobScale, duration: pulseSpeed),SKAction.scale(to: minBlobScale, duration: pulseSpeed)])
         sprite.run(SKAction.repeatForever(pulseAction))
         sprite.alpha=spriteAlpha
+        sprite.zRotation=spriteRotation
+        
         // Setup blob color 2
         if blobColor2Chance % 24 == 0
         {
@@ -1258,7 +1346,14 @@ class BlobClass
         blobOuter.removeAllActions()
         blobOuter.run(SKAction.repeatForever(getOuterAction(dec: blobOuterAction)))
         print("Outer Action: \(blobOuterAction)")
-        
+        if outer1GapActive
+        {
+            blobOuter.setScale(outer1GapDist)
+        }
+        else
+        {
+            blobOuter.setScale(1.0)
+        }
         // Add outer #2
         blobOuter2.zPosition=11
         blobOuter2.zRotation=0
@@ -1268,6 +1363,14 @@ class BlobClass
         blobOuter2.alpha=1.0
         blobOuter2.removeAllActions()
         blobOuter2.run(SKAction.repeatForever(getOuterAction(dec: blobOuter2Action)))
+        if outer2GapActive
+        {
+            blobOuter2.setScale(outer2GapDist)
+        }
+        else
+        {
+            blobOuter2.setScale(1.0)
+        }
         
         // Add out color actions
         if blobOuterColor2Chance % 10 == 0 && blobOuterColor3Chance % 20 != 0

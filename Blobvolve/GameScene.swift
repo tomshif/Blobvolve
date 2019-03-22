@@ -827,7 +827,9 @@ class GameScene: SKScene {
             first.sprite.color=NSColor.white
             second.sprite.color=NSColor.white
             firstNode=SKSpriteNode(texture: first.sprite.texture!)
+            //firstNode.zRotation=first.sprite.zRotation
             secondNode=SKSpriteNode(texture: second.sprite.texture!)
+            //secondNode.zRotation=second.sprite.zRotation
             first.sprite.alpha=firstAlpha
             second.sprite.alpha=secondAlpha
             first.sprite.color=firstColor
@@ -845,7 +847,9 @@ class GameScene: SKScene {
             first.sprite.color=NSColor.white
             second.sprite.color=NSColor.white
             firstNode=SKSpriteNode(texture: second.sprite.texture!)
+            //firstNode.zRotation=second.sprite.zRotation
             secondNode=SKSpriteNode(texture: first.sprite.texture!)
+            //secondNode.zRotation=first.sprite.zRotation
             first.sprite.alpha=secondAlpha
             second.sprite.alpha=firstAlpha
             first.sprite.color=secondColor
@@ -882,9 +886,9 @@ class GameScene: SKScene {
         var mapSize=vector_double2()
         mapSize.x=256
         mapSize.y=256
-        var type=Int(random(min: 0, max: 3.9999999))
+        var type=Int(random(min: 0, max: 4.9999999))
         print("Type: \(type)")
-        //type=0
+        //type=4
         switch type
         {
         case 0:
@@ -895,6 +899,13 @@ class GameScene: SKScene {
             mapCenter.y=Double(random(min: CGFloat(-mapSize.x*0.9), max: CGFloat(mapSize.x*0.9)))
         case 2:
             noise=GKNoise(GKVoronoiNoiseSource(frequency: Double(random(min: 0.01, max: 0.025)), displacement: Double(random(min: 0.5, max: 3.5)), distanceEnabled: true, seed: Int32(random(min: 0, max: 25000))))
+        case 3:
+            noise=GKNoise(GKRidgedNoiseSource(frequency: Double(random(min: 0, max: 5)), octaveCount: Int(random(min: 1, max: 10)), lacunarity: Double(random(min: 0.001, max: 5)), seed: Int32(random(min: 0, max: 25000))))
+            
+        case 4:
+            noise=GKNoise(GKSpheresNoiseSource(frequency: Double(random(min: 0.001, max: 0.55))))
+            mapCenter.x=Double(random(min: CGFloat(-mapSize.x*0.9), max: CGFloat(mapSize.x*0.9)))
+            mapCenter.y=Double(random(min: CGFloat(-mapSize.x*0.9), max: CGFloat(mapSize.x*0.9)))
         default:
             noise = GKNoise(GKBillowNoiseSource(frequency: Double(random(min: 0.01, max: 0.025)), octaveCount: Int(random(min: 1, max: 4.9999)), persistence: 0.2, lacunarity: 0.5, seed: Int32(random(min: 0, max: 25000))))
         }
@@ -918,10 +929,10 @@ class GameScene: SKScene {
         thisNode.addChild(tempNode)
         thisNode.name="DNACrop"
         thisNode.addChild(cropNode)
+        let ang=random(min: 0, max: CGFloat.pi*2)
         addChild(thisNode)
         let retText=scene!.view!.texture(from: thisNode)
         thisNode.removeFromParent()
-        
         return retText!
         
     }
