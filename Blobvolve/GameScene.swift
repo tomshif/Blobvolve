@@ -60,7 +60,7 @@ class GameScene: SKScene {
     
     var selected:Int=0
     
-    var money:Int=50000
+    var money:Int=500000
     
     override func didMove(to view: SKView) {
 
@@ -574,7 +574,7 @@ class GameScene: SKScene {
             drawDNAStrand()
             baby.sprite.isHidden=false
             let levels=blob.computeLevel()+blob2.computeLevel()
-            money -= (levels*100)+1000
+            money -= (levels*25)+100
             let chance=random(min: 0, max: 1)
             if chance > 0.95
             {
@@ -599,7 +599,7 @@ class GameScene: SKScene {
             blob2.generateByLevel(level: 10)
             baby.sprite.isHidden=true
             drawDNAStrand()
-            money -= 1000
+            money -= 100
             
         case 33:    // [ - Limit blob 1 to less than level 10
 
@@ -607,7 +607,7 @@ class GameScene: SKScene {
             blob.generateByLevel(level: 10)
             baby.sprite.isHidden=true
             drawDNAStrand()
-            money -= 1000
+            money -= 100
             
         case 18:
             if saveFrame.isHidden
@@ -714,7 +714,7 @@ class GameScene: SKScene {
 
             
             let levels=blob.computeLevel()+blob2.computeLevel()
-            money -= (levels*100)+1000
+            money -= (levels*25)+100
             
         case 49:    // spacebar - spawn 2 new blobs
             blob.genNewDNA()
@@ -722,7 +722,7 @@ class GameScene: SKScene {
             baby.sprite.isHidden=true
             //changeBlobColor()
             drawDNAStrand()
-            money -= 250
+            money -= 100
             
             let proc1Chance=random(min: 0, max: 1)
             if proc1Chance > 0.8
@@ -834,7 +834,7 @@ class GameScene: SKScene {
         {
             moneyLabel.fontColor=NSColor.white
         }
-        let cost=(blob.computeLevel()+blob2.computeLevel())*250+1000
+        let cost=(blob.computeLevel()+blob2.computeLevel())*25+100
         breedCostLabel.text="Breeding Cost: $\(cost)"
     }
     
@@ -915,9 +915,9 @@ class GameScene: SKScene {
         var mapSize=vector_double2()
         mapSize.x=256
         mapSize.y=256
-        var type=Int(random(min: 0, max: 7.9999999))
+        var type=Int(random(min: 0, max: 9.9999999))
         // print("Type: \(type)")
-        //type=7
+        //type=8
         switch type
         {
         case 0:
@@ -944,6 +944,8 @@ class GameScene: SKScene {
         case 7:
             noise=GKNoise(GKVoronoiNoiseSource(frequency: Double(random(min: 0.025, max: 0.25)), displacement: Double(random(min: 3.5, max: 8.5)), distanceEnabled: false, seed: Int32(random(min: 0, max: 25000))))
             
+        case 8:
+                        noise=GKNoise(GKCheckerboardNoiseSource(squareSize: Double(random(min: 5.5, max: 15.5))))
         default:
             noise = GKNoise(GKBillowNoiseSource(frequency: Double(random(min: 0.01, max: 0.025)), octaveCount: Int(random(min: 1, max: 4.9999)), persistence: 0.2, lacunarity: 0.5, seed: Int32(random(min: 0, max: 25000))))
         }
