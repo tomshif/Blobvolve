@@ -309,7 +309,7 @@ class BlobClass
         // Movement Speed - gene 24
         let moveSpeedDec=tripToDec(trip: getGene(num: 24))
         moveSpeed=MOVESPEEDBASE+CGFloat(moveSpeedDec)*MOVESPEEDLEVEL
-        print("Move Speed: \(moveSpeed) - \(moveSpeedDec)")
+        //print("Move Speed: \(moveSpeed) - \(moveSpeedDec)")
         
         // Spike 1 Type - gene 25
         spike1Type=tripToDec(trip: getGene(num: 25))
@@ -843,6 +843,7 @@ class BlobClass
         let levelTotal=tripToDec(trip: getGene(num: 34))+tripToDec(trip: getGene(num: 32))+tripToDec(trip: getGene(num: 24))
         
         let level=levelTotal/NUMCORESTATS
+        //print("Level: \(level)")
         return level
         
     }
@@ -899,7 +900,7 @@ class BlobClass
     public func breed(with: BlobClass) -> BlobClass
     {
         var offspring=BlobClass()
-        print("Breeding")
+        //print("Breeding")
         for i in 0..<GENECOUNT
         {
             let chance=random(min: 0, max: 1)
@@ -1200,7 +1201,7 @@ class BlobClass
         // Movement Speed - gene 24
         let moveSpeedDec=tripToDec(trip: getGene(num: 24))
         moveSpeed=MOVESPEEDBASE+CGFloat(moveSpeedDec)*MOVESPEEDLEVEL
-        print("Move Speed: \(moveSpeed) - \(moveSpeedDec)")
+        //print("Move Speed: \(moveSpeed) - \(moveSpeedDec)")
         
         // Spike 1 Type - gene 25
         spike1Type=tripToDec(trip: getGene(num: 25))
@@ -1345,7 +1346,7 @@ class BlobClass
         blobOuter.zRotation=0
         blobOuter.removeAllActions()
         blobOuter.run(SKAction.repeatForever(getOuterAction(dec: blobOuterAction)))
-        print("Outer Action: \(blobOuterAction)")
+        //print("Outer Action: \(blobOuterAction)")
         if outer1GapActive
         {
             blobOuter.setScale(outer1GapDist)
@@ -1387,7 +1388,7 @@ class BlobClass
         } // if both colors 2 and 3
         
         // Add blob circle
-        print("blobCircle: \(blobCircleShape)")
+        //print("blobCircle: \(blobCircleShape)")
         if blobCircleShape < NUMBLOBCIRCLETEXTURES
         {
             blobCircle.texture=SKTexture(imageNamed: String(format:"blobCircle%02d",blobCircleShape))

@@ -270,6 +270,12 @@ class GameScene: SKScene {
             }
         } // for each node
     
+        blob1Level.text="Level: \(blob.computeLevel())"
+        print("Level: \(blob.computeLevel())")
+        blob2Level.text="Level: \(blob2.computeLevel())"
+        babyLevel.text="Level: \(baby.computeLevel())"
+        
+        
         //blob.sprite.removeAllActions()
         //blob=BlobClass()
         let coded=blob.DNA
@@ -399,10 +405,7 @@ class GameScene: SKScene {
                 addChild(dna)
                 dna.zPosition=10
                 
-                blob1Level.text="Level: \(blob.computeLevel())"
-                blob2Level.text="Level: \(blob2.computeLevel())"
-                babyLevel.text="Level: \(baby.computeLevel())"
-                
+
                 // for number label
                 if i%3==1
                 {
@@ -458,7 +461,7 @@ class GameScene: SKScene {
                 let range=start..<end
                 let num=Int(theName[range])!
                 let geneNum=Int(num/3)
-                print("Gene: \(geneNum)")
+                //print("Gene: \(geneNum)")
                 if pos.y > size.height*0.4
                 {
                     blob2.generateNewGene(at: geneNum)
@@ -494,6 +497,7 @@ class GameScene: SKScene {
                     {
                         blob2.DNA=saves[0]
                         blob2.resetSprite()
+                        
                         drawDNAStrand()
                         
                     } // if blob 2
@@ -588,7 +592,7 @@ class GameScene: SKScene {
                 showGeneName=true
                 drawDNAStrand()
             }
-            print("showGeneName is \(showGeneName)")
+            //print("showGeneName is \(showGeneName)")
         case 30:    // ] - Limit blob 2 to less than level 10
 
             blob2.genNewDNA()
@@ -612,7 +616,14 @@ class GameScene: SKScene {
                 blob.resetSprite()
                 baby.sprite.isHidden=true
                 drawDNAStrand()
-                money -= 2500
+                money -= 250
+                let proc1Chance=random(min: 0, max: 1)
+                if proc1Chance > 0.8
+                {
+                    blob.sprite.texture=createProcTexture()
+                    
+                }
+                
             } // if not saving
             else
             {
@@ -632,7 +643,13 @@ class GameScene: SKScene {
                 blob2.resetSprite()
                 baby.sprite.isHidden=true
                 drawDNAStrand()
-                money -= 2500
+                money -= 250
+                let proc2Chance=random(min: 0, max: 1)
+                if proc2Chance > 0.8
+                {
+                    blob2.sprite.texture=createProcTexture()
+                    
+                }
             } // if not saving
             else
             {
@@ -699,13 +716,25 @@ class GameScene: SKScene {
             let levels=blob.computeLevel()+blob2.computeLevel()
             money -= (levels*100)+1000
             
-        case 49:
+        case 49:    // spacebar - spawn 2 new blobs
             blob.genNewDNA()
             blob2.genNewDNA()
             baby.sprite.isHidden=true
             //changeBlobColor()
             drawDNAStrand()
-            money -= 5000
+            money -= 250
+            
+            let proc1Chance=random(min: 0, max: 1)
+            if proc1Chance > 0.8
+            {
+                blob.sprite.texture=createProcTexture()
+
+            }
+            let proc2Chance=random(min: 0, max: 1)
+            if proc2Chance>0.8
+            {
+                blob2.sprite.texture=createProcTexture()
+            }
 
 
         case 123:
@@ -886,37 +915,48 @@ class GameScene: SKScene {
         var mapSize=vector_double2()
         mapSize.x=256
         mapSize.y=256
-        var type=Int(random(min: 0, max: 4.9999999))
-        print("Type: \(type)")
-        //type=4
+        var type=Int(random(min: 0, max: 7.9999999))
+        // print("Type: \(type)")
+        //type=7
         switch type
         {
         case 0:
             noise=GKNoise(GKVoronoiNoiseSource(frequency: Double(random(min: 0.01, max: 0.025)), displacement: Double(random(min: 0.5, max: 3.5)), distanceEnabled: false, seed: Int32(random(min: 0, max: 25000))))
         case 1:
             noise=GKNoise(GKCylindersNoiseSource(frequency: Double(random(min: 0.01, max: 0.15))))
-            mapCenter.x=Double(random(min: CGFloat(-mapSize.x*0.9), max: CGFloat(mapSize.x*0.9)))
-            mapCenter.y=Double(random(min: CGFloat(-mapSize.x*0.9), max: CGFloat(mapSize.x*0.9)))
+            mapCenter.x=Double(random(min: CGFloat(-mapSize.x*1.9), max: CGFloat(mapSize.x*1.9)))
+            mapCenter.y=Double(random(min: CGFloat(-mapSize.x*1.9), max: CGFloat(mapSize.x*1.9)))
         case 2:
             noise=GKNoise(GKVoronoiNoiseSource(frequency: Double(random(min: 0.01, max: 0.025)), displacement: Double(random(min: 0.5, max: 3.5)), distanceEnabled: true, seed: Int32(random(min: 0, max: 25000))))
         case 3:
-            noise=GKNoise(GKRidgedNoiseSource(frequency: Double(random(min: 0, max: 5)), octaveCount: Int(random(min: 1, max: 10)), lacunarity: Double(random(min: 0.001, max: 5)), seed: Int32(random(min: 0, max: 25000))))
+            noise=GKNoise(GKRidgedNoiseSource(frequency: Double(random(min: 0.01, max: 0.1)), octaveCount: Int(random(min: 1, max: 10)), lacunarity: Double(random(min: 0.001, max: 5)), seed: Int32(random(min: 0, max: 25000))))
             
         case 4:
             noise=GKNoise(GKSpheresNoiseSource(frequency: Double(random(min: 0.001, max: 0.55))))
-            mapCenter.x=Double(random(min: CGFloat(-mapSize.x*0.9), max: CGFloat(mapSize.x*0.9)))
-            mapCenter.y=Double(random(min: CGFloat(-mapSize.x*0.9), max: CGFloat(mapSize.x*0.9)))
+            mapCenter.x=Double(random(min: CGFloat(-mapSize.x*1.9), max: CGFloat(mapSize.x*1.9)))
+            mapCenter.y=Double(random(min: CGFloat(-mapSize.x*1.9), max: CGFloat(mapSize.x*1.9)))
+            
+        case 5:
+            noise = GKNoise(GKBillowNoiseSource(frequency: Double(random(min: 0.015, max: 0.035)), octaveCount: Int(random(min: 15, max: 19.9999)), persistence: 0.65, lacunarity: 0.05, seed: Int32(random(min: 0, max: 25000))))
+        case 6:
+            noise = GKNoise(GKBillowNoiseSource(frequency: Double(random(min: 0.015, max: 0.035)), octaveCount: Int(random(min: 15, max: 19.9999)), persistence: 0.65, lacunarity: Double(random(min: 0.25, max: 0.65)), seed: Int32(random(min: 0, max: 25000))))
+
+        case 7:
+            noise=GKNoise(GKVoronoiNoiseSource(frequency: Double(random(min: 0.025, max: 0.25)), displacement: Double(random(min: 3.5, max: 8.5)), distanceEnabled: false, seed: Int32(random(min: 0, max: 25000))))
+            
         default:
             noise = GKNoise(GKBillowNoiseSource(frequency: Double(random(min: 0.01, max: 0.025)), octaveCount: Int(random(min: 1, max: 4.9999)), persistence: 0.2, lacunarity: 0.5, seed: Int32(random(min: 0, max: 25000))))
         }
 
         
-
+        mapCenter.x=Double(random(min: CGFloat(-mapSize.x*1.9), max: CGFloat(mapSize.x*1.9)))
+        mapCenter.y=Double(random(min: CGFloat(-mapSize.x*1.9), max: CGFloat(mapSize.x*1.9)))
 
         var mapSamples=vector_int2()
         mapSamples.x=256
         mapSamples.y=256
-        let noiseMap = GKNoiseMap(noise, size: mapSize, origin: mapCenter, sampleCount: mapSamples, seamless: false)
+        
+        let noiseMap = GKNoiseMap(noise, size: mapSize, origin: mapCenter, sampleCount: mapSamples, seamless: true)
         
         let text=SKTexture(noiseMap: noiseMap)
         let thisNode=SKSpriteNode()
