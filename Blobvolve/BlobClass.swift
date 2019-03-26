@@ -107,7 +107,7 @@ class BlobClass
     let SPOTMAXSCALE:CGFloat=0.75
     let SPOTBASESCALE:CGFloat=0.5
     let NUMSPOTTEXTURES:Int=10
-    let NUMBLOBCIRCLETEXTURES:Int=17
+    let NUMBLOBCIRCLETEXTURES:Int=32
     let NUMOUTERTEXTURES=18
     let NUMSPIKETYPES:Int=2
     
@@ -842,7 +842,7 @@ class BlobClass
     {
         let levelTotal=tripToDec(trip: getGene(num: 34))+tripToDec(trip: getGene(num: 32))+tripToDec(trip: getGene(num: 24))
         
-        let level=levelTotal/NUMCORESTATS
+        let level=levelTotal //NUMCORESTATS
         //print("Level: \(level)")
         return level
         

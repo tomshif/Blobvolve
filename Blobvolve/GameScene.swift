@@ -57,6 +57,8 @@ class GameScene: SKScene {
     var strandOffset:CGFloat=0
     
     let MOVESPEED:CGFloat=5
+    let BREEDCOST:Int=5
+    let BREEDCOSTBASE:Int=200
     
     var selected:Int=0
     
@@ -571,10 +573,11 @@ class GameScene: SKScene {
             let temp=blob.breed(with: blob2)
             baby.DNA=temp.DNA
             baby.resetSprite()
-            drawDNAStrand()
+            
             baby.sprite.isHidden=false
+            drawDNAStrand()
             let levels=blob.computeLevel()+blob2.computeLevel()
-            money -= (levels*25)+100
+            money -= (levels*BREEDCOST)+BREEDCOSTBASE
             let chance=random(min: 0, max: 1)
             if chance > 0.95
             {
@@ -599,7 +602,7 @@ class GameScene: SKScene {
             blob2.generateByLevel(level: 10)
             baby.sprite.isHidden=true
             drawDNAStrand()
-            money -= 100
+            money -= BREEDCOST
             
         case 33:    // [ - Limit blob 1 to less than level 10
 
@@ -607,7 +610,7 @@ class GameScene: SKScene {
             blob.generateByLevel(level: 10)
             baby.sprite.isHidden=true
             drawDNAStrand()
-            money -= 100
+            money -= BREEDCOST
             
         case 18:
             if saveFrame.isHidden
@@ -616,7 +619,7 @@ class GameScene: SKScene {
                 blob.resetSprite()
                 baby.sprite.isHidden=true
                 drawDNAStrand()
-                money -= 250
+                money -= BREEDCOST
                 let proc1Chance=random(min: 0, max: 1)
                 if proc1Chance > 0.8
                 {
@@ -643,7 +646,7 @@ class GameScene: SKScene {
                 blob2.resetSprite()
                 baby.sprite.isHidden=true
                 drawDNAStrand()
-                money -= 250
+                money -= BREEDCOST
                 let proc2Chance=random(min: 0, max: 1)
                 if proc2Chance > 0.8
                 {
@@ -686,7 +689,7 @@ class GameScene: SKScene {
             baby.sprite.isHidden=true
             //changeBlobColor()
             drawDNAStrand()
-            money -= 5000
+            money -= BREEDCOST
             blob.sprite.texture=createProcTexture()
             blob2.sprite.texture=createProcTexture()
         case 36:
@@ -708,13 +711,13 @@ class GameScene: SKScene {
             let temp=blob.breed(with: blob2)
             baby.DNA=temp.DNA
             baby.resetSprite()
-            drawDNAStrand()
+            
             baby.sprite.isHidden=false
             baby.sprite.texture=blendTextures(first: blob, second: blob2)
-
+            drawDNAStrand()
             
             let levels=blob.computeLevel()+blob2.computeLevel()
-            money -= (levels*25)+100
+            money -= (levels*BREEDCOST)+BREEDCOSTBASE
             
         case 49:    // spacebar - spawn 2 new blobs
             blob.genNewDNA()
@@ -722,7 +725,7 @@ class GameScene: SKScene {
             baby.sprite.isHidden=true
             //changeBlobColor()
             drawDNAStrand()
-            money -= 100
+            money -= BREEDCOST
             
             let proc1Chance=random(min: 0, max: 1)
             if proc1Chance > 0.8
@@ -757,7 +760,7 @@ class GameScene: SKScene {
         case 126:       // up arrow - sell baby
             if !baby.sprite.isHidden
             {
-                money += baby.computeLevel()*100
+                money += (baby.computeLevel()*BREEDCOST)+BREEDCOSTBASE
                 baby.sprite.isHidden=true
             }
         default:
@@ -834,7 +837,7 @@ class GameScene: SKScene {
         {
             moneyLabel.fontColor=NSColor.white
         }
-        let cost=(blob.computeLevel()+blob2.computeLevel())*25+100
+        let cost=((blob.computeLevel()+blob2.computeLevel())*BREEDCOST)+BREEDCOSTBASE
         breedCostLabel.text="Breeding Cost: $\(cost)"
     }
     
@@ -915,9 +918,9 @@ class GameScene: SKScene {
         var mapSize=vector_double2()
         mapSize.x=256
         mapSize.y=256
-        var type=Int(random(min: 0, max: 9.9999999))
+        var type=Int(random(min: 0, max: 11.9999999))
         // print("Type: \(type)")
-        //type=8
+        //type=10
         switch type
         {
         case 0:
@@ -945,14 +948,21 @@ class GameScene: SKScene {
             noise=GKNoise(GKVoronoiNoiseSource(frequency: Double(random(min: 0.025, max: 0.25)), displacement: Double(random(min: 3.5, max: 8.5)), distanceEnabled: false, seed: Int32(random(min: 0, max: 25000))))
             
         case 8:
-                        noise=GKNoise(GKCheckerboardNoiseSource(squareSize: Double(random(min: 5.5, max: 15.5))))
+            noise=GKNoise(GKCheckerboardNoiseSource(squareSize: Double(random(min: 5.5, max: 15.5))))
+            
+        case 9:
+            noise=GKNoise(GKCheckerboardNoiseSource(squareSize: Double(random(min: 15.5, max: 45.5))))
+            
+        case 10:
+            noise=GKNoise(GKCheckerboardNoiseSource(squareSize: Double(random(min: 45.5, max: 145.5))))
+            
         default:
             noise = GKNoise(GKBillowNoiseSource(frequency: Double(random(min: 0.01, max: 0.025)), octaveCount: Int(random(min: 1, max: 4.9999)), persistence: 0.2, lacunarity: 0.5, seed: Int32(random(min: 0, max: 25000))))
         }
 
         
-        mapCenter.x=Double(random(min: CGFloat(-mapSize.x*1.9), max: CGFloat(mapSize.x*1.9)))
-        mapCenter.y=Double(random(min: CGFloat(-mapSize.x*1.9), max: CGFloat(mapSize.x*1.9)))
+        //mapCenter.x=Double(random(min: CGFloat(-mapSize.x*1.9), max: CGFloat(mapSize.x*1.9)))
+        //mapCenter.y=Double(random(min: CGFloat(-mapSize.x*1.9), max: CGFloat(mapSize.x*1.9)))
 
         var mapSamples=vector_int2()
         mapSamples.x=256
