@@ -15,7 +15,7 @@ import GameplayKit
 class BlobClass
 {
     //Genetic Constants
-    let GENECOUNT:Int=47
+    let GENECOUNT:Int=48
     let GENESIZE:Int=3
     
     var coreStats=[Int]()
@@ -30,9 +30,14 @@ class BlobClass
     
     var scene:SKScene?
     
+    var age:CGFloat=0.5
+    var bornTime=NSDate()
+    var growthTime:Double=0
+    
     
     // Genetic Characteristics
     var baseSize:Int=0
+    var blobSize:CGFloat=0.0
     var spriteRed:CGFloat=0
     var spriteGreen:CGFloat=0
     var spriteBlue:CGFloat=0
@@ -79,10 +84,10 @@ class BlobClass
     var outer1GapDist:CGFloat=0
     var outer2GapActive:Bool=false
     var outer2GapDist:CGFloat=0
+    var jitterAction:Int=0
     
     
-    
-    var GeneStrings=["Size", "RGB-R", "RGB-G", "RGB-B", "PlsSpd", "Alpha", "Sp1Ang", "Sp1Dst", "Sp1Alpha", "Sp1RGB", "Sp1Size", "Sp1Rot", "Spec1Typ", "Spec2Typ", "Sp1Shp", "CrcShp", "CrcRGB", "CrcAlpha", "CrcAct", "Sprite", "Spec1RGB", "OuterShp", "OuterRGB", "OutAct", "MoveSpd", "Spk1Typ", "Spk1Ang", "Spk1Rot", "Out2Prsnt", "Out2Shp", "Out2RGB", "Out2Act", "Health", "Spk1RGB", "Damage", "Color2%", "Color2RGB", "Color2Act", "OutClr2%", "OutClr2RGB", "OutColor3%", "OutColor3RGB", "SpriteRot", "Out1GapOn","Out1GapDist", "Out2GapOn","Out2GapDist"]
+    var GeneStrings=["Size", "RGB-R", "RGB-G", "RGB-B", "PlsSpd", "Alpha", "Sp1Ang", "Sp1Dst", "Sp1Alpha", "Sp1RGB", "Sp1Size", "Sp1Rot", "Spec1Typ", "Spec2Typ", "Sp1Shp", "CrcShp", "CrcRGB", "CrcAlpha", "CrcAct", "Sprite", "Spec1RGB", "OuterShp", "OuterRGB", "OutAct", "MoveSpd", "Spk1Typ", "Spk1Ang", "Spk1Rot", "Out2Prsnt", "Out2Shp", "Out2RGB", "Out2Act", "Health", "Spk1RGB", "Damage", "Color2%", "Color2RGB", "Color2Act", "OutClr2%", "OutClr2RGB", "OutColor3%", "OutColor3RGB", "SpriteRot", "Out1GapOn","Out1GapDist", "Out2GapOn","Out2GapDist", "Jitter"]
     
     
     // Computed Core Stats
@@ -92,6 +97,8 @@ class BlobClass
     
     // Constants
 
+    let UPDATEAGE:CGFloat=0.001
+    
     let NUMBLOBTEXTURES:Int=40
     
     let MINSIZE:CGFloat=0.0
@@ -107,7 +114,7 @@ class BlobClass
     let SPOTMAXSCALE:CGFloat=0.75
     let SPOTBASESCALE:CGFloat=0.5
     let NUMSPOTTEXTURES:Int=10
-    let NUMBLOBCIRCLETEXTURES:Int=32
+    let NUMBLOBCIRCLETEXTURES:Int=33
     let NUMOUTERTEXTURES=18
     let NUMSPIKETYPES:Int=2
     
@@ -120,12 +127,16 @@ class BlobClass
     let DAMAGEBASE:CGFloat=12.5
     let DAMAGELEVEL:CGFloat=2.5
     let OUTERMAXDIST:CGFloat=0.8
+    
+    
+    
     struct SpecialType
     {
         public static let ELECTRICFIELD:Int=16
         public static let SMOKEFIELD:Int=32
         public static let MAGICFIELD:Int=3
         public static let FIREFLYFIELD:Int=51
+        public static let DRIFTFIELD:Int=23
     }
     
     init()
@@ -175,10 +186,11 @@ class BlobClass
         let sizeCoded=String(DNA[..<sizeIndex])
         let sizeDec=tripToDec(trip: sizeCoded)
         let sizeRatio=CGFloat(sizeDec)/63
-        let blobSize:CGFloat=(MAXSIZE-MINSIZE)*sizeRatio
+        blobSize=1.0*sizeRatio
         let blobBaseSize=0.75+blobSize
         let minBlobScale = blobBaseSize * 0.9
         let maxBlobScale = blobBaseSize * 1.1
+        
         
         // Color | Red Channel - gene 1
         let colorGeneRed=getGene(num: 1)
@@ -422,6 +434,11 @@ class BlobClass
         let blobOuter2GapDistRatio=CGFloat(blobOuter2GapDistDec)/63
         outer2GapDist=1+(blobOuter2GapDistRatio*OUTERMAXDIST)
         
+        // Blob jitter Action - gene 47
+        jitterAction=tripToDec(trip: getGene(num: 47))
+
+        
+        
         //////////////////////////////////////////////
         // END OF GENE SEQUENCE //////////////////////
         //////////////////////////////////////////////
@@ -429,7 +446,7 @@ class BlobClass
         // setup the sprite
         sprite=SKSpriteNode(imageNamed: "blob01")
         sprite.name="Blob"
-        let pulseAction=SKAction.sequence([SKAction.scale(to: maxBlobScale, duration: pulseSpeed),SKAction.scale(to: minBlobScale, duration: pulseSpeed)])
+        let pulseAction=SKAction.sequence([SKAction.scale(by: maxBlobScale, duration: pulseSpeed),SKAction.scale(to: minBlobScale, duration: pulseSpeed)])
         sprite.run(SKAction.repeatForever(pulseAction))
         sprite.colorBlendFactor=1.0
         sprite.color=NSColor(calibratedRed: spriteRed, green: spriteGreen, blue: spriteBlue, alpha: 1.0)
@@ -566,7 +583,52 @@ class BlobClass
             sprite.addChild(spot1)
         }
         addSpecials()
+        bornTime=NSDate()
+        growthTime=Double((computeLevel()*10)+30)
         
+        // Add jitter
+        
+        switch jitterAction
+        {
+        case 12:
+            
+            let offset1=CGPoint(x: random(min: -5, max: 5), y: random(min: -5, max: 5))
+            let jitterAct=SKAction.sequence([SKAction.moveBy(x: offset1.x, y: offset1.y, duration: 0.15),SKAction.moveBy(x: -offset1.x, y: -offset1.y, duration: 0.15)])
+            sprite.run(SKAction.repeatForever(jitterAct))
+            
+            
+        case 28:
+            
+            let offset1=CGPoint(x: random(min: -10, max: 10), y: random(min: -10, max: 10))
+            let offset2=CGPoint(x: random(min: -10, max: 10), y: random(min: -10, max: 10))
+            let jitterAct=SKAction.sequence([SKAction.moveBy(x: offset1.x, y: offset1.y, duration: 0.15),SKAction.moveBy(x: -offset1.x, y: -offset1.y, duration: 0.15), SKAction.moveBy(x: offset2.x, y: offset2.y, duration: 0.15),SKAction.moveBy(x: -offset2.x, y: -offset2.y, duration: 0.15)])
+            sprite.run(SKAction.repeatForever(jitterAct))
+            
+        case 30:
+            
+            let offset1=CGPoint(x: random(min: -10, max: 10), y: random(min: -10, max: 10))
+            let offset2=CGPoint(x: random(min: -10, max: 10), y: random(min: -10, max: 10))
+            let jitterAct=SKAction.sequence([SKAction.moveBy(x: offset1.x, y: offset1.y, duration: 0.55),SKAction.moveBy(x: -offset1.x, y: -offset1.y, duration: 0.55), SKAction.moveBy(x: offset2.x, y: offset2.y, duration: 0.55),SKAction.moveBy(x: -offset2.x, y: -offset2.y, duration: 0.55)])
+            sprite.run(SKAction.repeatForever(jitterAct))
+            
+            
+        case 33:
+            
+            let offset1=CGPoint(x: random(min: -15, max: 15), y: 0)
+            
+            let jitterAct=SKAction.sequence([SKAction.moveBy(x: offset1.x, y: offset1.y, duration: 0.15),SKAction.moveBy(x: -offset1.x, y: -offset1.y, duration: 0.15)])
+            sprite.run(SKAction.repeatForever(jitterAct))
+            
+        case 41:
+            let offset1=CGPoint(x: random(min: -15, max: 15), y: random(min: -15, max: 15))
+            let offset2=CGPoint(x: random(min: -15, max: 15), y: random(min: -15, max: 15))
+            let jitterAct=SKAction.sequence([SKAction.moveBy(x: offset1.x, y: offset1.y, duration: 0.25),SKAction.moveBy(x: -offset1.x, y: -offset1.y, duration: 0.25), SKAction.moveBy(x: offset2.x, y: offset2.y, duration: 0.25),SKAction.moveBy(x: -offset2.x, y: -offset2.y, duration: 0.25)])
+            sprite.run(SKAction.repeatForever(jitterAct))
+            
+        default:
+            break
+            
+        } // switch jitterAction
         
     } // init()
     
@@ -749,7 +811,7 @@ class BlobClass
             magicNode.particleColor=special1RGB
             sprite.addChild(magicNode)
             
-        } // if smoke field
+        } // if magic field
         
         if special1==SpecialType.FIREFLYFIELD
         {
@@ -766,8 +828,24 @@ class BlobClass
             fireFlyNode.particleColor=special1RGB
             sprite.addChild(fireFlyNode)
             
-        } // if smoke field
+        } // if firefly field
         
+        if special1==SpecialType.DRIFTFIELD
+        {
+            let fireFlyPath = Bundle.main.path(
+                forResource: "driftEffect", ofType: "sks")
+            
+            let fireFlyNode =
+                NSKeyedUnarchiver.unarchiveObject(withFile: fireFlyPath!)
+                    as! SKEmitterNode
+            fireFlyNode.name="driftNodeSpecial"
+            fireFlyNode.zPosition=8
+            fireFlyNode.particleColorSequence=nil
+            fireFlyNode.particleColorBlendFactor=1.0
+            fireFlyNode.particleColor=special1RGB
+            sprite.addChild(fireFlyNode)
+            
+        } // if drift field
     } // add specials
     
     private func getAction(dec: Int) -> SKAction
@@ -1054,14 +1132,14 @@ class BlobClass
     public func resetSprite()
     {
         sprite.setScale(1.0)
-        
+        growthTime=Double((computeLevel()*1)+15)
         
         // reset size - gene 0
         let sizeString=getGene(num: 0)
         let sizeCoded=sizeString
         let sizeDec=tripToDec(trip: sizeCoded)
         let sizeRatio=CGFloat(sizeDec)/63
-        let blobSize:CGFloat=(MAXSIZE-MINSIZE)*sizeRatio
+        blobSize=1.0*sizeRatio
         let blobBaseSize=0.75+blobSize
         let minBlobScale = blobBaseSize * 0.9
         let maxBlobScale = blobBaseSize * 1.1
@@ -1319,6 +1397,8 @@ class BlobClass
         let blobOuter2GapDistRatio=CGFloat(blobOuter2GapDistDec)/63
         outer2GapDist=1+(blobOuter2GapDistRatio*OUTERMAXDIST)
         
+        // Blob jitter Action - gene 47
+        jitterAction=tripToDec(trip: getGene(num: 47))
         
         
         
@@ -1328,7 +1408,7 @@ class BlobClass
         
         
         sprite.color=NSColor(calibratedRed: spriteRed, green: spriteGreen, blue: spriteBlue, alpha: 1.0)
-        let pulseAction=SKAction.sequence([SKAction.scale(to: maxBlobScale, duration: pulseSpeed),SKAction.scale(to: minBlobScale, duration: pulseSpeed)])
+        let pulseAction=SKAction.sequence([SKAction.scale(by: 1.1, duration: pulseSpeed),SKAction.scale(by: 0.9090909090909090909090909090, duration: pulseSpeed)])
         sprite.run(SKAction.repeatForever(pulseAction))
         sprite.alpha=spriteAlpha
         sprite.zRotation=spriteRotation
@@ -1437,6 +1517,54 @@ class BlobClass
         }
         addSpecials()
         
+        
+        //jitterAction=33
+        switch jitterAction
+        {
+        case 12:
+            
+            let offset1=CGPoint(x: random(min: -5, max: 5), y: random(min: -5, max: 5))
+            let jitterAct=SKAction.sequence([SKAction.moveBy(x: offset1.x, y: offset1.y, duration: 0.15),SKAction.moveBy(x: -offset1.x, y: -offset1.y, duration: 0.15)])
+            sprite.run(SKAction.repeatForever(jitterAct))
+            
+            
+        case 28:
+            
+            let offset1=CGPoint(x: random(min: -10, max: 10), y: random(min: -10, max: 10))
+            let offset2=CGPoint(x: random(min: -10, max: 10), y: random(min: -10, max: 10))
+            let jitterAct=SKAction.sequence([SKAction.moveBy(x: offset1.x, y: offset1.y, duration: 0.15),SKAction.moveBy(x: -offset1.x, y: -offset1.y, duration: 0.15), SKAction.moveBy(x: offset2.x, y: offset2.y, duration: 0.15),SKAction.moveBy(x: -offset2.x, y: -offset2.y, duration: 0.15)])
+            sprite.run(SKAction.repeatForever(jitterAct))
+            
+        case 30:
+            
+            let offset1=CGPoint(x: random(min: -10, max: 10), y: random(min: -10, max: 10))
+            let offset2=CGPoint(x: random(min: -10, max: 10), y: random(min: -10, max: 10))
+            let jitterAct=SKAction.sequence([SKAction.moveBy(x: offset1.x, y: offset1.y, duration: 0.55),SKAction.moveBy(x: -offset1.x, y: -offset1.y, duration: 0.55), SKAction.moveBy(x: offset2.x, y: offset2.y, duration: 0.55),SKAction.moveBy(x: -offset2.x, y: -offset2.y, duration: 0.55)])
+            sprite.run(SKAction.repeatForever(jitterAct))
+            
+            
+        case 33:
+            
+            let offset1=CGPoint(x: random(min: -15, max: 15), y: 0)
+
+            let jitterAct=SKAction.sequence([SKAction.moveBy(x: offset1.x, y: offset1.y, duration: 0.15),SKAction.moveBy(x: -offset1.x, y: -offset1.y, duration: 0.15)])
+            sprite.run(SKAction.repeatForever(jitterAct))
+            
+            
+        case 41:
+            let offset1=CGPoint(x: random(min: -15, max: 15), y: random(min: -15, max: 15))
+            let offset2=CGPoint(x: random(min: -15, max: 15), y: random(min: -15, max: 15))
+            let jitterAct=SKAction.sequence([SKAction.moveBy(x: offset1.x, y: offset1.y, duration: 0.25),SKAction.moveBy(x: -offset1.x, y: -offset1.y, duration: 0.25), SKAction.moveBy(x: offset2.x, y: offset2.y, duration: 0.25),SKAction.moveBy(x: -offset2.x, y: -offset2.y, duration: 0.25)])
+            sprite.run(SKAction.repeatForever(jitterAct))
+            
+        default:
+            break
+            
+        } // switch jitterAction
+        
+    
+
+        
     }
     
     public func genNewDNA()
@@ -1478,6 +1606,23 @@ class BlobClass
         return num
     } // func tripToDec()
 
+    public func update()
+    {
+       
+        let timeDelta = -bornTime.timeIntervalSinceNow
+        if timeDelta < growthTime
+        {
+            let growthRatio=CGFloat(timeDelta/growthTime)
+            sprite.xScale=growthRatio*blobSize
+            sprite.yScale=growthRatio*blobSize
+        }
+        else
+        {
+            sprite.xScale=blobSize
+            sprite.yScale=blobSize
+        }
+    }
+    
 } // class BlobClass
 
 

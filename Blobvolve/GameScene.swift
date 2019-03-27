@@ -177,6 +177,8 @@ class GameScene: SKScene {
         blob.generateByLevel(level: 0)
         blob2.generateByLevel(level: 0)
         drawDNAStrand()
+        
+        blob.age=1.0
     } // didMove()
     
 
@@ -718,7 +720,7 @@ class GameScene: SKScene {
             
             let levels=blob.computeLevel()+blob2.computeLevel()
             money -= (levels*BREEDCOST)+BREEDCOSTBASE
-            
+            baby.age=0.5
         case 49:    // spacebar - spawn 2 new blobs
             blob.genNewDNA()
             blob2.genNewDNA()
@@ -993,6 +995,9 @@ class GameScene: SKScene {
         // Called before each frame is rendered
         checkKeys()
         updateUI()
+        baby.update()
+        print("Age: \(baby.age)")
+        print("Scale: \(baby.sprite.xScale)")
         
         if -lastMoneyGain.timeIntervalSinceNow > 5
         {
