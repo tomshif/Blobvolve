@@ -1132,7 +1132,7 @@ class BlobClass
     public func resetSprite()
     {
         sprite.setScale(1.0)
-        growthTime=Double((computeLevel()*1)+15)
+        growthTime=Double((computeLevel()*0)+1)
         
         // reset size - gene 0
         let sizeString=getGene(num: 0)
@@ -1516,6 +1516,8 @@ class BlobClass
             spot1.texture=SKTexture(imageNamed: "spot64")
         }
         addSpecials()
+        bornTime=NSDate()
+        growthTime=Double((computeLevel()*0)+1)
         
         
         //jitterAction=33
@@ -1606,6 +1608,55 @@ class BlobClass
         return num
     } // func tripToDec()
 
+    func threeGenesToDec(gene1: Int, gene2:Int, gene3: Int) -> Int
+    {
+        var num:Int=0
+        var digit:Int=8
+        var current:Int=0
+        //print("Trip: \(trip)" )
+        for gene in 0...2
+        {
+            if gene==0
+            {
+                current=gene1
+            }
+            else if gene==1
+            {
+                current=gene2
+            }
+            else if gene==2
+            {
+                current=gene3
+            }
+            let trip=getGene(num: current)
+            for char in trip
+            {
+                var mult:Int=0
+                switch char
+                {
+                case "R":
+                    mult=0
+                    
+                case "G":
+                    mult=1
+                case "B":
+                    mult=2
+                case "Y":
+                    mult=3
+                default:
+                    print("Error in three Genes to Dec - Unknown base")
+                } // swith
+                
+                num += 4^^digit * mult
+                
+                digit -= 1
+                
+            } // for each character
+        } // for each gene
+        return num
+        
+    }
+    
     public func update()
     {
        
@@ -1613,13 +1664,13 @@ class BlobClass
         if timeDelta < growthTime
         {
             let growthRatio=CGFloat(timeDelta/growthTime)
-            sprite.xScale=growthRatio*blobSize
-            sprite.yScale=growthRatio*blobSize
+            sprite.xScale=growthRatio
+            sprite.yScale=growthRatio
         }
         else
         {
-            sprite.xScale=blobSize
-            sprite.yScale=blobSize
+            //sprite.xScale=blobSize
+            //sprite.yScale=blobSize
         }
     }
     

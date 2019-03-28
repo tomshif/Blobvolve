@@ -44,6 +44,7 @@ class GameScene: SKScene {
     var babyLevel=SKLabelNode(text: "Baby Level")
     var moneyLabel=SKLabelNode(text: "Money")
     var breedCostLabel=SKLabelNode(text: "Breeding Cost")
+    var babyGrowthLabel=SKLabelNode(text: "Growth: ")
     
     var lastMoneyGain=NSDate()
     
@@ -157,6 +158,10 @@ class GameScene: SKScene {
         selectArrow.name="selectArrow"
         addChild(selectArrow)
 
+        babyGrowthLabel.zPosition=10
+        babyGrowthLabel.position.y = -size.height*0.2
+        babyGrowthLabel.name="babyGrowthLabel"
+        addChild(babyGrowthLabel)
         
         bg.zPosition = -5
         bg.name="bg"
@@ -741,6 +746,8 @@ class GameScene: SKScene {
                 blob2.sprite.texture=createProcTexture()
             }
 
+            let temp=blob.threeGenesToDec(gene1: 0, gene2: 1, gene3: 2)
+            print("Three to Dec: \(temp)")
 
         case 123:
             
@@ -825,10 +832,13 @@ class GameScene: SKScene {
         if baby.sprite.isHidden
         {
             babyLevel.isHidden=true
+            babyGrowthLabel.isHidden=true
         }
         else
         {
             babyLevel.isHidden=false
+            babyGrowthLabel.isHidden=false
+            babyGrowthLabel.text=String(format: "Growth: %3.2f %", baby.sprite.xScale*100)
         }
         moneyLabel.text="$\(money)"
         if money < 0
@@ -996,8 +1006,8 @@ class GameScene: SKScene {
         checkKeys()
         updateUI()
         baby.update()
-        print("Age: \(baby.age)")
-        print("Scale: \(baby.sprite.xScale)")
+        //print("Age: \(baby.age)")
+        //print("Scale: \(baby.sprite.xScale)")
         
         if -lastMoneyGain.timeIntervalSinceNow > 5
         {
