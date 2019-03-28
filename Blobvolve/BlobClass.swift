@@ -15,7 +15,7 @@ import GameplayKit
 class BlobClass
 {
     //Genetic Constants
-    let GENECOUNT:Int=48
+    let GENECOUNT:Int=51
     let GENESIZE:Int=3
     
     var coreStats=[Int]()
@@ -85,9 +85,12 @@ class BlobClass
     var outer2GapActive:Bool=false
     var outer2GapDist:CGFloat=0
     var jitterAction:Int=0
+    var genSeed1:Int=0
+    var genSeed2:Int=0
+    var genSeed3:Int=0
     
     
-    var GeneStrings=["Size", "RGB-R", "RGB-G", "RGB-B", "PlsSpd", "Alpha", "Sp1Ang", "Sp1Dst", "Sp1Alpha", "Sp1RGB", "Sp1Size", "Sp1Rot", "Spec1Typ", "Spec2Typ", "Sp1Shp", "CrcShp", "CrcRGB", "CrcAlpha", "CrcAct", "Sprite", "Spec1RGB", "OuterShp", "OuterRGB", "OutAct", "MoveSpd", "Spk1Typ", "Spk1Ang", "Spk1Rot", "Out2Prsnt", "Out2Shp", "Out2RGB", "Out2Act", "Health", "Spk1RGB", "Damage", "Color2%", "Color2RGB", "Color2Act", "OutClr2%", "OutClr2RGB", "OutColor3%", "OutColor3RGB", "SpriteRot", "Out1GapOn","Out1GapDist", "Out2GapOn","Out2GapDist", "Jitter"]
+    var GeneStrings=["Size", "RGB-R", "RGB-G", "RGB-B", "PlsSpd", "Alpha", "Sp1Ang", "Sp1Dst", "Sp1Alpha", "Sp1RGB", "Sp1Size", "Sp1Rot", "Spec1Typ", "Spec2Typ", "Sp1Shp", "CrcShp", "CrcRGB", "CrcAlpha", "CrcAct", "Sprite", "Spec1RGB", "OuterShp", "OuterRGB", "OutAct", "MoveSpd", "Spk1Typ", "Spk1Ang", "Spk1Rot", "Out2Prsnt", "Out2Shp", "Out2RGB", "Out2Act", "Health", "Spk1RGB", "Damage", "Color2%", "Color2RGB", "Color2Act", "OutClr2%", "OutClr2RGB", "OutColor3%", "OutColor3RGB", "SpriteRot", "Out1GapOn","Out1GapDist", "Out2GapOn","Out2GapDist", "Jitter", "ProcSeed1", "ProcSeed2", "ProcSeed3"]
     
     
     // Computed Core Stats
@@ -100,6 +103,7 @@ class BlobClass
     let UPDATEAGE:CGFloat=0.001
     
     let NUMBLOBTEXTURES:Int=40
+    let NUMRANDOMGEN:Int=12
     
     let MINSIZE:CGFloat=0.0
     let MAXSIZE:CGFloat=0.5
@@ -287,10 +291,16 @@ class BlobClass
         // Blob Sprite - gene 19
         let blobSpriteGene=getGene(num: 19)
         let blobSpriteDec=tripToDec(trip: blobSpriteGene)
+        blobStyle=blobSpriteDec
         if blobSpriteDec < NUMBLOBTEXTURES
         {
             sprite.texture=SKTexture(imageNamed: String(format:"blob%02d",blobSpriteDec))
         }
+        else if blobSpriteDec < NUMBLOBTEXTURES+NUMRANDOMGEN
+        {
+            sprite.texture=createProcTexture()
+            
+        } // if the texture is randomly generated
         
         // Blob Special 1 RGB - gene 20
         let special1RGBGene=getGene(num: 20)
@@ -437,6 +447,8 @@ class BlobClass
         // Blob jitter Action - gene 47
         jitterAction=tripToDec(trip: getGene(num: 47))
 
+
+        
         
         
         //////////////////////////////////////////////
@@ -631,6 +643,508 @@ class BlobClass
         } // switch jitterAction
         
     } // init()
+    
+    init(theScene:SKScene)
+    {
+        scene=theScene
+        // fill core stats array
+        coreStats.append(24)
+        coreStats.append(32)
+        coreStats.append(34)
+        
+        /*
+         // fill spot texture array
+         for i in 0..<NUMSPOTTEXTURES
+         {
+         let tempTex=SKTexture(imageNamed: String(format: "blob%02d",blobCircleShape))
+         
+         }
+         */
+        // generate random DNA strand
+        for i in 0..<GENECOUNT*GENESIZE
+        {
+            var c:Character
+            let num=random(min: 1, max: 0)
+            if num < 0.25
+            {
+                c="R"
+            }
+            else if num < 0.5
+            {
+                c="G"
+            }
+            else if num < 0.75
+            {
+                c="B"
+            }
+            else
+            {
+                c="Y"
+            }
+            DNA.append(c)
+        } // for each gene
+        
+        
+        // decode the genes to stats
+        
+        // Size - gene 0
+        let sizeIndex=DNA.index(DNA.startIndex, offsetBy: 3)
+        let sizeCoded=String(DNA[..<sizeIndex])
+        let sizeDec=tripToDec(trip: sizeCoded)
+        let sizeRatio=CGFloat(sizeDec)/63
+        blobSize=1.0*sizeRatio
+        let blobBaseSize=0.75+blobSize
+        let minBlobScale = blobBaseSize * 0.9
+        let maxBlobScale = blobBaseSize * 1.1
+        
+        
+        // Color | Red Channel - gene 1
+        let colorGeneRed=getGene(num: 1)
+        let colorDec=tripToDec(trip: colorGeneRed)
+        spriteRed=CGFloat(colorDec)/63
+        
+        // Color | Green Channel - gene 2
+        let colorGeneGreen=getGene(num: 2)
+        let colorDecGreen=tripToDec(trip: colorGeneGreen)
+        spriteGreen=CGFloat(colorDecGreen)/63
+        
+        // Color | Blue Channel - gene 3
+        let colorGeneBlue=getGene(num: 3)
+        let colorDecBlue=tripToDec(trip: colorGeneBlue)
+        spriteBlue=CGFloat(colorDecBlue)/63
+        
+        // Pulse Speed - gene 4
+        let pulseGene=getGene(num:4)
+        let pulseDec=tripToDec(trip: pulseGene)
+        let pulseRatio=Double(pulseDec)/63
+        pulseSpeed=(pulseRatio*0.75)+PULSEBASE
+        
+        // Alpha - gene 5
+        let alphaGene=getGene(num:5)
+        let alphaDec=tripToDec(trip: alphaGene)
+        let alphaRatio=CGFloat(alphaDec)/63
+        spriteAlpha=(alphaRatio*(MAXALPHA-MINALPHA))+ALPHABASE
+        
+        // Spot #1 angle - gene 6
+        let spot1AngleGene=getGene(num: 6)
+        let spot1AngleDec=tripToDec(trip: spot1AngleGene)
+        let spot1AngleRatio=CGFloat(spot1AngleDec)/63
+        spot1Angle = (spot1AngleRatio*CGFloat.pi*2)
+        
+        // Spot #1 distance - gene 7
+        let spot1DistGene=getGene(num: 7)
+        let spot1DistDec=tripToDec(trip: spot1DistGene)
+        let spot1DistRatio=CGFloat(spot1DistDec)/63
+        spot1Dist=(spot1DistRatio*(MAXSPOTDIST-MINSPOTDIST))
+        
+        // Spot 1 Alpha - gene 8
+        let spot1AlphaGene=getGene(num: 8)
+        let spot1AlphaDec=tripToDec(trip: spot1AlphaGene)
+        spot1Alpha=CGFloat(spot1AlphaDec)/63
+        
+        // Spot 1 RGB - gene 9
+        let spot1RGBGene=getGene(num: 9)
+        let spot1RGBDec=tripToDec(trip: spot1RGBGene)
+        spot1RGB=getRGB(col: spot1RGBDec)
+        
+        // Spot 1 Scale - gene 10
+        let spot1ScaleGene=getGene(num: 10)
+        let spot1ScaleDec=tripToDec(trip: spot1ScaleGene)
+        let spot1scaleRatio=CGFloat(spot1ScaleDec)/63
+        spot1Scale=(spot1scaleRatio*SPOTMAXSCALE)+SPOTBASESCALE
+        
+        // Spot 1 Rotation - gene 11
+        let spot1RotationGene=getGene(num: 11)
+        let spot1RotDec=tripToDec(trip: spot1RotationGene)
+        let spot1RotRatio=CGFloat(spot1RotDec)/63
+        spot1Rotation=spot1RotRatio*CGFloat.pi*2
+        
+        // Special #1 type - gene 12
+        let spec1TypeGene=getGene(num: 12)
+        special1=tripToDec(trip: spec1TypeGene)
+        
+        // Special #2 type - gene 13
+        let spec2TypeGene=getGene(num: 13)
+        special2=tripToDec(trip: spec2TypeGene)
+        
+        // Spot 1 shape - gene 14
+        let spot1ShapeGene=getGene(num: 14)
+        spot1Shape=tripToDec(trip: spot1ShapeGene)
+        
+        // Blob circle shape - gene 15
+        let blobCircleShapeGene=getGene(num: 15)
+        blobCircleShape=tripToDec(trip: blobCircleShapeGene)
+        
+        // Blob circle RGB - gene 16
+        let blobCircleRGBGene=getGene(num: 16)
+        let blobCircleRGBDec=tripToDec(trip: blobCircleRGBGene)
+        blobCircleRGB=getRGB(col: blobCircleRGBDec)
+        
+        // Blob circle Alpha - gene 17
+        let blobCircleAlphaGene=getGene(num: 17)
+        let blobCircleAlphaDec=tripToDec(trip: blobCircleAlphaGene)
+        let blobCircleAlphaRatio=CGFloat(blobCircleAlphaDec)/63
+        blobCircleAlpha = (blobCircleAlphaRatio*0.5)+0.2
+        
+        // Blob circle action - gene 18
+        let blobCircleActionGene=getGene(num: 18)
+        blobCircleAction=tripToDec(trip: blobCircleActionGene)
+        
+        // Blob Sprite - gene 19
+        let blobSpriteGene=getGene(num: 19)
+        let blobSpriteDec=tripToDec(trip: blobSpriteGene)
+        blobStyle=blobSpriteDec
+        if blobSpriteDec < NUMBLOBTEXTURES
+        {
+            sprite.texture=SKTexture(imageNamed: String(format:"blob%02d",blobSpriteDec))
+        }
+        else if blobSpriteDec < NUMBLOBTEXTURES+NUMRANDOMGEN
+        {
+            sprite.texture=createProcTexture()
+            
+        } // if the texture is randomly generated
+        
+        // Blob Special 1 RGB - gene 20
+        let special1RGBGene=getGene(num: 20)
+        let special1RGBDec=tripToDec(trip: special1RGBGene)
+        special1RGB=getRGB(col: special1RGBDec)
+        
+        // Blob Outer Shape - gene 21
+        let blobOuterShapeGene=getGene(num: 21)
+        let blobOuterShapeDec=tripToDec(trip: blobOuterShapeGene)
+        if blobOuterShapeDec < NUMOUTERTEXTURES
+        {
+            blobOuter.texture=SKTexture(imageNamed: String(format: "blobOuter%02d",blobOuterShapeDec))
+        }
+        else
+        {
+            blobOuter.texture=SKTexture(imageNamed: "blobOuter64")
+        }
+        
+        // Blob Outer RGB - gene 22
+        let blobOuterRGBGene=getGene(num: 22)
+        let blobOuterRGBDec=tripToDec(trip: blobOuterRGBGene)
+        blobOuterRGB=getRGB(col: blobOuterRGBDec)
+        
+        // Blob outer Action - gene 23
+        let blobOuterActionGene=getGene(num: 23)
+        blobOuterAction=tripToDec(trip: blobOuterActionGene)
+        
+        // Movement Speed - gene 24
+        let moveSpeedDec=tripToDec(trip: getGene(num: 24))
+        moveSpeed=MOVESPEEDBASE+CGFloat(moveSpeedDec)*MOVESPEEDLEVEL
+        //print("Move Speed: \(moveSpeed) - \(moveSpeedDec)")
+        
+        // Spike 1 Type - gene 25
+        spike1Type=tripToDec(trip: getGene(num: 25))
+        if spike1Type < NUMSPIKETYPES
+        {
+            spike1.texture=SKTexture(imageNamed: String(format: "spike%02d",spike1Type))
+        }
+        else
+        {
+            spike1.texture=SKTexture(imageNamed: "spike64")
+        }
+        
+        // spike 1 Angle - gene 26
+        let spike1AngleDec=tripToDec(trip: getGene(num: 26))
+        let spike1AngleRatio=CGFloat(spike1AngleDec)/63
+        spike1Rotation=spike1AngleRatio*CGFloat.pi*2
+        
+        // blob circle rotation - gene 27
+        let blobCircleRotDec=tripToDec(trip: getGene(num: 27))
+        let blobCircleRotRatio=(CGFloat(blobCircleRotDec)/63)
+        blobCircleRotation=blobCircleRotRatio*CGFloat.pi*2
+        
+        // blob outer #2 present - gene 28
+        blobOuter2Present=tripToDec(trip: getGene(num: 28))
+        
+        // blob outer #2 shape - gene 29
+        let blobOuter2ShapeDec=tripToDec(trip: getGene(num: 29))
+        if blobOuter2Present%12==0
+        {
+            if blobOuter2ShapeDec < NUMOUTERTEXTURES
+            {
+                blobOuter2.texture=SKTexture(imageNamed: String(format: "blobOuter%02d",blobOuter2ShapeDec))
+            }
+            
+        }
+        else
+        {
+            blobOuter2.texture=SKTexture(imageNamed: "blobOuter64")
+        }
+        
+        // Blob outer #2 RGB - gene 30
+        var blobOuter2RGBDec=tripToDec(trip: getGene(num: 30))
+        blobOuter2RGB=getRGB(col: blobOuter2RGBDec)
+        
+        // Blob outer #2 Action - gene 31
+        blobOuter2Action=tripToDec(trip: getGene(num: 31))
+        
+        // Blob Health - gene 32
+        let blobHealthDec=tripToDec(trip: getGene(num: 32))
+        blobHealth=HEALTHBASE+(CGFloat(blobHealthDec)*HEALTHLEVEL)
+        
+        // Spike 1 RGB - gene 33
+        let spike1RGBDec=tripToDec(trip: getGene(num: 33))
+        spike1RGB=getRGB(col: spike1RGBDec)
+        
+        // Blob Damage - gene 34
+        let damageDec=tripToDec(trip: getGene(num: 34))
+        blobDamage=DAMAGEBASE+(CGFloat(damageDec)*DAMAGELEVEL)
+        
+        // Blob Color 2 Chance - gene 35
+        blobColor2Chance=tripToDec(trip: getGene(num: 35))
+        
+        // Blob Color 2 RGB - gene 36
+        let blobColor2RGBDec=tripToDec(trip: getGene(num: 36))
+        blobColor2RGB=getRGB(col: blobColor2RGBDec)
+        
+        // Blob Color 2 action - gene 37
+        blobColor2Action=tripToDec(trip: getGene(num: 37))
+        
+        // Blob Outer Color 2 Chnce - gene 38
+        blobOuterColor2Chance=tripToDec(trip: getGene(num: 38))
+        
+        // Blob Outer Color 2 RGB - gene 39
+        let blobOuterColor2RGBDec=tripToDec(trip: getGene(num: 39))
+        blobOuterColor2RGB=getRGB(col: blobOuterColor2RGBDec)
+        
+        // Blob Outer Color 3 Chance - gene 40
+        blobOuterColor3Chance=tripToDec(trip: getGene(num: 40))
+        
+        // Blob Outer Color 3 RGB - gene 41
+        let blobOuterColor3RGBDec=tripToDec(trip: getGene(num: 41))
+        blobOuterColor3RGB=getRGB(col: blobOuterColor3RGBDec)
+        
+        // Blob Sprite Rotation - gene 42
+        let blobSpriteRotDec=tripToDec(trip: getGene(num: 42))
+        let blobSpriteRotRatio=CGFloat(blobSpriteRotDec)/63
+        spriteRotation=blobSpriteRotRatio*CGFloat.pi*2
+        
+        // Blob Outer 1 Gap Present - gene 43
+        let blobOuterGapOnDec=tripToDec(trip: getGene(num: 43))
+        if blobOuterGapOnDec%17==0
+        {
+            outer1GapActive=true
+        }
+        
+        // Blob Outer 1 Gap Dist - gene 44
+        let blobOuterGapDistDec=tripToDec(trip: getGene(num: 44))
+        let blobOuterGapDistRatio=CGFloat(blobOuterGapDistDec)/63
+        outer1GapDist=1+(blobOuterGapDistRatio*OUTERMAXDIST)
+        
+        // Blob Outer 2 Gap Present - gene 45
+        let blobOuter2GapOnDec=tripToDec(trip: getGene(num: 45))
+        if blobOuter2GapOnDec%19==0
+        {
+            outer2GapActive=true
+        }
+        
+        // Blob Outer 2 Gap Dist - gene 46
+        let blobOuter2GapDistDec=tripToDec(trip: getGene(num: 46))
+        let blobOuter2GapDistRatio=CGFloat(blobOuter2GapDistDec)/63
+        outer2GapDist=1+(blobOuter2GapDistRatio*OUTERMAXDIST)
+        
+        // Blob jitter Action - gene 47
+        jitterAction=tripToDec(trip: getGene(num: 47))
+        
+        
+        
+        //////////////////////////////////////////////
+        // END OF GENE SEQUENCE //////////////////////
+        //////////////////////////////////////////////
+        
+        // setup the sprite
+        sprite=SKSpriteNode(imageNamed: "blob01")
+        sprite.name="Blob"
+        let pulseAction=SKAction.sequence([SKAction.scale(by: maxBlobScale, duration: pulseSpeed),SKAction.scale(to: minBlobScale, duration: pulseSpeed)])
+        sprite.run(SKAction.repeatForever(pulseAction))
+        sprite.colorBlendFactor=1.0
+        sprite.color=NSColor(calibratedRed: spriteRed, green: spriteGreen, blue: spriteBlue, alpha: 1.0)
+        sprite.alpha=spriteAlpha
+        sprite.zPosition=9
+        sprite.zRotation=spriteRotation
+        // Add blob circle
+        if blobCircleShape < NUMBLOBCIRCLETEXTURES
+        {
+            blobCircle.texture=SKTexture(imageNamed: String(format:"blobCircle%02d",blobCircleShape))
+        }
+        else
+        {
+            blobCircle.texture=SKTexture(imageNamed: "blobCircle64")
+        }
+        blobCircle.colorBlendFactor=1.0
+        blobCircle.color=blobCircleRGB
+        blobCircle.name="blobCircle"
+        
+        // Setup blob color 2
+        if blobColor2Chance % 8 == 24
+        {
+            let action=getColor2Action(dec: blobColor2Action)
+            sprite.run(SKAction.repeatForever(action))
+        }
+        
+        
+        blobCircle.alpha=blobCircleAlpha
+        blobCircle.zPosition=10
+        blobCircle.zRotation=blobCircleRotation
+        sprite.addChild(blobCircle)
+        blobCircle.removeAllActions()
+        blobCircle.run(SKAction.repeatForever(getAction(dec: blobCircleAction)))
+        
+        
+        
+        
+        // Add outer
+        blobOuter.zPosition=11
+        sprite.addChild(blobOuter)
+        blobOuter.name="blobOuter"
+        blobOuter.colorBlendFactor=1.0
+        blobOuter.color=blobOuterRGB
+        blobOuter.alpha=1.0
+        blobOuter.setScale(1.0)
+        if outer1GapActive
+        {
+            blobOuter.setScale(outer1GapDist)
+        }
+        else
+        {
+            outer1GapActive=false
+        }
+        
+        // Add outer #2
+        blobOuter2.zPosition=11
+        sprite.addChild(blobOuter2)
+        blobOuter2.name="blobOuter2"
+        blobOuter2.colorBlendFactor=1.0
+        blobOuter2.color=blobOuter2RGB
+        blobOuter2.alpha=1.0
+        if outer1GapActive
+        {
+            blobOuter2.setScale(outer2GapDist)
+        }
+        else
+        {
+            outer2GapActive=false
+        }
+        
+        // Add outer action
+        blobOuter.removeAllActions()
+        blobOuter.run(SKAction.repeatForever(getOuterAction(dec: blobOuterAction)))
+        
+        // Add outer #2 action
+        blobOuter2.removeAllActions()
+        blobOuter2.run(SKAction.repeatForever(getOuterAction(dec: blobOuter2Action)))
+        
+        // Add out color actions
+        if blobOuterColor2Chance % 10 == 0 && blobOuterColor3Chance % 20 != 0
+        {
+            let action=SKAction.sequence([SKAction.colorize(with: blobOuterColor2RGB, colorBlendFactor: 1.0, duration: 1.0), SKAction.colorize(with: blobOuterRGB, colorBlendFactor: 1.0, duration: 1.0)])
+            blobOuter.run(SKAction.repeatForever(action))
+            
+        } // if only color #2
+        if blobOuterColor2Chance % 10 == 0 && blobOuterColor3Chance % 20 == 0
+        {
+            let action=SKAction.sequence([SKAction.colorize(with: blobOuterColor2RGB, colorBlendFactor: 1.0, duration: 1.0), SKAction.colorize(with: blobOuterColor3RGB, colorBlendFactor: 1.0, duration: 1.0), SKAction.colorize(with: blobOuterRGB, colorBlendFactor: 1.0, duration: 1.0)])
+            blobOuter.run(SKAction.repeatForever(action))
+            
+        } // if both colors 2 and 3
+        
+        
+        // Add spike 1
+        let dx=cos(spike1Rotation)*sprite.size.width*0.425
+        let dy=sin(spike1Rotation)*sprite.size.width*0.425
+        sprite.addChild(spike1)
+        spike1.position=CGPoint(x: dx, y: dy)
+        spike1.name="spike1"
+        spike1.zPosition=10
+        spike1.zRotation=spike1Rotation
+        spike1.colorBlendFactor=1.0
+        spike1.color=spike1RGB
+        
+        // add Spots
+        if spot1Shape < NUMSPOTTEXTURES
+        {
+            
+            let s1dx=cos(spot1Angle)*spot1Dist
+            let s1dy=sin(spot1Angle)*spot1Dist
+            spot1.position=CGPoint(x: s1dx, y: s1dy)
+            spot1.alpha=spot1Alpha
+            spot1.colorBlendFactor=1.0
+            spot1.color=spot1RGB
+            spot1.setScale(spot1Scale)
+            spot1.zPosition=11
+            spot1.zRotation=spot1Rotation
+            spot1.name="spot1"
+            sprite.addChild(spot1)
+        }
+        else
+        {
+            spot1.texture=SKTexture(imageNamed: "spot64")
+            let s1dx=cos(spot1Angle)*spot1Dist
+            let s1dy=sin(spot1Angle)*spot1Dist
+            spot1.position=CGPoint(x: s1dx, y: s1dy)
+            spot1.alpha=spot1Alpha
+            spot1.colorBlendFactor=1.0
+            spot1.color=spot1RGB
+            spot1.setScale(spot1Scale)
+            spot1.zPosition=11
+            spot1.zRotation=spot1Rotation
+            spot1.name="spot1"
+            sprite.addChild(spot1)
+        }
+        addSpecials()
+        bornTime=NSDate()
+        growthTime=Double((computeLevel()*10)+30)
+        
+        // Add jitter
+        
+        switch jitterAction
+        {
+        case 12:
+            
+            let offset1=CGPoint(x: random(min: -5, max: 5), y: random(min: -5, max: 5))
+            let jitterAct=SKAction.sequence([SKAction.moveBy(x: offset1.x, y: offset1.y, duration: 0.15),SKAction.moveBy(x: -offset1.x, y: -offset1.y, duration: 0.15)])
+            sprite.run(SKAction.repeatForever(jitterAct))
+            
+            
+        case 28:
+            
+            let offset1=CGPoint(x: random(min: -10, max: 10), y: random(min: -10, max: 10))
+            let offset2=CGPoint(x: random(min: -10, max: 10), y: random(min: -10, max: 10))
+            let jitterAct=SKAction.sequence([SKAction.moveBy(x: offset1.x, y: offset1.y, duration: 0.15),SKAction.moveBy(x: -offset1.x, y: -offset1.y, duration: 0.15), SKAction.moveBy(x: offset2.x, y: offset2.y, duration: 0.15),SKAction.moveBy(x: -offset2.x, y: -offset2.y, duration: 0.15)])
+            sprite.run(SKAction.repeatForever(jitterAct))
+            
+        case 30:
+            
+            let offset1=CGPoint(x: random(min: -10, max: 10), y: random(min: -10, max: 10))
+            let offset2=CGPoint(x: random(min: -10, max: 10), y: random(min: -10, max: 10))
+            let jitterAct=SKAction.sequence([SKAction.moveBy(x: offset1.x, y: offset1.y, duration: 0.55),SKAction.moveBy(x: -offset1.x, y: -offset1.y, duration: 0.55), SKAction.moveBy(x: offset2.x, y: offset2.y, duration: 0.55),SKAction.moveBy(x: -offset2.x, y: -offset2.y, duration: 0.55)])
+            sprite.run(SKAction.repeatForever(jitterAct))
+            
+            
+        case 33:
+            
+            let offset1=CGPoint(x: random(min: -15, max: 15), y: 0)
+            
+            let jitterAct=SKAction.sequence([SKAction.moveBy(x: offset1.x, y: offset1.y, duration: 0.15),SKAction.moveBy(x: -offset1.x, y: -offset1.y, duration: 0.15)])
+            sprite.run(SKAction.repeatForever(jitterAct))
+            
+        case 41:
+            let offset1=CGPoint(x: random(min: -15, max: 15), y: random(min: -15, max: 15))
+            let offset2=CGPoint(x: random(min: -15, max: 15), y: random(min: -15, max: 15))
+            let jitterAct=SKAction.sequence([SKAction.moveBy(x: offset1.x, y: offset1.y, duration: 0.25),SKAction.moveBy(x: -offset1.x, y: -offset1.y, duration: 0.25), SKAction.moveBy(x: offset2.x, y: offset2.y, duration: 0.25),SKAction.moveBy(x: -offset2.x, y: -offset2.y, duration: 0.25)])
+            sprite.run(SKAction.repeatForever(jitterAct))
+            
+        default:
+            break
+            
+        } // switch jitterAction
+        
+
+        
+    } // init(scene)
     
     private func getColor2Action(dec: Int) -> SKAction
     {
@@ -977,8 +1491,9 @@ class BlobClass
     
     public func breed(with: BlobClass) -> BlobClass
     {
-        var offspring=BlobClass()
+        var offspring=BlobClass(theScene: self.scene!)
         //print("Breeding")
+        
         for i in 0..<GENECOUNT
         {
             let chance=random(min: 0, max: 1)
@@ -1086,7 +1601,7 @@ class BlobClass
         } // for
 
 
-        resetSprite()
+        //resetSprite()
     }
     
     func genNewGeneString() -> String
@@ -1234,21 +1749,19 @@ class BlobClass
         let blobCircleAlphaRatio=CGFloat(blobCircleAlphaDec)/63
         blobCircleAlpha = (blobCircleAlphaRatio*0.5)+0.2
         
-        // Blob circle action - gene 18
-        let blobCircleActionGene=getGene(num: 18)
-        blobCircleAction=tripToDec(trip: blobCircleActionGene)
-
         // Blob Sprite - gene 19
         let blobSpriteGene=getGene(num: 19)
         let blobSpriteDec=tripToDec(trip: blobSpriteGene)
+        blobStyle=blobSpriteDec
         if blobSpriteDec < NUMBLOBTEXTURES
         {
             sprite.texture=SKTexture(imageNamed: String(format:"blob%02d",blobSpriteDec))
         }
-        else
+        else if blobSpriteDec < NUMBLOBTEXTURES+NUMRANDOMGEN
         {
-            sprite.texture=SKTexture(imageNamed: "blob01")
-        }
+            sprite.texture=createProcTexture()
+            
+        } // if the texture is randomly generated
         
         // Blob Special 1 RGB - gene 20
         let special1RGBGene=getGene(num: 20)
@@ -1552,6 +2065,12 @@ class BlobClass
             let jitterAct=SKAction.sequence([SKAction.moveBy(x: offset1.x, y: offset1.y, duration: 0.15),SKAction.moveBy(x: -offset1.x, y: -offset1.y, duration: 0.15)])
             sprite.run(SKAction.repeatForever(jitterAct))
             
+        case 34:
+            
+            let offset1=CGPoint(x: 0, y: random(min: -15, max: 15))
+            
+            let jitterAct=SKAction.sequence([SKAction.moveBy(x: offset1.x, y: offset1.y, duration: 0.15),SKAction.moveBy(x: -offset1.x, y: -offset1.y, duration: 0.15)])
+            sprite.run(SKAction.repeatForever(jitterAct))
             
         case 41:
             let offset1=CGPoint(x: random(min: -15, max: 15), y: random(min: -15, max: 15))
@@ -1655,6 +2174,98 @@ class BlobClass
         } // for each gene
         return num
         
+    } // func threeGenesToDec
+    
+    public func createProcTexture() -> SKTexture
+    {
+        //let noise = GKNoise(GKBillowNoiseSource(frequency: 0.015, octaveCount: 2, persistence: 0.2, lacunarity: 0.005, seed: Int32(random(min: 0, max: 25000))))
+        var noise=GKNoise()
+        var mapCenter=vector_double2()
+        mapCenter.x=0
+        mapCenter.y=0
+        var mapSize=vector_double2()
+        mapSize.x=256
+        mapSize.y=256
+        //var type=Int(random(min: 0, max: 11.9999999))
+        // print("Type: \(type)")
+        //type=10
+        print("Resetting Sprite")
+        var seed=threeGenesToDec(gene1: 48, gene2: 49, gene3: 50)
+        print("Seed: \(seed)")
+        var type:Int=blobStyle-NUMBLOBTEXTURES
+        switch type
+        {
+        case 0:
+            noise=GKNoise(GKVoronoiNoiseSource(frequency: Double(random(min: 0.01, max: 0.025)), displacement: Double(random(min: 0.5, max: 3.5)), distanceEnabled: false, seed: Int32(seed)))
+        case 1:
+            noise=GKNoise(GKCylindersNoiseSource(frequency: Double(random(min: 0.01, max: 0.15))))
+            mapCenter.x=Double(random(min: CGFloat(-mapSize.x*1.9), max: CGFloat(mapSize.x*1.9)))
+            mapCenter.y=Double(random(min: CGFloat(-mapSize.x*1.9), max: CGFloat(mapSize.x*1.9)))
+        case 2:
+            noise=GKNoise(GKVoronoiNoiseSource(frequency: Double(random(min: 0.01, max: 0.025)), displacement: Double(random(min: 0.5, max: 3.5)), distanceEnabled: true, seed: Int32(seed)))
+        case 3:
+            noise=GKNoise(GKRidgedNoiseSource(frequency: Double(random(min: 0.01, max: 0.1)), octaveCount: Int(random(min: 1, max: 10)), lacunarity: Double(random(min: 0.001, max: 5)), seed: Int32(seed)))
+            
+        case 4:
+            noise=GKNoise(GKSpheresNoiseSource(frequency: Double(random(min: 0.001, max: 0.55))))
+            mapCenter.x=Double(random(min: CGFloat(-mapSize.x*1.9), max: CGFloat(mapSize.x*1.9)))
+            mapCenter.y=Double(random(min: CGFloat(-mapSize.x*1.9), max: CGFloat(mapSize.x*1.9)))
+            
+        case 5:
+            noise = GKNoise(GKBillowNoiseSource(frequency: Double(random(min: 0.015, max: 0.035)), octaveCount: Int(random(min: 15, max: 19.9999)), persistence: 0.65, lacunarity: 0.05, seed: Int32(seed)))
+        case 6:
+            noise = GKNoise(GKBillowNoiseSource(frequency: Double(random(min: 0.015, max: 0.035)), octaveCount: Int(random(min: 15, max: 19.9999)), persistence: 0.65, lacunarity: Double(random(min: 0.25, max: 0.65)), seed: Int32(seed)))
+            
+        case 7:
+            noise=GKNoise(GKVoronoiNoiseSource(frequency: Double(random(min: 0.025, max: 0.25)), displacement: Double(random(min: 3.5, max: 8.5)), distanceEnabled: false, seed: Int32(seed)))
+            
+        case 8:
+            noise=GKNoise(GKCheckerboardNoiseSource(squareSize: Double(random(min: 5.5, max: 15.5))))
+            
+        case 9:
+            noise=GKNoise(GKCheckerboardNoiseSource(squareSize: Double(random(min: 15.5, max: 45.5))))
+            
+        case 10:
+            noise=GKNoise(GKCheckerboardNoiseSource(squareSize: Double(random(min: 45.5, max: 145.5))))
+            
+        default:
+            noise = GKNoise(GKBillowNoiseSource(frequency: Double(random(min: 0.01, max: 0.025)), octaveCount: Int(random(min: 1, max: 4.9999)), persistence: 0.2, lacunarity: 0.5, seed: Int32(seed)))
+        }
+        
+        
+        //mapCenter.x=Double(random(min: CGFloat(-mapSize.x*1.9), max: CGFloat(mapSize.x*1.9)))
+        //mapCenter.y=Double(random(min: CGFloat(-mapSize.x*1.9), max: CGFloat(mapSize.x*1.9)))
+        
+        var mapSamples=vector_int2()
+        mapSamples.x=256
+        mapSamples.y=256
+        
+        let noiseMap = GKNoiseMap(noise, size: mapSize, origin: mapCenter, sampleCount: mapSamples, seamless: true)
+        
+        let text=SKTexture(noiseMap: noiseMap)
+        let thisNode=SKSpriteNode()
+        let cropNode=SKSpriteNode(imageNamed: "blob00")
+        cropNode.blendMode=SKBlendMode.multiply
+        let tempNode=SKSpriteNode(texture: text)
+        tempNode.blendMode=SKBlendMode.alpha
+        tempNode.zPosition=1
+        cropNode.zPosition=2
+        thisNode.addChild(tempNode)
+        thisNode.name="DNACrop"
+        thisNode.addChild(cropNode)
+        let ang=random(min: 0, max: CGFloat.pi*2)
+        if scene != nil
+        {
+            scene!.addChild(thisNode)
+        }
+        else
+        {
+            print("SCENE NIL.")
+        }
+        let retText=scene!.view!.texture(from: thisNode)
+        thisNode.removeFromParent()
+        return retText!
+        
     }
     
     public func update()
@@ -1672,7 +2283,7 @@ class BlobClass
             //sprite.xScale=blobSize
             //sprite.yScale=blobSize
         }
-    }
+    } // update
     
 } // class BlobClass
 

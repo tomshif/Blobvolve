@@ -19,10 +19,10 @@ func ^^ (radix: Int, power: Int) -> Int {
 class GameScene: SKScene {
     
     let DNA=SKSpriteNode(imageNamed: "DNA_2")
-    var blob=BlobClass()
-    var blob2=BlobClass()
+    var blob:BlobClass?
+    var blob2:BlobClass?
     
-    var baby=BlobClass()
+    var baby:BlobClass?
     
     let bg=SKSpriteNode(imageNamed: "bg01")
     let saveFrame=SKSpriteNode(imageNamed: "saveFrame")
@@ -67,6 +67,10 @@ class GameScene: SKScene {
     
     override func didMove(to view: SKView) {
 
+        blob=BlobClass(theScene: self)
+        blob2=BlobClass(theScene: self)
+        baby=BlobClass(theScene: self)
+        
         strandOffset = -size.width*0.4
         let clutterPath = Bundle.main.path(
             forResource: "screenClutter", ofType: "sks")
@@ -82,6 +86,8 @@ class GameScene: SKScene {
         frame.zPosition=8
         frame.name="frame"
         addChild(frame)
+        
+        
         
         // init saves arrays
         for _ in 0..<9
@@ -169,21 +175,21 @@ class GameScene: SKScene {
         
 
         
-        addChild(blob.sprite)
-        addChild(blob2.sprite)
-        addChild(baby.sprite)
-        blob.sprite.name="blob00"
-        blob2.sprite.name="blob01"
+        addChild(blob!.sprite)
+        addChild(blob2!.sprite)
+        addChild(baby!.sprite)
+        blob!.sprite.name="blob00"
+        blob2!.sprite.name="blob01"
         
-        blob.sprite.position.x = -size.width*0.35
-        blob2.sprite.position.x = size.width*0.35
-        baby.sprite.isHidden=true
+        blob!.sprite.position.x = -size.width*0.35
+        blob2!.sprite.position.x = size.width*0.35
+        baby!.sprite.isHidden=true
         
-        blob.generateByLevel(level: 0)
-        blob2.generateByLevel(level: 0)
+        blob!.generateByLevel(level: 0)
+        blob2!.generateByLevel(level: 0)
         drawDNAStrand()
         
-        blob.age=1.0
+        blob!.age=1.0
     } // didMove()
     
 
@@ -279,16 +285,19 @@ class GameScene: SKScene {
             }
         } // for each node
     
-        blob1Level.text="Level: \(blob.computeLevel())"
-        print("Level: \(blob.computeLevel())")
-        blob2Level.text="Level: \(blob2.computeLevel())"
-        babyLevel.text="Level: \(baby.computeLevel())"
+        blob1Level.text="Level: \(blob!.computeLevel())"
+        print("Level: \(blob!.computeLevel())")
+        blob2Level.text="Level: \(blob2!.computeLevel())"
+        babyLevel.text="Level: \(baby!.computeLevel())"
         
         
         //blob.sprite.removeAllActions()
-        //blob=BlobClass()
-        let coded=blob.DNA
-        for i in 0..<blob.GENECOUNT*blob.GENESIZE
+        blob!.scene=self
+        blob2!.scene=self
+        baby!.scene=self
+        
+        let coded=blob!.DNA
+        for i in 0..<blob!.GENECOUNT*blob!.GENESIZE
         {
             let dna=SKSpriteNode(imageNamed: "DNA_2")
             dna.name=String(format: "DNA%03d",i)
@@ -324,9 +333,9 @@ class GameScene: SKScene {
                 
                 if (showGeneName)
                 {
-                    if geneNum < blob.GeneStrings.count
+                    if geneNum < blob!.GeneStrings.count
                     {
-                        geneLabel=SKLabelNode(text: blob.GeneStrings[geneNum])
+                        geneLabel=SKLabelNode(text: blob!.GeneStrings[geneNum])
                     }
                     else
                     {
@@ -354,8 +363,8 @@ class GameScene: SKScene {
             }
         } // for each chromosome
         
-        let coded2=blob2.DNA
-        for i in 0..<blob2.GENECOUNT*blob2.GENESIZE
+        let coded2=blob2!.DNA
+        for i in 0..<blob2!.GENECOUNT*blob2!.GENESIZE
         {
             let dna=SKSpriteNode(imageNamed: "DNA_2")
             dna.name=String(format: "DNA%03d",i)
@@ -384,10 +393,10 @@ class GameScene: SKScene {
         }
         
         // draw baby DNA
-        if !baby.sprite.isHidden
+        if !baby!.sprite.isHidden
         {
-            let coded3=baby.DNA
-            for i in 0..<baby.GENECOUNT*baby.GENESIZE
+            let coded3=baby!.DNA
+            for i in 0..<baby!.GENECOUNT*baby!.GENESIZE
             {
                 let dna=SKSpriteNode(imageNamed: "DNA_2")
                 dna.name=String(format: "DNA%03d",i)
@@ -424,9 +433,9 @@ class GameScene: SKScene {
                     
                     if (showGeneName)
                     {
-                        if geneNum < blob.GeneStrings.count
+                        if geneNum < blob!.GeneStrings.count
                         {
-                            geneLabel=SKLabelNode(text: blob.GeneStrings[geneNum])
+                            geneLabel=SKLabelNode(text: blob!.GeneStrings[geneNum])
                         }
                         else
                         {
@@ -473,14 +482,16 @@ class GameScene: SKScene {
                 //print("Gene: \(geneNum)")
                 if pos.y > size.height*0.4
                 {
-                    blob2.generateNewGene(at: geneNum)
+                    blob2!.generateNewGene(at: geneNum)
+                    blob2!.resetSprite()
                 }
                 else
                 {
-                    blob.generateNewGene(at: geneNum)
+                    blob!.generateNewGene(at: geneNum)
+                    blob!.resetSprite()
                 }
                 drawDNAStrand()
-                baby.sprite.isHidden=true
+                baby!.sprite.isHidden=true
                 
             } // if node is DNA
             if thisNode.name!.contains("blob00")
@@ -498,14 +509,14 @@ class GameScene: SKScene {
                 {
                     if selected==0
                     {
-                        blob.DNA=saves[0]
-                        blob.resetSprite()
+                        blob!.DNA=saves[0]
+                        blob!.resetSprite()
                         drawDNAStrand()
                     } // if blob 1
                     else if selected==1
                     {
-                        blob2.DNA=saves[0]
-                        blob2.resetSprite()
+                        blob2!.DNA=saves[0]
+                        blob2!.resetSprite()
                         
                         drawDNAStrand()
                         
@@ -515,14 +526,14 @@ class GameScene: SKScene {
                 {
                     if selected==0
                     {
-                        blob.DNA=saves[1]
-                        blob.resetSprite()
+                        blob!.DNA=saves[1]
+                        blob!.resetSprite()
                         drawDNAStrand()
                     } // if blob 1
                     else if selected==1
                     {
-                        blob2.DNA=saves[1]
-                        blob2.resetSprite()
+                        blob2!.DNA=saves[1]
+                        blob2!.resetSprite()
                         drawDNAStrand()
                         
                     } // if blob 2
@@ -531,14 +542,14 @@ class GameScene: SKScene {
                 {
                     if selected==0
                     {
-                        blob.DNA=saves[2]
-                        blob.resetSprite()
+                        blob!.DNA=saves[2]
+                        blob!.resetSprite()
                         drawDNAStrand()
                     } // if blob 1
                     else if selected==1
                     {
-                        blob2.DNA=saves[2]
-                        blob2.resetSprite()
+                        blob2!.DNA=saves[2]
+                        blob2!.resetSprite()
                         drawDNAStrand()
                         
                     } // if blob 2
@@ -576,19 +587,21 @@ class GameScene: SKScene {
         case 2:
             rightPressed=true
             
-        case 11:
-            let temp=blob.breed(with: blob2)
-            baby.DNA=temp.DNA
-            baby.resetSprite()
-            
-            baby.sprite.isHidden=false
+        case 11:        // m - proc blend textures
+            let temp=blob!.breed(with: blob2!)
+            baby!.DNA=temp.DNA
+            baby!.resetSprite()
+            blob!.scene=self
+            blob2!.scene=self
+            baby!.scene=self
+            baby!.sprite.isHidden=false
             drawDNAStrand()
-            let levels=blob.computeLevel()+blob2.computeLevel()
+            let levels=blob!.computeLevel()+blob2!.computeLevel()
             money -= (levels*BREEDCOST)+BREEDCOSTBASE
             let chance=random(min: 0, max: 1)
             if chance > 0.95
             {
-                baby.sprite.texture=blendTextures(first: blob, second: blob2)
+                baby!.sprite.texture=blendTextures(first: blob!, second: blob2!)
             }
             
         case 29:
@@ -605,42 +618,42 @@ class GameScene: SKScene {
             //print("showGeneName is \(showGeneName)")
         case 30:    // ] - Limit blob 2 to less than level 10
 
-            blob2.genNewDNA()
-            blob2.generateByLevel(level: 10)
-            baby.sprite.isHidden=true
+            blob2!.genNewDNA()
+            blob2!.generateByLevel(level: 10)
+            baby!.sprite.isHidden=true
             drawDNAStrand()
             money -= BREEDCOST
             
         case 33:    // [ - Limit blob 1 to less than level 10
 
-            blob.genNewDNA()
-            blob.generateByLevel(level: 10)
-            baby.sprite.isHidden=true
+            blob!.genNewDNA()
+            blob!.generateByLevel(level: 10)
+            baby!.sprite.isHidden=true
             drawDNAStrand()
             money -= BREEDCOST
             
         case 18:
             if saveFrame.isHidden
             {
-                blob.genNewDNA()
-                blob.resetSprite()
-                baby.sprite.isHidden=true
+                blob!.genNewDNA()
+                
+                baby!.sprite.isHidden=true
                 drawDNAStrand()
                 money -= BREEDCOST
                 let proc1Chance=random(min: 0, max: 1)
                 if proc1Chance > 0.8
                 {
-                    blob.sprite.texture=createProcTexture()
+                    //blob!.sprite.texture=createProcTexture()
                     
                 }
-                
+                blob!.resetSprite()
             } // if not saving
             else
             {
-                saves[0]=baby.DNA
+                saves[0]=baby!.DNA
                 print(saves[0])
                 self.isPaused=true
-                let temp=self.view!.texture(from: baby.sprite)
+                let temp=self.view!.texture(from: baby!.sprite)
                 self.isPaused=false
                 savesPreview[0]=temp!
                 save01.texture=savesPreview[0]
@@ -649,24 +662,24 @@ class GameScene: SKScene {
         case 19:
             if saveFrame.isHidden
             {
-                blob2.genNewDNA()
-                blob2.resetSprite()
-                baby.sprite.isHidden=true
+                blob2!.genNewDNA()
+                blob2!.resetSprite()
+                baby!.sprite.isHidden=true
                 drawDNAStrand()
                 money -= BREEDCOST
                 let proc2Chance=random(min: 0, max: 1)
                 if proc2Chance > 0.8
                 {
-                    blob2.sprite.texture=createProcTexture()
+                    blob2!.sprite.texture=createProcTexture()
                     
                 }
             } // if not saving
             else
             {
-                saves[1]=baby.DNA
+                saves[1]=baby!.DNA
                 print(saves[1])
                 self.isPaused=true
-                let temp=self.view!.texture(from: baby.sprite)
+                let temp=self.view!.texture(from: baby!.sprite)
                 self.isPaused=false
                 savesPreview[1]=temp!
                 save02.texture=savesPreview[1]
@@ -674,31 +687,31 @@ class GameScene: SKScene {
         case 20:
             if !saveFrame.isHidden
             {
-                saves[2]=baby.DNA
+                saves[2]=baby!.DNA
                 print(saves[2])
                 self.isPaused=true
-                let temp=self.view!.texture(from: baby.sprite)
+                let temp=self.view!.texture(from: baby!.sprite)
                 self.isPaused=false
                 savesPreview[2]=temp!
                 save03.texture=savesPreview[2]
             }
             
         case 34:
-            print("Baby Speed: \(baby.moveSpeed)")
-            print("Baby Health: \(baby.blobHealth)")
-            print("Baby Damage: \(baby.blobDamage)")
-            print("Baby Level: \(baby.computeLevel())")
+            print("Baby Speed: \(baby!.moveSpeed)")
+            print("Baby Health: \(baby!.blobHealth)")
+            print("Baby Damage: \(baby!.blobDamage)")
+            print("Baby Level: \(baby!.computeLevel())")
         
         case 35:
             
-            blob.genNewDNA()
-            blob2.genNewDNA()
-            baby.sprite.isHidden=true
+            blob!.genNewDNA()
+            blob2!.genNewDNA()
+            baby!.sprite.isHidden=true
             //changeBlobColor()
             drawDNAStrand()
             money -= BREEDCOST
-            blob.sprite.texture=createProcTexture()
-            blob2.sprite.texture=createProcTexture()
+            blob!.sprite.texture=createProcTexture()
+            blob2!.sprite.texture=createProcTexture()
         case 36:
             if saveFrame.isHidden
             {
@@ -710,26 +723,35 @@ class GameScene: SKScene {
             }
         case 45:
 
-            baby.replaceGene(at: 3, with: "RRR")
-            baby.resetSprite()
+            baby!.replaceGene(at: 3, with: "RRR")
+            baby!.resetSprite()
             drawDNAStrand()
             
         case 46:        // M - spawn baby with blended texture
-            let temp=blob.breed(with: blob2)
-            baby.DNA=temp.DNA
-            baby.resetSprite()
+            let temp=blob!.breed(with: blob2!)
+            temp.scene=self
+            blob!.scene=self
+            blob2!.scene=self
+            baby!.scene=self
+            baby!.DNA=temp.DNA
+            baby!.resetSprite()
             
-            baby.sprite.isHidden=false
-            baby.sprite.texture=blendTextures(first: blob, second: blob2)
+            baby!.sprite.isHidden=false
+            baby!.sprite.texture=blendTextures(first: blob!, second: blob2!)
+            
             drawDNAStrand()
             
-            let levels=blob.computeLevel()+blob2.computeLevel()
+            let levels=blob!.computeLevel()+blob2!.computeLevel()
             money -= (levels*BREEDCOST)+BREEDCOSTBASE
-            baby.age=0.5
+            baby!.age=0.5
         case 49:    // spacebar - spawn 2 new blobs
-            blob.genNewDNA()
-            blob2.genNewDNA()
-            baby.sprite.isHidden=true
+            blob!.scene=self
+            blob2!.scene=self
+            baby!.scene=self
+            
+            blob!.genNewDNA()
+            blob2!.genNewDNA()
+            baby!.sprite.isHidden=true
             //changeBlobColor()
             drawDNAStrand()
             money -= BREEDCOST
@@ -737,40 +759,42 @@ class GameScene: SKScene {
             let proc1Chance=random(min: 0, max: 1)
             if proc1Chance > 0.8
             {
-                blob.sprite.texture=createProcTexture()
+                //blob.sprite.texture=createProcTexture()
 
             }
             let proc2Chance=random(min: 0, max: 1)
             if proc2Chance>0.8
             {
-                blob2.sprite.texture=createProcTexture()
+                //blob2.sprite.texture=createProcTexture()
             }
 
-            let temp=blob.threeGenesToDec(gene1: 0, gene2: 1, gene3: 2)
-            print("Three to Dec: \(temp)")
-
+            let temp=blob!.threeGenesToDec(gene1: 0, gene2: 1, gene3: 2)
+            //print("Three to Dec: \(temp)")
+            blob!.resetSprite()
+            blob2!.resetSprite()
+            
         case 123:
             
-            blob.DNA=baby.DNA
-            baby.sprite.isHidden=true
-            let tempTexture=baby.sprite.texture!
-            blob.resetSprite()
+            blob!.DNA=baby!.DNA
+            baby!.sprite.isHidden=true
+            let tempTexture=baby!.sprite.texture!
+            blob!.resetSprite()
             drawDNAStrand()
-            blob.sprite.texture=tempTexture
+            blob!.sprite.texture=tempTexture
         case 124:
-            blob2.DNA=baby.DNA
-            baby.sprite.isHidden=true
-            blob2.resetSprite()
-            let tempTexture=baby.sprite.texture!
+            blob2!.DNA=baby!.DNA
+            baby!.sprite.isHidden=true
+            blob2!.resetSprite()
+            let tempTexture=baby!.sprite.texture!
             drawDNAStrand()
             
-            blob2.sprite.texture=tempTexture
+            blob2!.sprite.texture=tempTexture
             
         case 126:       // up arrow - sell baby
-            if !baby.sprite.isHidden
+            if !baby!.sprite.isHidden
             {
-                money += (baby.computeLevel()*BREEDCOST)+BREEDCOSTBASE
-                baby.sprite.isHidden=true
+                money += (baby!.computeLevel()*BREEDCOST)+BREEDCOSTBASE
+                baby!.sprite.isHidden=true
             }
         default:
             print("keyDown: \(event.characters!) keyCode: \(event.keyCode)")
@@ -829,7 +853,7 @@ class GameScene: SKScene {
         {
             selectArrow.position.x = size.width*0.35
         }
-        if baby.sprite.isHidden
+        if baby!.sprite.isHidden
         {
             babyLevel.isHidden=true
             babyGrowthLabel.isHidden=true
@@ -838,7 +862,7 @@ class GameScene: SKScene {
         {
             babyLevel.isHidden=false
             babyGrowthLabel.isHidden=false
-            babyGrowthLabel.text=String(format: "Growth: %3.2f %", baby.sprite.xScale*100)
+            babyGrowthLabel.text=String(format: "Growth: %3.2f %", baby!.sprite.xScale*100)
         }
         moneyLabel.text="$\(money)"
         if money < 0
@@ -849,7 +873,7 @@ class GameScene: SKScene {
         {
             moneyLabel.fontColor=NSColor.white
         }
-        let cost=((blob.computeLevel()+blob2.computeLevel())*BREEDCOST)+BREEDCOSTBASE
+        let cost=((blob!.computeLevel()+blob2!.computeLevel())*BREEDCOST)+BREEDCOSTBASE
         breedCostLabel.text="Breeding Cost: $\(cost)"
     }
     
@@ -1005,7 +1029,7 @@ class GameScene: SKScene {
         // Called before each frame is rendered
         checkKeys()
         updateUI()
-        baby.update()
+        baby!.update()
         //print("Age: \(baby.age)")
         //print("Scale: \(baby.sprite.xScale)")
         
