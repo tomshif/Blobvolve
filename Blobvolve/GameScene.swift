@@ -25,7 +25,16 @@ struct PHYSICSTYPES
     static let EVERYTHING: UInt32=UInt32.max
 } // PHYSICSTYPES
 
+struct GAMESTATES
+{
+    static let BREED:Int=0
+    static let FIGHT:Int=2
+    
+}
+
 class GameScene: SKScene, SKPhysicsContactDelegate {
+    
+    var gameState:Int=0
     
     let DNA=SKSpriteNode(imageNamed: "DNA_2")
     var blob:BlobClass?
@@ -183,13 +192,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         save03.name="save03"
         save03.zPosition=22
         
-        blob1Level.position.x = -size.width*0.35
+ 
         blob1Level.position.y = size.height*0.25
         blob1Level.zPosition=25
         blob1Level.name="blob1Level"
         addChild(blob1Level)
         
-        blob2Level.position.x = size.width*0.35
+
         blob2Level.position.y = size.height*0.25
         blob2Level.zPosition=25
         blob2Level.name="blob2Level"
@@ -698,7 +707,20 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         case 13:    // w
             upPressed=true
             
-            
+        case 3:
+            if gameState==GAMESTATES.FIGHT
+            {
+                gameState=GAMESTATES.BREED
+                blob!.sprite.position=CGPoint(x: -size.height*0.35, y: 0)
+                blob2!.sprite.position=CGPoint(x: size.height*0.35, y: 0)
+            }
+            else if gameState==GAMESTATES.BREED
+            {
+                gameState=GAMESTATES.FIGHT
+                blob!.speed=0
+                blob2!.speed=0
+                
+            }
         case 4:
             if showHUD
             {
@@ -1096,6 +1118,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             moneyLabel.isHidden=true
         }
         
+        // move blob labels
+        blob1Level.position.x=blob!.sprite.position.x
+        blob1Level.position.y=blob!.sprite.position.y+120
+        blob2Level.position.x=blob2!.sprite.position.x
+        blob2Level.position.y=blob2!.sprite.position.y+120
     } // func updateUI
     
     func blendTextures(first: BlobClass, second: BlobClass) -> SKTexture
@@ -1249,10 +1276,27 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     override func update(_ currentTime: TimeInterval) {
         // Called before each frame is rendered
         checkKeys()
-        updateUI()
-        baby!.update()
+
         //print("Age: \(baby.age)")
         //print("Scale: \(baby.sprite.xScale)")
+        
+        switch gameState
+        {
+        case GAMESTATES.BREED:
+            updateUI()
+            baby!.update()
+            
+        case GAMESTATES.FIGHT:
+            showHUD=false
+            updateUI()
+            baby!.sprite.isHidden=true
+            blob!.update()
+            blob2!.update()
+            
+        default:
+            print("Error - Invalid GameState")
+            
+        }
         
         if -lastMoneyGain.timeIntervalSinceNow > 5
         {

@@ -500,6 +500,7 @@ class BlobClass
         
         sprite.physicsBody=SKPhysicsBody(circleOfRadius: BLOBPHYSICSSIZE)
         sprite.physicsBody!.categoryBitMask=PHYSICSTYPES.BLOB
+        sprite.physicsBody!.collisionBitMask=PHYSICSTYPES.NOTHING
         
         // Setup Blob Light
         blobLight.falloff=blobLightFalloff
@@ -1017,7 +1018,7 @@ class BlobClass
         
         sprite.physicsBody=SKPhysicsBody(circleOfRadius: BLOBPHYSICSSIZE)
         sprite.physicsBody!.categoryBitMask=PHYSICSTYPES.BLOB
-        
+        sprite.physicsBody!.collisionBitMask=PHYSICSTYPES.NOTHING
         
         // Setup Blob Light
         blobLight.falloff=blobLightFalloff
@@ -2369,7 +2370,7 @@ class BlobClass
     {
         if -lastWanderTurn.timeIntervalSinceNow > nextWanderTurn
         {
-            let turnAmount=random(min: -CGFloat.pi/2, max: CGFloat.pi/2)
+            let turnAmount=random(min: -CGFloat.pi*0.6, max: CGFloat.pi*0.6)
             turnToAngle=sprite.zRotation+turnAmount
             if turnToAngle > CGFloat.pi*2
             {
@@ -2381,7 +2382,7 @@ class BlobClass
             }
             isTurning=true
             lastWanderTurn=NSDate()
-            nextWanderTurn=Double(random(min: 1.5, max: 3.5))
+            nextWanderTurn=Double(random(min: 2.5, max: 5.5))
         } // if it's time to turn
         
         // decide what to do with speed
