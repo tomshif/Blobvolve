@@ -729,14 +729,12 @@ class GameScene: SKScene {
             
         case 46:        // M - spawn baby with blended texture
             let temp=blob!.breed(with: blob2!)
-            temp.scene=self
-            blob!.scene=self
-            blob2!.scene=self
-            baby!.scene=self
+
             baby!.DNA=temp.DNA
-            baby!.resetSprite()
+
             
             baby!.sprite.isHidden=false
+            baby!.resetSprite()
             baby!.sprite.texture=blendTextures(first: blob!, second: blob2!)
             
             drawDNAStrand()
@@ -745,10 +743,7 @@ class GameScene: SKScene {
             money -= (levels*BREEDCOST)+BREEDCOSTBASE
             baby!.age=0.5
         case 49:    // spacebar - spawn 2 new blobs
-            blob!.scene=self
-            blob2!.scene=self
-            baby!.scene=self
-            
+
             blob!.genNewDNA()
             blob2!.genNewDNA()
             baby!.sprite.isHidden=true

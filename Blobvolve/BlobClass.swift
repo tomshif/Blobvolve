@@ -1419,13 +1419,23 @@ class BlobClass
             retAction=SKAction.sequence([SKAction.scale(to: 1.1, duration: 0.5), SKAction.scale(to: 0.5, duration: 0.5)])
         case 17:
             retAction=SKAction.sequence([SKAction.scale(to: 0.7, duration: 0.25), SKAction.scale(to: 0.5, duration: 0.25)])
+        
+        case 18:
+            retAction=SKAction.sequence([SKAction.rotate(byAngle: -CGFloat.pi, duration: 0.50)])
+        
+        case 19:
+            retAction=SKAction.sequence([SKAction.rotate(byAngle: CGFloat.pi, duration: 0.250)])
+            
+        case 20:
+            retAction=SKAction.sequence([SKAction.fadeOut(withDuration: 0.2),SKAction.fadeIn(withDuration: 0.2)])
+            
         default:
             //retAction=SKAction.sequence([SKAction.scale(to: 0.7, duration: 0.25), SKAction.scale(to: 0.5, duration: 0.25)])
             retAction = SKAction.sequence([SKAction.scale(to: 1.0, duration: 1.0),SKAction.scale(to: 1.0, duration: 1.0)])
         }
         
         
-        
+        print("Action \(dec)")
         return retAction
         
     } // func getAction
@@ -1748,6 +1758,11 @@ class BlobClass
         let blobCircleAlphaDec=tripToDec(trip: blobCircleAlphaGene)
         let blobCircleAlphaRatio=CGFloat(blobCircleAlphaDec)/63
         blobCircleAlpha = (blobCircleAlphaRatio*0.5)+0.2
+        
+        // Blob circle action - gene 18
+        let blobCircleActionGene=getGene(num: 18)
+        blobCircleAction=tripToDec(trip: blobCircleActionGene)
+
         
         // Blob Sprite - gene 19
         let blobSpriteGene=getGene(num: 19)
