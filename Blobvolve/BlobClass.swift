@@ -12,10 +12,17 @@ import Foundation
 import SpriteKit
 import GameplayKit
 
+
 class BlobClass
 {
+    
+    struct STATE
+    {
+        static let WANDER:Int = 0
+        
+    }
     //Genetic Constants
-    let GENECOUNT:Int=51
+    let GENECOUNT:Int=52
     let GENESIZE:Int=3
     
     var coreStats=[Int]()
@@ -27,12 +34,21 @@ class BlobClass
     var blobOuter2=SKSpriteNode(imageNamed: "blobOuter64")
     var DNA=String()
     var spike1=SKSpriteNode(imageNamed: "spike64")
+    var blobLight=SKLightNode()
     
     var scene:SKScene?
     
     var age:CGFloat=0.5
     var bornTime=NSDate()
     var growthTime:Double=0
+    
+    var currentState:Int=0
+    var lastWanderTurn=NSDate()
+    var nextWanderTurn:Double=0
+    var isTurning:Bool=false
+    var turnToAngle:CGFloat=0
+    var speed:CGFloat=0
+    
     
     
     // Genetic Characteristics
@@ -88,9 +104,9 @@ class BlobClass
     var genSeed1:Int=0
     var genSeed2:Int=0
     var genSeed3:Int=0
+    var blobLightFalloff:CGFloat=0
     
-    
-    var GeneStrings=["Size", "RGB-R", "RGB-G", "RGB-B", "PlsSpd", "Alpha", "Sp1Ang", "Sp1Dst", "Sp1Alpha", "Sp1RGB", "Sp1Size", "Sp1Rot", "Spec1Typ", "Spec2Typ", "Sp1Shp", "CrcShp", "CrcRGB", "CrcAlpha", "CrcAct", "Sprite", "Spec1RGB", "OuterShp", "OuterRGB", "OutAct", "MoveSpd", "Spk1Typ", "Spk1Ang", "Spk1Rot", "Out2Prsnt", "Out2Shp", "Out2RGB", "Out2Act", "Health", "Spk1RGB", "Damage", "Color2%", "Color2RGB", "Color2Act", "OutClr2%", "OutClr2RGB", "OutColor3%", "OutColor3RGB", "SpriteRot", "Out1GapOn","Out1GapDist", "Out2GapOn","Out2GapDist", "Jitter", "ProcSeed1", "ProcSeed2", "ProcSeed3"]
+    var GeneStrings=["Size", "RGB-R", "RGB-G", "RGB-B", "PlsSpd", "Alpha", "Sp1Ang", "Sp1Dst", "Sp1Alpha", "Sp1RGB", "Sp1Size", "Sp1Rot", "Spec1Typ", "Spec2Typ", "Sp1Shp", "CrcShp", "CrcRGB", "CrcAlpha", "CrcAct", "Sprite", "Spec1RGB", "OuterShp", "OuterRGB", "OutAct", "MoveSpd", "Spk1Typ", "Spk1Ang", "Spk1Rot", "Out2Prsnt", "Out2Shp", "Out2RGB", "Out2Act", "Health", "Spk1RGB", "Damage", "Color2%", "Color2RGB", "Color2Act", "OutClr2%", "OutClr2RGB", "OutColor3%", "OutColor3RGB", "SpriteRot", "Out1GapOn","Out1GapDist", "Out2GapOn","Out2GapDist", "Jitter", "ProcSeed1", "ProcSeed2", "ProcSeed3", "LightFall"]
     
     
     // Computed Core Stats
@@ -101,6 +117,8 @@ class BlobClass
     // Constants
 
     let UPDATEAGE:CGFloat=0.001
+    
+    let BLOBPHYSICSSIZE:CGFloat=120
     
     let NUMBLOBTEXTURES:Int=40
     let NUMRANDOMGEN:Int=12
@@ -121,6 +139,11 @@ class BlobClass
     let NUMBLOBCIRCLETEXTURES:Int=33
     let NUMOUTERTEXTURES=18
     let NUMSPIKETYPES:Int=2
+    
+    let LIGHTMIN:CGFloat=2.5
+    let LIGHTMAX:CGFloat=0.75
+    let LIGHTBASE:CGFloat=2.5
+    
     
     // Core stat constants
     let NUMCORESTATS:Int=3
@@ -447,6 +470,14 @@ class BlobClass
         // Blob jitter Action - gene 47
         jitterAction=tripToDec(trip: getGene(num: 47))
 
+        // blobSeed1 - gene 48
+        // blobSeed2 - gene 49
+        // blobSeed3 - gene 50
+        
+        // Blob light falloff - gene 51
+        let blobLightFalloffDec=tripToDec(trip: getGene(num: 51))
+        let blobLightFalloffRatio=CGFloat(blobLightFalloffDec)/63
+        blobLightFalloff=blobLightFalloffRatio*(LIGHTMIN-LIGHTMAX)+LIGHTBASE
 
         
         
@@ -461,10 +492,24 @@ class BlobClass
         let pulseAction=SKAction.sequence([SKAction.scale(by: maxBlobScale, duration: pulseSpeed),SKAction.scale(to: minBlobScale, duration: pulseSpeed)])
         sprite.run(SKAction.repeatForever(pulseAction))
         sprite.colorBlendFactor=1.0
+        sprite.lightingBitMask=1
         sprite.color=NSColor(calibratedRed: spriteRed, green: spriteGreen, blue: spriteBlue, alpha: 1.0)
         sprite.alpha=spriteAlpha
         sprite.zPosition=9
         sprite.zRotation=spriteRotation
+        
+        sprite.physicsBody=SKPhysicsBody(circleOfRadius: BLOBPHYSICSSIZE)
+        sprite.physicsBody!.categoryBitMask=PHYSICSTYPES.BLOB
+        
+        // Setup Blob Light
+        blobLight.falloff=blobLightFalloff
+        blobLight.categoryBitMask=1
+        blobLight.lightColor=NSColor.white
+        blobLight.name="blobLight"
+        sprite.addChild(blobLight)
+        
+        
+        
         // Add blob circle
         if blobCircleShape < NUMBLOBCIRCLETEXTURES
         {
@@ -949,7 +994,10 @@ class BlobClass
         // Blob jitter Action - gene 47
         jitterAction=tripToDec(trip: getGene(num: 47))
         
-        
+        // Blob light falloff - gene 51
+        let blobLightFalloffDec=tripToDec(trip: getGene(num: 51))
+        let blobLightFalloffRatio=CGFloat(blobLightFalloffDec)/63
+        blobLightFalloff=blobLightFalloffRatio*(LIGHTMIN-LIGHTMAX)+LIGHTBASE
         
         //////////////////////////////////////////////
         // END OF GENE SEQUENCE //////////////////////
@@ -965,6 +1013,20 @@ class BlobClass
         sprite.alpha=spriteAlpha
         sprite.zPosition=9
         sprite.zRotation=spriteRotation
+        sprite.lightingBitMask=1
+        
+        sprite.physicsBody=SKPhysicsBody(circleOfRadius: BLOBPHYSICSSIZE)
+        sprite.physicsBody!.categoryBitMask=PHYSICSTYPES.BLOB
+        
+        
+        // Setup Blob Light
+        blobLight.falloff=blobLightFalloff
+        blobLight.categoryBitMask=1
+        blobLight.lightColor=NSColor.white
+        blobLight.name="blobLight"
+        sprite.addChild(blobLight)
+        
+        
         // Add blob circle
         if blobCircleShape < NUMBLOBCIRCLETEXTURES
         {
@@ -1429,6 +1491,10 @@ class BlobClass
         case 20:
             retAction=SKAction.sequence([SKAction.fadeOut(withDuration: 0.2),SKAction.fadeIn(withDuration: 0.2)])
             
+        case 21:
+            retAction=SKAction.sequence([SKAction.rotate(byAngle: CGFloat.pi*8, duration: 1.00), SKAction.rotate(byAngle: -CGFloat.pi*2, duration: 0.50) ])
+        case 22 :
+            retAction=SKAction.sequence([SKAction.rotate(byAngle: -CGFloat.pi/2, duration: 0.5), SKAction.rotate(byAngle: CGFloat.pi/4, duration: 0.250) ])
         default:
             //retAction=SKAction.sequence([SKAction.scale(to: 0.7, duration: 0.25), SKAction.scale(to: 0.5, duration: 0.25)])
             retAction = SKAction.sequence([SKAction.scale(to: 1.0, duration: 1.0),SKAction.scale(to: 1.0, duration: 1.0)])
@@ -1656,7 +1722,10 @@ class BlobClass
     
     public func resetSprite()
     {
+        
         sprite.setScale(1.0)
+        speed=0
+        
         growthTime=Double((computeLevel()*0)+1)
         
         // reset size - gene 0
@@ -1928,7 +1997,11 @@ class BlobClass
         // Blob jitter Action - gene 47
         jitterAction=tripToDec(trip: getGene(num: 47))
         
-        
+        // Blob light falloff - gene 51
+        let blobLightFalloffDec=tripToDec(trip: getGene(num: 51))
+        let blobLightFalloffRatio=CGFloat(blobLightFalloffDec)/63
+        blobLightFalloff=blobLightFalloffRatio*(LIGHTMIN-LIGHTMAX)+LIGHTBASE
+        print("Light fall: \(blobLightFalloff)")
         
         /////////////////////////////////////////////
         // End of gene sequence
@@ -1939,7 +2012,15 @@ class BlobClass
         let pulseAction=SKAction.sequence([SKAction.scale(by: 1.1, duration: pulseSpeed),SKAction.scale(by: 0.9090909090909090909090909090, duration: pulseSpeed)])
         sprite.run(SKAction.repeatForever(pulseAction))
         sprite.alpha=spriteAlpha
+        sprite.lightingBitMask=1
         sprite.zRotation=spriteRotation
+        
+        // Setup Blob Light
+        blobLight.falloff=blobLightFalloff
+        blobLight.categoryBitMask=1
+        blobLight.lightColor=NSColor.white
+        blobLight.name="blobLight"
+        
         
         // Setup blob color 2
         if blobColor2Chance % 24 == 0
@@ -2283,6 +2364,89 @@ class BlobClass
         
     }
     
+    
+    func wander()
+    {
+        if -lastWanderTurn.timeIntervalSinceNow > nextWanderTurn
+        {
+            let turnAmount=random(min: -CGFloat.pi/2, max: CGFloat.pi/2)
+            turnToAngle=sprite.zRotation+turnAmount
+            if turnToAngle > CGFloat.pi*2
+            {
+                turnToAngle-=CGFloat.pi*2
+            }
+            if turnToAngle < 0
+            {
+                turnToAngle+=CGFloat.pi*2
+            }
+            isTurning=true
+            lastWanderTurn=NSDate()
+            nextWanderTurn=Double(random(min: 1.5, max: 3.5))
+        } // if it's time to turn
+        
+        // decide what to do with speed
+        let chance=random(min: 0, max: 1)
+        if chance > 0.75
+        {
+            speed += 0.1
+        }
+        else if chance > 0.5
+        {
+            speed -= 0.1
+        }
+        if speed > moveSpeed
+        {
+            speed=moveSpeed
+        }
+        if speed > 0
+        {
+            moveSpeed=0
+        }
+        
+        
+    } // func wander
+    
+    func doTurn()
+    {
+        if abs(sprite.zRotation-turnToAngle) < 0.1
+        {
+            isTurning=false
+        }
+        
+        if isTurning
+        {
+            if sprite.zRotation-turnToAngle > 0
+            {
+                sprite.zRotation -= 0.01
+            }
+            if sprite.zRotation-turnToAngle < 0
+            {
+                sprite.zRotation += 0.01
+            }
+            
+        } // if we're turning
+    } // func doTurn
+    
+    func updatePosition()
+    {
+        let dx=cos(sprite.zRotation)*speed
+        let dy=sin(sprite.zRotation)*speed
+        sprite.position.x+=dx
+        sprite.position.y+=dy
+        
+        // normalize rotation
+        if sprite.zRotation > CGFloat.pi*2
+        {
+            sprite.zRotation -= CGFloat.pi*2
+        }
+        
+        if sprite.zRotation < 0
+        {
+            sprite.zRotation += CGFloat.pi*2
+        }
+        
+    } // func updatePosition
+    
     public func update()
     {
        
@@ -2298,6 +2462,17 @@ class BlobClass
             //sprite.xScale=blobSize
             //sprite.yScale=blobSize
         }
+        
+        switch currentState
+        {
+        case STATE.WANDER:
+            doTurn()
+            wander()
+            updatePosition()
+        default:
+            break
+        } // switch currentState
+        
     } // update
     
 } // class BlobClass
