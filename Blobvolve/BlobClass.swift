@@ -22,7 +22,7 @@ class BlobClass
         
     }
     //Genetic Constants
-    let GENECOUNT:Int=52
+    let GENECOUNT:Int=57
     let GENESIZE:Int=3
     
     var coreStats=[Int]()
@@ -48,7 +48,9 @@ class BlobClass
     var isTurning:Bool=false
     var turnToAngle:CGFloat=0
     var speed:CGFloat=0
+    var health:CGFloat=0
     
+    var enemy:BlobClass?
     
     
     // Genetic Characteristics
@@ -105,8 +107,17 @@ class BlobClass
     var genSeed2:Int=0
     var genSeed3:Int=0
     var blobLightFalloff:CGFloat=0
+    var specialAttack1:Int=0
+    var specialAttack1Cool:Double=8.0
+    var lastSpecialAttack1=NSDate()
+    var poisonResist:CGFloat=0
+    var primaryDamageType:Int=0
+    var physicalResist:CGFloat=0
+    var electricalResist:CGFloat=0
     
-    var GeneStrings=["Size", "RGB-R", "RGB-G", "RGB-B", "PlsSpd", "Alpha", "Sp1Ang", "Sp1Dst", "Sp1Alpha", "Sp1RGB", "Sp1Size", "Sp1Rot", "Spec1Typ", "Spec2Typ", "Sp1Shp", "CrcShp", "CrcRGB", "CrcAlpha", "CrcAct", "Sprite", "Spec1RGB", "OuterShp", "OuterRGB", "OutAct", "MoveSpd", "Spk1Typ", "Spk1Ang", "Spk1Rot", "Out2Prsnt", "Out2Shp", "Out2RGB", "Out2Act", "Health", "Spk1RGB", "Damage", "Color2%", "Color2RGB", "Color2Act", "OutClr2%", "OutClr2RGB", "OutColor3%", "OutColor3RGB", "SpriteRot", "Out1GapOn","Out1GapDist", "Out2GapOn","Out2GapDist", "Jitter", "ProcSeed1", "ProcSeed2", "ProcSeed3", "LightFall"]
+    
+    
+    var GeneStrings=["Size", "RGB-R", "RGB-G", "RGB-B", "PlsSpd", "Alpha", "Sp1Ang", "Sp1Dst", "Sp1Alpha", "Sp1RGB", "Sp1Size", "Sp1Rot", "Spec1Typ", "Spec2Typ", "Sp1Shp", "CrcShp", "CrcRGB", "CrcAlpha", "CrcAct", "Sprite", "Spec1RGB", "OuterShp", "OuterRGB", "OutAct", "MoveSpd", "Spk1Typ", "Spk1Ang", "Spk1Rot", "Out2Prsnt", "Out2Shp", "Out2RGB", "Out2Act", "Health", "Spk1RGB", "Damage", "Color2%", "Color2RGB", "Color2Act", "OutClr2%", "OutClr2RGB", "OutColor3%", "OutColor3RGB", "SpriteRot", "Out1GapOn","Out1GapDist", "Out2GapOn","Out2GapDist", "Jitter", "ProcSeed1", "ProcSeed2", "ProcSeed3", "LightFall", "SpAttack-1", "PoisonResist", "PrimAtkType", "PhysResist", "ElecResist"]
     
     
     // Computed Core Stats
@@ -142,12 +153,12 @@ class BlobClass
     
     let LIGHTMIN:CGFloat=2.5
     let LIGHTMAX:CGFloat=0.75
-    let LIGHTBASE:CGFloat=2.5
+    let LIGHTBASE:CGFloat=2.75
     
     
     // Core stat constants
     let NUMCORESTATS:Int=3
-    let MOVESPEEDBASE:CGFloat=7.5
+    let MOVESPEEDBASE:CGFloat=15
     let MOVESPEEDLEVEL:CGFloat=0.75
     let HEALTHBASE:CGFloat=100
     let HEALTHLEVEL:CGFloat=7.5
@@ -164,6 +175,23 @@ class BlobClass
         public static let MAGICFIELD:Int=3
         public static let FIREFLYFIELD:Int=51
         public static let DRIFTFIELD:Int=23
+    }
+    
+    
+    struct SpecialAttacks
+    {
+        public static let ELECTRICWAVE:Int=3
+        
+    } // struct SpecialAttacks
+    
+    struct DamageType
+    {
+        public static let Physical  :Int=0
+        public static let Electrical:Int=1
+        public static let Poison    :Int=2
+        public static let Sonic     :Int=3
+        
+        
     }
     
     init()
@@ -479,6 +507,25 @@ class BlobClass
         let blobLightFalloffRatio=CGFloat(blobLightFalloffDec)/63
         blobLightFalloff=blobLightFalloffRatio*(LIGHTMIN-LIGHTMAX)+LIGHTBASE
 
+        // Special attack - gene 52
+        specialAttack1=tripToDec(trip: getGene(num: 52))
+        
+        // Poison Resistance - gene 53
+        let poisonResistDec=tripToDec(trip: getGene(num: 53))
+        poisonResist=CGFloat(poisonResistDec)/75
+        
+        // Primary Attack Damage Type - gene 54
+        let primDamTypeDec=tripToDec(trip: getGene(num: 54))
+        primaryDamageType=primDamTypeDec%4
+        
+        // Physical Resistance - gene 55
+        let physicalResistDec=tripToDec(trip: getGene(num: 55))
+        physicalResist=CGFloat(physicalResistDec)/75
+        
+        // Electrical Resistance - gene 56
+        let elecResistDec=tripToDec(trip: getGene(num: 56))
+        electricalResist=CGFloat(elecResistDec)/75
+        
         
         
         
@@ -500,7 +547,10 @@ class BlobClass
         
         sprite.physicsBody=SKPhysicsBody(circleOfRadius: BLOBPHYSICSSIZE)
         sprite.physicsBody!.categoryBitMask=PHYSICSTYPES.BLOB
-        sprite.physicsBody!.collisionBitMask=PHYSICSTYPES.NOTHING
+        sprite.physicsBody!.collisionBitMask=PHYSICSTYPES.WALL | PHYSICSTYPES.BLOB
+        sprite.physicsBody!.contactTestBitMask=PHYSICSTYPES.WALL | PHYSICSTYPES.BLOB
+        sprite.physicsBody!.linearDamping=0.5
+        sprite.physicsBody!.angularDamping=0.5
         
         // Setup Blob Light
         blobLight.falloff=blobLightFalloff
@@ -642,6 +692,7 @@ class BlobClass
         }
         addSpecials()
         bornTime=NSDate()
+        health=blobHealth
         growthTime=Double((computeLevel()*10)+30)
         
         // Add jitter
@@ -1000,6 +1051,26 @@ class BlobClass
         let blobLightFalloffRatio=CGFloat(blobLightFalloffDec)/63
         blobLightFalloff=blobLightFalloffRatio*(LIGHTMIN-LIGHTMAX)+LIGHTBASE
         
+        // Special attack - gene 52
+        specialAttack1=tripToDec(trip: getGene(num: 52))
+        
+        // Poison Resistance - gene 53
+        let poisonResistDec=tripToDec(trip: getGene(num: 53))
+        poisonResist=CGFloat(poisonResistDec)/75
+        
+        // Primary Attack Damage Type - gene 54
+        let primDamTypeDec=tripToDec(trip: getGene(num: 54))
+        primaryDamageType=primDamTypeDec%4
+        
+        // Physical Resistance - gene 55
+        let physicalResistDec=tripToDec(trip: getGene(num: 55))
+        physicalResist=CGFloat(physicalResistDec)/75
+        
+        // Electrical Resistance - gene 56
+        let elecResistDec=tripToDec(trip: getGene(num: 56))
+        electricalResist=CGFloat(elecResistDec)/75
+        
+        
         //////////////////////////////////////////////
         // END OF GENE SEQUENCE //////////////////////
         //////////////////////////////////////////////
@@ -1018,7 +1089,10 @@ class BlobClass
         
         sprite.physicsBody=SKPhysicsBody(circleOfRadius: BLOBPHYSICSSIZE)
         sprite.physicsBody!.categoryBitMask=PHYSICSTYPES.BLOB
-        sprite.physicsBody!.collisionBitMask=PHYSICSTYPES.NOTHING
+        sprite.physicsBody!.collisionBitMask=PHYSICSTYPES.WALL | PHYSICSTYPES.BLOB
+        sprite.physicsBody!.contactTestBitMask=PHYSICSTYPES.WALL | PHYSICSTYPES.BLOB
+        sprite.physicsBody!.linearDamping=0.5
+        sprite.physicsBody!.angularDamping=0.5
         
         // Setup Blob Light
         blobLight.falloff=blobLightFalloff
@@ -1159,6 +1233,7 @@ class BlobClass
         }
         addSpecials()
         bornTime=NSDate()
+        health=blobHealth
         growthTime=Double((computeLevel()*10)+30)
         
         // Add jitter
@@ -1937,6 +2012,10 @@ class BlobClass
         let spike1RGBDec=tripToDec(trip: getGene(num: 33))
         spike1RGB=getRGB(col: spike1RGBDec)
         
+        // Blob Damage - gene 34
+        let damageDec=tripToDec(trip: getGene(num: 34))
+        blobDamage=DAMAGEBASE+(CGFloat(damageDec)*DAMAGELEVEL)
+        
         // Blob Color 2 Chance - gene 35
         blobColor2Chance=tripToDec(trip: getGene(num: 35))
         
@@ -2003,6 +2082,26 @@ class BlobClass
         let blobLightFalloffRatio=CGFloat(blobLightFalloffDec)/63
         blobLightFalloff=blobLightFalloffRatio*(LIGHTMIN-LIGHTMAX)+LIGHTBASE
         print("Light fall: \(blobLightFalloff)")
+        
+        // Special attack - gene 52
+        specialAttack1=tripToDec(trip: getGene(num: 52))
+        
+        // Poison Resistance - gene 53
+        let poisonResistDec=tripToDec(trip: getGene(num: 53))
+        poisonResist=CGFloat(poisonResistDec)/75
+        
+        // Primary Attack Damage Type - gene 54
+        let primDamTypeDec=tripToDec(trip: getGene(num: 54))
+        primaryDamageType=primDamTypeDec%4
+        
+        // Physical Resistance - gene 55
+        let physicalResistDec=tripToDec(trip: getGene(num: 55))
+        physicalResist=CGFloat(physicalResistDec)/75
+        
+        // Electrical Resistance - gene 56
+        let elecResistDec=tripToDec(trip: getGene(num: 56))
+        electricalResist=CGFloat(elecResistDec)/75
+        
         
         /////////////////////////////////////////////
         // End of gene sequence
@@ -2127,6 +2226,7 @@ class BlobClass
         }
         addSpecials()
         bornTime=NSDate()
+        health=blobHealth
         growthTime=Double((computeLevel()*0)+1)
         
         
@@ -2416,11 +2516,11 @@ class BlobClass
         
         if isTurning
         {
-            if sprite.zRotation-turnToAngle > 0
+            if sprite.zRotation-turnToAngle > 0 || sprite.zRotation-turnToAngle < -CGFloat.pi
             {
                 sprite.zRotation -= 0.01
             }
-            if sprite.zRotation-turnToAngle < 0
+            if sprite.zRotation-turnToAngle < 0 || sprite.zRotation-turnToAngle >= CGFloat.pi
             {
                 sprite.zRotation += 0.01
             }
@@ -2448,6 +2548,59 @@ class BlobClass
         
     } // func updatePosition
     
+    public func getStandardDamage(against: BlobClass) -> CGFloat
+    {
+        // used to compute damage of one blob against another
+        // taking into account type from attacker and resistance of defender
+        var damage:CGFloat=0
+        
+        switch primaryDamageType
+        {
+        case DamageType.Poison:
+            damage=blobDamage*against.poisonResist
+            
+        case DamageType.Physical:
+            damage=blobDamage*against.physicalResist
+            
+        case DamageType.Electrical:
+            damage=blobDamage*against.electricalResist
+            
+        default:
+            damage=blobDamage
+            print("Error - Invalid damage type")
+        } // switch
+
+        return damage
+        
+    } // func getStandardDamage
+    
+    func checkSpecialAttacks()
+    {
+        
+        if specialAttack1 == SpecialAttacks.ELECTRICWAVE         // change to electric wave
+        {
+            if -lastSpecialAttack1.timeIntervalSinceNow > specialAttack1Cool
+            {
+                let wave=SKSpriteNode(imageNamed: "electricWave")
+                //wave.position=self.sprite.position
+                wave.setScale(sprite.xScale*1.5)
+                wave.name="ElectricWave"
+                wave.physicsBody=SKPhysicsBody(circleOfRadius: wave.size.height*0.35)
+                wave.physicsBody!.categoryBitMask=PHYSICSTYPES.ELECTRICWAVE
+                wave.physicsBody!.collisionBitMask=PHYSICSTYPES.NOTHING
+                wave.physicsBody!.contactTestBitMask=PHYSICSTYPES.BLOB
+                sprite.addChild(wave)
+                wave.run(SKAction.rotate(byAngle: CGFloat.pi*8, duration: 1))
+                let waveAction = SKAction.sequence([SKAction.scale(to: 8, duration: 1.0), SKAction.fadeOut(withDuration: 0.1),SKAction.removeFromParent()])
+                wave.run(waveAction)
+                lastSpecialAttack1=NSDate()
+                
+            } // if wave is on cooldown
+            
+        } // if special is electric wave
+        
+    } // func checkSpecialAttacks
+    
     public func update()
     {
        
@@ -2470,11 +2623,14 @@ class BlobClass
             doTurn()
             wander()
             updatePosition()
+            checkSpecialAttacks()
         default:
             break
         } // switch currentState
         
     } // update
+    
+    
     
 } // class BlobClass
 

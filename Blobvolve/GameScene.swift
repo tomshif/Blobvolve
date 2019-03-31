@@ -18,9 +18,10 @@ func ^^ (radix: Int, power: Int) -> Int {
 
 struct PHYSICSTYPES
 {
-    static let NOTHING:    UInt32=0b00000001
-    static let BLOB:       UInt32=0b00000010
-    static let WALL:       UInt32=0b00000100
+    static let NOTHING:         UInt32=0b00000001
+    static let BLOB:            UInt32=0b00000010
+    static let WALL:            UInt32=0b00000100
+    static let ELECTRICWAVE:    UInt32=0b00001000
     
     static let EVERYTHING: UInt32=UInt32.max
 } // PHYSICSTYPES
@@ -53,6 +54,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     let frame1=SKSpriteNode(imageNamed: "DNAFrame")
     let frame2=SKSpriteNode(imageNamed: "DNAFrame")
+    
+    var arenaEdge=SKShapeNode()
     
     var leftPressed:Bool=false
     var rightPressed:Bool=false
@@ -281,6 +284,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         drawDNAStrand()
         
         blob!.age=1.0
+        
+        drawArenaEdge()
     } // didMove()
     
 
@@ -329,6 +334,145 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         return str
     } //toBase()
     
+    func drawArenaEdge()
+    {
+        let edgeRect=CGRect(x: 0, y: 0, width: 640, height: 20)
+        arenaEdge=SKShapeNode(rect: edgeRect)
+        arenaEdge.fillColor=NSColor.white
+        arenaEdge.strokeColor=NSColor.white
+        arenaEdge.position=CGPoint(x: -edgeRect.width/2, y: 740)
+        arenaEdge.physicsBody=SKPhysicsBody(rectangleOf: CGSize(width: edgeRect.width, height: edgeRect.height), center: CGPoint(x: edgeRect.width/2, y:edgeRect.height/2))
+        arenaEdge.physicsBody?.collisionBitMask=PHYSICSTYPES.BLOB
+        arenaEdge.physicsBody!.categoryBitMask=PHYSICSTYPES.WALL
+        arenaEdge.physicsBody!.contactTestBitMask=PHYSICSTYPES.BLOB
+        arenaEdge.physicsBody!.isDynamic=false
+        arenaEdge.name="wall"
+        arenaBorder.addChild(arenaEdge)
+        
+        let bottom=arenaEdge.copy() as! SKShapeNode
+        bottom.position.y = -760
+        arenaBorder.addChild(bottom)
+        
+        let right=arenaEdge.copy() as! SKShapeNode
+        right.zRotation=CGFloat.pi/2
+        right.position.x = 760
+        right.position.y = -320
+        arenaBorder.addChild(right)
+        
+        let left=arenaEdge.copy() as! SKShapeNode
+        left.zRotation=CGFloat.pi/2
+        left.position.x = -740
+        left.position.y = -320
+        arenaBorder.addChild(left)
+        
+        let topleft=arenaEdge.copy() as! SKShapeNode
+        topleft.zRotation=CGFloat.pi/4
+        topleft.position.x = -740
+        topleft.position.y = 300
+        arenaBorder.addChild(topleft)
+        
+        let bottomright=arenaEdge.copy() as! SKShapeNode
+        bottomright.zRotation = -3*CGFloat.pi/4
+        bottomright.position.x = 740
+        bottomright.position.y = -300
+        arenaBorder.addChild(bottomright)
+        
+        let topright=arenaEdge.copy() as! SKShapeNode
+        topright.zRotation = 3*CGFloat.pi/4
+        topright.position.x = 760
+        topright.position.y = 320
+        arenaBorder.addChild(topright)
+        
+        let bottomleft=arenaEdge.copy() as! SKShapeNode
+        bottomleft.zRotation = -CGFloat.pi/4
+        bottomleft.position.x = -760
+        bottomleft.position.y = -320
+        arenaBorder.addChild(bottomleft)
+    } // func drawArenaEdge
+    
+    func didBegin(_ contact: SKPhysicsContact) {
+        
+        print("Contacting!")
+        var firstBody: SKPhysicsBody
+        var secondBody: SKPhysicsBody
+        if contact.bodyA.categoryBitMask < contact.bodyB.categoryBitMask {
+            firstBody = contact.bodyA
+            secondBody = contact.bodyB
+        } else
+        {
+            firstBody = contact.bodyB
+            secondBody = contact.bodyA
+        }
+        print("Logical & blob = \(firstBody.categoryBitMask & PHYSICSTYPES.BLOB)")
+        print("Logical & wall = \(secondBody.categoryBitMask & PHYSICSTYPES.WALL)")
+        
+
+        if (firstBody.categoryBitMask & PHYSICSTYPES.BLOB != 0) && (secondBody.categoryBitMask & PHYSICSTYPES.WALL != 0)
+        {
+
+            // get angle to center
+            let angle=atan2(-firstBody.node!.position.y, -firstBody.node!.position.x)
+            print("Angle to center: \(angle)")
+            let dx=cos(angle)*500
+            let dy=sin(angle)*500
+            if (firstBody.node!.name! == "blob01")
+            {
+                blob!.speed=0
+            }
+            else if firstBody.node!.name!=="blob02"
+            {
+                blob2!.speed=0
+            }
+            firstBody.applyImpulse(CGVector(dx: dx, dy: dy))
+            
+            firstBody.applyAngularImpulse(CGFloat.pi)
+            
+            let sparks=SKEmitterNode(fileNamed: "wallSparks")
+            let sparkAction=SKAction.sequence([SKAction.wait(forDuration: 0.5), SKAction.removeFromParent()])
+            addChild(sparks!)
+            sparks!.run(sparkAction)
+            sparks!.position=contact.contactPoint
+            //print("Wall Collision")
+        
+        } // if contact with wall
+
+        if (firstBody.node!.name!.contains("blob")) && (secondBody.node!.name!.contains("blob"))
+        {
+            let blob1Dam=blob!.getStandardDamage(against: blob2!)
+            let blob2Dam=blob2!.getStandardDamage(against: blob!)
+            blob!.health -= blob2Dam
+            blob2!.health -= blob1Dam
+            print("Blob 1 damage: \(blob1Dam)")
+            print("Blob 2 damage: \(blob2Dam)")
+            let sparks=SKEmitterNode(fileNamed: "wallSparks")
+            let sparkAction=SKAction.sequence([SKAction.wait(forDuration: 0.5), SKAction.removeFromParent()])
+            addChild(sparks!)
+            sparks!.particleColorSequence=nil
+            sparks!.particleColorBlendFactor=1.0
+            sparks!.particleColor=NSColor.red
+            sparks!.run(sparkAction)
+            sparks!.position=contact.contactPoint
+        } // if contact with another blob
+        
+         if (firstBody.categoryBitMask & PHYSICSTYPES.BLOB != 0) && (secondBody.categoryBitMask & PHYSICSTYPES.ELECTRICWAVE != 0)
+        {
+            let parent=secondBody.node!.parent
+            
+            if parent!.name=="blob00" && firstBody.node!.name=="blob01"
+            {
+                
+                blob2!.health -= 50
+                print("Hit blob2")
+            }
+            else if parent!.name=="blob01" && firstBody.node!.name=="blob00"
+            {
+                blob!.health -= 50
+                print("Hit blob1")
+            }
+
+        }
+        
+    } // func didBegin -- physics contact
     
     func genNewArena()
     {
@@ -456,7 +600,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                        geneLabel=SKLabelNode(text: "\(geneNum)")
                     }
                     geneLabel.name="DNALabel"
-                    geneLabel.position.y=size.height*0.445
+                    geneLabel.position.y=0
                     geneLabel.fontColor=NSColor.white
                     geneLabel.fontSize=14
                     geneLabel.zPosition=12
@@ -467,7 +611,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 {
                     geneLabel=SKLabelNode(text: "\(geneNum)")
                     geneLabel.name="DNALabel"
-                    geneLabel.position.y=size.height*0.445
+                    geneLabel.position.y=0
                     geneLabel.fontColor=NSColor.white
                     geneLabel.fontSize=14
                     geneLabel.zPosition=12
@@ -556,7 +700,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                             geneLabel=SKLabelNode(text: "\(geneNum)")
                         }
                         geneLabel.name="DNALabel"
-                        //geneLabel.position.y = -size.height*0.47
+                        geneLabel.position.y = 30
                         geneLabel.fontColor=NSColor.white
                         geneLabel.fontSize=14
                         geneLabel.zPosition=12
@@ -567,7 +711,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     {
                         geneLabel=SKLabelNode(text: "\(geneNum)")
                         geneLabel.name="DNALabel"
-                        //geneLabel.position.y = -size.height*0.47
+                        geneLabel.position.y = 30
                         geneLabel.fontColor=NSColor.white
                         geneLabel.fontSize=14
                         geneLabel.zPosition=12
@@ -698,28 +842,44 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
             
         case 0:     // a
-            leftPressed=true
             
+            if gameState==GAMESTATES.FIGHT
+            {
+                leftPressed=true
+            }
         case 1:     // s
-            downPressed=true
+            if gameState==GAMESTATES.FIGHT
+            {
+                downPressed=true
+            }
         case 2:     // d
-            rightPressed=true
+            if gameState==GAMESTATES.FIGHT
+            {
+                rightPressed=true
+            }
         case 13:    // w
-            upPressed=true
-            
+            if gameState==GAMESTATES.FIGHT
+            {
+                upPressed=true
+            }
         case 3:
             if gameState==GAMESTATES.FIGHT
             {
                 gameState=GAMESTATES.BREED
-                blob!.sprite.position=CGPoint(x: -size.height*0.35, y: 0)
-                blob2!.sprite.position=CGPoint(x: size.height*0.35, y: 0)
+                blob!.sprite.position=CGPoint(x: -size.height*0.40, y: 0)
+                blob2!.sprite.position=CGPoint(x: size.height*0.40, y: 0)
+                blob!.sprite.physicsBody!.velocity = .zero
+                blob2!.sprite.physicsBody!.velocity = .zero
+                cam.position = .zero
             }
             else if gameState==GAMESTATES.BREED
             {
                 gameState=GAMESTATES.FIGHT
                 blob!.speed=0
                 blob2!.speed=0
-                
+                cam.run(SKAction.scale(to: 2.0, duration: 0.5))
+                blob!.lastSpecialAttack1=NSDate()
+                blob2!.lastSpecialAttack1=NSDate()
             }
         case 4:
             if showHUD
@@ -752,10 +912,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 }
             }
         case 24:        // + zoom in
-            zoomInPressed=true
+            if gameState==GAMESTATES.FIGHT
+            {
+                zoomInPressed=true
+            }
         case 27:        // - zoom out
-            zoomOutPressed=true
-            
+            if gameState==GAMESTATES.FIGHT
+            {
+                zoomOutPressed=true
+            }
         case 29:
             if showGeneName
             {
@@ -911,7 +1076,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
         case 49:    // spacebar - spawn 2 new blobs
             
-            genNewArena()
+            //genNewArena()
             
             if showHUD
             {
@@ -939,6 +1104,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 //print("Three to Dec: \(temp)")
                 blob!.resetSprite()
                 blob2!.resetSprite()
+            }
+            else
+            {
+                genNewArena()
             }
         case 123:
             
@@ -1032,12 +1201,28 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     
                 }
             }
+            for i in frame1.children
+            {
+                if i.name!.contains("DNA")
+                {
+                    i.position.x += MOVESPEED
+                    
+                }
+            }
             strandOffset += MOVESPEED
         } // if left
         
         if scrollRightPressed
         {
             for i in frame2.children
+            {
+                if i.name!.contains("DNA")
+                {
+                    i.position.x -= MOVESPEED
+                    
+                }
+            }
+            for i in frame1.children
             {
                 if i.name!.contains("DNA")
                 {
@@ -1123,6 +1308,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         blob1Level.position.y=blob!.sprite.position.y+120
         blob2Level.position.x=blob2!.sprite.position.x
         blob2Level.position.y=blob2!.sprite.position.y+120
+        blob1Level.text=String(format: "%2.2f",blob!.health)
+        blob2Level.text=String(format: "%2.2f",blob2!.health)
+        
     } // func updateUI
     
     func blendTextures(first: BlobClass, second: BlobClass) -> SKTexture
@@ -1273,6 +1461,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
     }
     
+    func checkBlobHealth()
+    {
+        if (blob!.health <= 0) || (blob2!.health <= 0)
+        {
+            gameState=GAMESTATES.BREED
+            showHUD=true
+            cam.position = .zero
+            blob!.health = blob!.blobHealth
+            blob2!.health=blob2!.blobHealth
+        }
+        
+    } // func checkBlobHealth
     override func update(_ currentTime: TimeInterval) {
         // Called before each frame is rendered
         checkKeys()
@@ -1284,7 +1484,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         {
         case GAMESTATES.BREED:
             updateUI()
-            baby!.update()
+            //baby!.update()
+            baby!.sprite.position=CGPoint(x: 0, y: 0)
+            blob!.sprite.position=CGPoint(x: -size.width*0.4, y: 0)
+            blob2!.sprite.position=CGPoint(x: size.width*0.4, y: 0)
+            cam.setScale(1.3)
             
         case GAMESTATES.FIGHT:
             showHUD=false
@@ -1292,6 +1496,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             baby!.sprite.isHidden=true
             blob!.update()
             blob2!.update()
+            baby!.sprite.position=CGPoint(x: -5000, y: -5000)
+            checkBlobHealth()
             
         default:
             print("Error - Invalid GameState")
