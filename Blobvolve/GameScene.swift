@@ -1175,6 +1175,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
                 blob!.genNewDNA()
                 blob2!.genNewDNA()
+                
+                print("Blob 2 DNA: \(blob2!.DNA)")
                 baby!.sprite.isHidden=true
                 //changeBlobColor()
                 drawDNAStrand()

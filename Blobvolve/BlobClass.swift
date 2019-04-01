@@ -1749,7 +1749,7 @@ class BlobClass
                     }
                 } // if the genes match give a high chance to mutate
             } // if inheriting our gene
-            else if chance < 0.995
+            else if chance < 0.99
             {
                 offspring.replaceGene(at: i, with: with.getGene(num: i))
                 if getGene(num: i) == with.getGene(num: i)
