@@ -123,37 +123,37 @@ class BlobClass
                            "Mol", "He", "Hai", "Vil", "Yun", "Chlo", "Pri", "Cis",
                            "Ax", "Bru", "Fri", "Qua", "Ai", "Rod", "Si", "Nur",
                            "Swa", "Pro", "Cri", "Calo", "Pub", "Mer", "Vaso", "Oli",
-                           "32", "33", "34", "35", "36", "37", "38", "39",
-                           "40", "41", "42", "43", "44", "45", "46", "47",
-                           "48", "49", "50", "51", "52", "53", "54", "55",
-                           "56", "57", "58", "59", "60", "61", "62", "63"]
+                           "Bacil", "Cuod", "Ero", "Amo", "Coc", "Wil", "Zero", "Los",
+                           "Tric", "Sli", "Tomo", "Jinu", "Raivo", "Plu", "Vero", "Vin",
+                           "Dia", "Rado", "Cope", "Phil", "Lyco", "Fora", "Mini", "Lori",
+                           "Cif", "Roti", "Litho", "Rosi", "Visto", "Foli", "Ersto", "Comu"]
     
-    let SpecialNameStrings=["tuso", "pila", "craya", "voln", "rint", "cren", "quol", "sentin",
-                           "olin", "hecta", "brin", "rine", "jant", "n", "lin", "crost",
+    let SpecialNameStrings=["tuso", "pila", "craya", "vol", "rint", "cren", "quol", "sentin",
+                           "olin", "hecta", "brin", "rine", "jant", "an", "lin", "crost",
                            "tine", "crax", "lus", "lux", "fino", "vert", "wax", "liso",
                            "rix", "plus", "blo", "fiz", "fix", "yerx", "nit", "dil",
-                           "32", "33", "34", "35", "36", "37", "38", "39",
-                           "40", "41", "42", "43", "44", "45", "46", "47",
-                           "48", "49", "50", "51", "52", "53", "54", "55",
-                           "56", "57", "58", "59", "60", "61", "62", "63"]
+                           "lino", "bine", "cone", "rian", "tom", "poda", "dum", "ate",
+                           "ion", "list", "nido", "wuda", "fige", "cus", "drom", "cos",
+                           "fera", "fer", "phora", "hida", "blox", "nima", "taso", "jin",
+                           "yolop", "yai", "vesto", "lomo", "saz", "plon", "tril", "kil"]
     
-    let OuterNameStrings=["0", "1", "2", "3", "4", "5", "6", "7",
-                           "8", "9", "10", "11", "12", "13", "14", "15",
-                           "16", "17", "18", "19", "20", "21", "22", "23",
-                           "24", "25", "26", "27", "28", "29", "30", "31",
-                           "32", "33", "34", "35", "36", "37", "38", "39",
-                           "40", "41", "42", "43", "44", "45", "46", "47",
-                           "48", "49", "50", "51", "52", "53", "54", "55",
-                           "56", "57", "58", "59", "60", "61", "62", "63"]
+    let OuterNameStrings=["yog", "ren", "lois", "list", "selis", "pilom", "castin", "plis",
+                           "froz", "moiner", "cust", "bris", "wrip", "prib", "virt", "pnom",
+                           "triv", "trem", "caus", "shil", "tom", "trug", "iolk", "xirt",
+                           "univ", "erom", "asim", "alim", "cip", "walph", "phob", "zaril",
+                           "frin", "flog", "aph", "asib", "vilop", "shan", "quem", "chal",
+                           "evop", "tyl", "nol", "kiran", "zul", "fos", "cypl", "anis",
+                           "pyr", "lyr", "anon", "zystr", "nox", "quim", "wid", "nat",
+                           "irop", "azur", "din", "lux", "ubril", "erst", "jam", "plex"]
     
-    let CircleNameStrings=["0", "1", "2", "3", "4", "5", "6", "7",
-                           "8", "9", "10", "11", "12", "13", "14", "15",
-                           "16", "17", "18", "19", "20", "21", "22", "23",
-                           "24", "25", "26", "27", "28", "29", "30", "31",
-                           "32", "33", "34", "35", "36", "37", "38", "39",
-                           "40", "41", "42", "43", "44", "45", "46", "47",
-                           "48", "49", "50", "51", "52", "53", "54", "55",
-                           "56", "57", "58", "59", "60", "61", "62", "63"]
+    let CircleNameStrings=["ila", "onia", "air", "onus", "orus", "ewil", "isano", "ylus",
+                           "ist", "eymno", "olim", "ulami", "ipo", "eria", "ebian", "osha",
+                           "iphia", "obra", "uphia", "inag", "oce", "ibria", "awa", "irabo",
+                           "unia", "izol", "oxo", "ylina", "aquus", "into", "ifora", "onti",
+                           "yrae", "ivar", "ileat", "essa", "onim", "owera", "ynsa", "erto",
+                           "ibau", "olpa", "yxia", "emanu", "esti", "irra", "ra", "ichia",
+                           "asha", "illum", "oprum", "anum", "ivella", "onella", "ifra", "itian",
+                           "ulko", "ileer", "unai", "iens", "omo", "ai", "us", "um"]
     
     let DamageNameStrings=["0", "1", "2", "3", "4", "5", "6", "7",
                            "8", "9", "10", "11", "12", "13", "14", "15",
@@ -412,6 +412,7 @@ class BlobClass
         // Blob Outer Shape - gene 21
         let blobOuterShapeGene=getGene(num: 21)
         let blobOuterShapeDec=tripToDec(trip: blobOuterShapeGene)
+        blobOuterShape=blobOuterShapeDec
         if blobOuterShapeDec < NUMOUTERTEXTURES
         {
             blobOuter.texture=SKTexture(imageNamed: String(format: "blobOuter%02d",blobOuterShapeDec))
@@ -970,6 +971,7 @@ class BlobClass
         // Blob Outer Shape - gene 21
         let blobOuterShapeGene=getGene(num: 21)
         let blobOuterShapeDec=tripToDec(trip: blobOuterShapeGene)
+        blobOuterShape=blobOuterShapeDec
         if blobOuterShapeDec < NUMOUTERTEXTURES
         {
             blobOuter.texture=SKTexture(imageNamed: String(format: "blobOuter%02d",blobOuterShapeDec))
@@ -1361,7 +1363,9 @@ class BlobClass
         
         retName += SpriteNameStrings[blobStyle]
         retName += SpecialNameStrings[special1]
-        
+        retName += " "
+        retName += OuterNameStrings[blobOuterShape]
+        retName += CircleNameStrings[blobCircleShape]
         
         
         return retName
@@ -2015,6 +2019,7 @@ class BlobClass
         // Blob Outer Shape - gene 21
         let blobOuterShapeGene=getGene(num: 21)
         let blobOuterShapeDec=tripToDec(trip: blobOuterShapeGene)
+        blobOuterShape=blobOuterShapeDec
         if blobOuterShapeDec < NUMOUTERTEXTURES
         {
             blobOuter.texture=SKTexture(imageNamed: String(format: "blobOuter%02d",blobOuterShapeDec))

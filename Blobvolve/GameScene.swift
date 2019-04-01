@@ -90,6 +90,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var moneyLabel=SKLabelNode(text: "Money")
     var breedCostLabel=SKLabelNode(text: "Breeding Cost")
     var babyGrowthLabel=SKLabelNode(text: "Growth: ")
+    var blob1Name=SKLabelNode(text: "")
+    var blob2Name=SKLabelNode(text: "")
+    var babyName=SKLabelNode(text: "")
     
     let clutterPath = Bundle.main.path(
         forResource: "screenClutter", ofType: "sks")
@@ -243,13 +246,21 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         babyGrowthLabel.zPosition=10
         babyGrowthLabel.position.y = -size.height*0.2
         babyGrowthLabel.name="babyGrowthLabel"
-        cam.addChild(babyGrowthLabel)
+        //cam.addChild(babyGrowthLabel)
         
         bg.zPosition = -5
         bg.name="bg"
         bg.lightingBitMask=1
         //addChild(bg)
 
+        blob1Name.position.x = -size.width*0.40
+        blob2Name.position.x = size.width*0.40
+        blob1Name.position.y = size.height*0.35
+        blob2Name.position.y = size.height*0.35
+        babyName.position.y = size.height*0.35
+        addChild(blob1Name)
+        addChild(blob2Name)
+        addChild(babyName)
         
         // add arena
         
@@ -494,6 +505,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 secondBody.node!.removeFromParent()
                 let virus=SKSpriteNode(imageNamed: "virus01")
                 blob2!.sprite.addChild(virus)
+                virus.name="Virus"
                 virus.position=CGPoint(x: posx, y: posy)
                 virus.zRotation=ang
                 //blob2!.health -= blob!.blobDamage*blob2!.electricalResist
@@ -507,6 +519,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 secondBody.node!.removeFromParent()
                 let virus=SKSpriteNode(imageNamed: "virus01")
                 blob!.sprite.addChild(virus)
+                virus.name="Virus"
                 virus.position=CGPoint(x: posx, y: posy)
                 virus.zRotation=ang
                 //blob2!.health -= blob!.blobDamage*blob2!.electricalResist
@@ -940,7 +953,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             {
                 upPressed=true
             }
-        case 3:
+        case 3:     // f - switch between fight and breed
             if gameState==GAMESTATES.FIGHT
             {
                 gameState=GAMESTATES.BREED
@@ -949,6 +962,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 blob!.sprite.physicsBody!.velocity = .zero
                 blob2!.sprite.physicsBody!.velocity = .zero
                 cam.position = .zero
+                endBattle()
             }
             else if gameState==GAMESTATES.BREED
             {
@@ -1383,6 +1397,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             moneyLabel.isHidden=true
         }
         
+        blob1Name.text=blob!.generateName()
+        blob2Name.text=blob2!.generateName()
+        babyName.text=baby!.generateName()
+        
         // move blob labels
         blob1Level.position.x=blob!.sprite.position.x
         blob1Level.position.y=blob!.sprite.position.y+120
@@ -1554,11 +1572,32 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             gameState=GAMESTATES.BREED
             showHUD=true
             cam.position = .zero
-            blob!.health = blob!.blobHealth
-            blob2!.health=blob2!.blobHealth
+            endBattle()
         }
         
     } // func checkBlobHealth
+    
+    func endBattle()
+    {
+        blob!.health = blob!.blobHealth
+        blob2!.health=blob2!.blobHealth
+        
+        for node in blob!.sprite.children
+        {
+            if node.name!.contains("Virus")
+            {
+                node.removeFromParent()
+            }
+        }
+        for node in blob2!.sprite.children
+        {
+            if node.name!.contains("Virus")
+            {
+                node.removeFromParent()
+            }
+        }
+        
+    }
     override func update(_ currentTime: TimeInterval) {
         // Called before each frame is rendered
         checkKeys()
@@ -1575,7 +1614,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             blob!.sprite.position=CGPoint(x: -size.width*0.4, y: 0)
             blob2!.sprite.position=CGPoint(x: size.width*0.4, y: 0)
             cam.setScale(1.3)
-            
+            blob1Name.isHidden=false
+            blob2Name.isHidden=false
+            if baby!.sprite.isHidden
+            {
+                babyName.isHidden=true
+            }
+            else
+            {
+                babyName.isHidden=false
+            }
         case GAMESTATES.FIGHT:
             showHUD=false
             updateUI()
@@ -1584,7 +1632,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             blob2!.update()
             baby!.sprite.position=CGPoint(x: -5000, y: -5000)
             checkBlobHealth()
-            
+            blob1Name.isHidden=true
+            blob2Name.isHidden=true
+            babyName.isHidden=true
         default:
             print("Error - Invalid GameState")
             
