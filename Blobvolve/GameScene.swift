@@ -22,6 +22,9 @@ struct PHYSICSTYPES
     static let BLOB:            UInt32=0b00000010
     static let WALL:            UInt32=0b00000100
     static let ELECTRICWAVE:    UInt32=0b00001000
+    static let SONICWAVE:       UInt32=0b00010000
+    static let VIRUS:           UInt32=0b00100000
+    
     
     static let EVERYTHING: UInt32=UInt32.max
 } // PHYSICSTYPES
@@ -78,6 +81,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var save02=SKSpriteNode(imageNamed: "blob00")
     var save03=SKSpriteNode(imageNamed: "blob00")
     
+    var blob1Label=SKLabelNode(text: "1-Level")
+    var blob2Label=SKLabelNode(text: "2-Level")
+    
     var blob1Level=SKLabelNode(text: "Level")
     var blob2Level=SKLabelNode(text: "Level")
     var babyLevel=SKLabelNode(text: "Baby Level")
@@ -103,7 +109,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
     var strandOffset:CGFloat=0
     
-    let MOVESPEED:CGFloat=5
+    let MOVESPEED:CGFloat=10
     let BREEDCOST:Int=5
     let BREEDCOSTBASE:Int=200
     var MOVEBOUNDARY:CGFloat=0
@@ -269,6 +275,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         arenaBorder.addChild(arenaFloor)
 
         
+        addChild(blob1Label)
+        addChild(blob2Label)
+        
         addChild(blob!.sprite)
         addChild(blob2!.sprite)
         addChild(baby!.sprite)
@@ -403,8 +412,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             firstBody = contact.bodyB
             secondBody = contact.bodyA
         }
-        print("Logical & blob = \(firstBody.categoryBitMask & PHYSICSTYPES.BLOB)")
-        print("Logical & wall = \(secondBody.categoryBitMask & PHYSICSTYPES.WALL)")
+        //print("Logical & blob = \(firstBody.categoryBitMask & PHYSICSTYPES.BLOB)")
+        //print("Logical & wall = \(secondBody.categoryBitMask & PHYSICSTYPES.WALL)")
         
 
         if (firstBody.categoryBitMask & PHYSICSTYPES.BLOB != 0) && (secondBody.categoryBitMask & PHYSICSTYPES.WALL != 0)
@@ -425,7 +434,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
             firstBody.applyImpulse(CGVector(dx: dx, dy: dy))
             
-            firstBody.applyAngularImpulse(CGFloat.pi)
+            let spinspeed=random(min: -CGFloat.pi*1.5, max: CGFloat.pi*1.5)
+            firstBody.applyAngularImpulse(spinspeed)
             
             let sparks=SKEmitterNode(fileNamed: "wallSparks")
             let sparkAction=SKAction.sequence([SKAction.wait(forDuration: 0.5), SKAction.removeFromParent()])
@@ -461,16 +471,84 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             if parent!.name=="blob00" && firstBody.node!.name=="blob01"
             {
                 
-                blob2!.health -= 50
+                blob2!.health -= blob!.blobDamage*blob2!.electricalResist
                 print("Hit blob2")
             }
             else if parent!.name=="blob01" && firstBody.node!.name=="blob00"
             {
-                blob!.health -= 50
+                blob!.health -= blob2!.blobDamage*blob!.electricalResist
                 print("Hit blob1")
             }
 
-        }
+        } // if Electric Wave hits a blob
+        
+        if (firstBody.categoryBitMask & PHYSICSTYPES.BLOB != 0) && (secondBody.categoryBitMask & PHYSICSTYPES.VIRUS != 0)
+        {
+            let parent=secondBody.node!.parent
+            
+            if firstBody.node!.name=="blob01"
+            {
+                let posx=contact.contactPoint.x-blob2!.sprite.position.x
+                let posy=contact.contactPoint.y-blob2!.sprite.position.y
+                let ang=secondBody.node!.zRotation
+                secondBody.node!.removeFromParent()
+                let virus=SKSpriteNode(imageNamed: "virus01")
+                blob2!.sprite.addChild(virus)
+                virus.position=CGPoint(x: posx, y: posy)
+                virus.zRotation=ang
+                //blob2!.health -= blob!.blobDamage*blob2!.electricalResist
+                print("Virus Hit blob2")
+            }
+            else if firstBody.node!.name=="blob00"
+            {
+                let posx=contact.contactPoint.x-blob!.sprite.position.x
+                let posy=contact.contactPoint.y-blob!.sprite.position.y
+                let ang=secondBody.node!.zRotation
+                secondBody.node!.removeFromParent()
+                let virus=SKSpriteNode(imageNamed: "virus01")
+                blob!.sprite.addChild(virus)
+                virus.position=CGPoint(x: posx, y: posy)
+                virus.zRotation=ang
+                //blob2!.health -= blob!.blobDamage*blob2!.electricalResist
+                print("Virus Hit blob1")
+            }
+            
+        } // if Electric Wave hits a blob
+        
+        
+        if (firstBody.categoryBitMask & PHYSICSTYPES.BLOB != 0) && (secondBody.categoryBitMask & PHYSICSTYPES.SONICWAVE != 0)
+        {
+            let parent=secondBody.node!.parent
+            
+            if parent!.name=="blob00" && firstBody.node!.name=="blob01"
+            {
+                
+                blob2!.health -= blob!.blobDamage*blob2!.sonicResist
+                print("Sonic wave resist: \(blob2!.sonicResist)")
+                let dx=blob2!.sprite.position.x-contact.contactPoint.x
+                let dy=blob2!.sprite.position.y-contact.contactPoint.y
+                let ang=atan2(dy,dx)
+                let vecx=cos(ang)*1000
+                let vecy=sin(ang)*1000
+                blob2!.speed=0
+                blob2!.sprite.physicsBody!.applyImpulse(CGVector(dx: vecx, dy: vecy))
+            }
+            else if parent!.name=="blob01" && firstBody.node!.name=="blob00"
+            {
+                blob!.health -= blob2!.blobDamage*blob!.sonicResist
+                print("Sonic wave resist: \(blob!.sonicResist)")
+                let dx=blob!.sprite.position.x-contact.contactPoint.x
+                let dy=blob!.sprite.position.y-contact.contactPoint.y
+                let ang=atan2(dy,dx)
+                let vecx=cos(ang)*1000
+                let vecy=sin(ang)*1000
+                blob!.speed=0
+                blob!.sprite.physicsBody!.applyImpulse(CGVector(dx: vecx, dy: vecy))
+            } // if parent
+            
+            
+            
+        } // if sonic wave hits a blob
         
     } // func didBegin -- physics contact
     
@@ -1104,6 +1182,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 //print("Three to Dec: \(temp)")
                 blob!.resetSprite()
                 blob2!.resetSprite()
+                print("Blob 1 name: \(blob!.generateName())")
+                print("Blob 2 name: \(blob2!.generateName())")
             }
             else
             {
@@ -1311,6 +1391,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         blob1Level.text=String(format: "%2.2f",blob!.health)
         blob2Level.text=String(format: "%2.2f",blob2!.health)
         
+        blob1Label.position.x=blob!.sprite.position.x
+        blob1Label.position.y=blob!.sprite.position.y - 160
+        blob1Label.text=String(format: "1 - %2.0d",blob!.computeLevel())
+        blob2Label.position.x=blob2!.sprite.position.x
+        blob2Label.position.y=blob2!.sprite.position.y - 160
+        blob2Label.text=String(format: "2 - %2.0d",blob2!.computeLevel())
     } // func updateUI
     
     func blendTextures(first: BlobClass, second: BlobClass) -> SKTexture

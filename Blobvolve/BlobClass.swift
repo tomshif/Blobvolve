@@ -22,7 +22,7 @@ class BlobClass
         
     }
     //Genetic Constants
-    let GENECOUNT:Int=57
+    let GENECOUNT:Int=59
     let GENESIZE:Int=3
     
     var coreStats=[Int]()
@@ -108,17 +108,61 @@ class BlobClass
     var genSeed3:Int=0
     var blobLightFalloff:CGFloat=0
     var specialAttack1:Int=0
-    var specialAttack1Cool:Double=8.0
     var lastSpecialAttack1=NSDate()
     var poisonResist:CGFloat=0
     var primaryDamageType:Int=0
     var physicalResist:CGFloat=0
     var electricalResist:CGFloat=0
+    var sonicResist:CGFloat=0
+    var special1Cool:Double=0
     
     
+    var GeneStrings=["Size", "RGB-R", "RGB-G", "RGB-B", "PlsSpd", "Alpha", "Sp1Ang", "Sp1Dst", "Sp1Alpha", "Sp1RGB", "Sp1Size", "Sp1Rot", "Spec1Typ", "Spec2Typ", "Sp1Shp", "CrcShp", "CrcRGB", "CrcAlpha", "CrcAct", "Sprite", "Spec1RGB", "OuterShp", "OuterRGB", "OutAct", "MoveSpd", "Spk1Typ", "Spk1Ang", "Spk1Rot", "Out2Prsnt", "Out2Shp", "Out2RGB", "Out2Act", "Health", "Spk1RGB", "Damage", "Color2%", "Color2RGB", "Color2Act", "OutClr2%", "OutClr2RGB", "OutColor3%", "OutColor3RGB", "SpriteRot", "Out1GapOn","Out1GapDist", "Out2GapOn","Out2GapDist", "Jitter", "ProcSeed1", "ProcSeed2", "ProcSeed3", "LightFall", "SpAttack-1", "PoisonResist", "PrimAtkType", "PhysResist", "ElecResist", "SonicResist", "Spec1Cool"]
     
-    var GeneStrings=["Size", "RGB-R", "RGB-G", "RGB-B", "PlsSpd", "Alpha", "Sp1Ang", "Sp1Dst", "Sp1Alpha", "Sp1RGB", "Sp1Size", "Sp1Rot", "Spec1Typ", "Spec2Typ", "Sp1Shp", "CrcShp", "CrcRGB", "CrcAlpha", "CrcAct", "Sprite", "Spec1RGB", "OuterShp", "OuterRGB", "OutAct", "MoveSpd", "Spk1Typ", "Spk1Ang", "Spk1Rot", "Out2Prsnt", "Out2Shp", "Out2RGB", "Out2Act", "Health", "Spk1RGB", "Damage", "Color2%", "Color2RGB", "Color2Act", "OutClr2%", "OutClr2RGB", "OutColor3%", "OutColor3RGB", "SpriteRot", "Out1GapOn","Out1GapDist", "Out2GapOn","Out2GapDist", "Jitter", "ProcSeed1", "ProcSeed2", "ProcSeed3", "LightFall", "SpAttack-1", "PoisonResist", "PrimAtkType", "PhysResist", "ElecResist"]
+    let SpriteNameStrings=["An", "Po", "Ca", "Bac", "Al", "Ra", "Car", "Min",
+                           "Mol", "He", "Hai", "Vil", "Yun", "Chlo", "Pri", "Cis",
+                           "Ax", "Bru", "Fri", "Qua", "Ai", "Rod", "Si", "Nur",
+                           "Swa", "Pro", "Cri", "Calo", "Pub", "Mer", "Vaso", "Oli",
+                           "32", "33", "34", "35", "36", "37", "38", "39",
+                           "40", "41", "42", "43", "44", "45", "46", "47",
+                           "48", "49", "50", "51", "52", "53", "54", "55",
+                           "56", "57", "58", "59", "60", "61", "62", "63"]
     
+    let SpecialNameStrings=["tuso", "pila", "craya", "voln", "rint", "cren", "quol", "sentin",
+                           "olin", "hecta", "brin", "rine", "jant", "n", "lin", "crost",
+                           "tine", "crax", "lus", "lux", "fino", "vert", "wax", "liso",
+                           "rix", "plus", "blo", "fiz", "fix", "yerx", "nit", "dil",
+                           "32", "33", "34", "35", "36", "37", "38", "39",
+                           "40", "41", "42", "43", "44", "45", "46", "47",
+                           "48", "49", "50", "51", "52", "53", "54", "55",
+                           "56", "57", "58", "59", "60", "61", "62", "63"]
+    
+    let OuterNameStrings=["0", "1", "2", "3", "4", "5", "6", "7",
+                           "8", "9", "10", "11", "12", "13", "14", "15",
+                           "16", "17", "18", "19", "20", "21", "22", "23",
+                           "24", "25", "26", "27", "28", "29", "30", "31",
+                           "32", "33", "34", "35", "36", "37", "38", "39",
+                           "40", "41", "42", "43", "44", "45", "46", "47",
+                           "48", "49", "50", "51", "52", "53", "54", "55",
+                           "56", "57", "58", "59", "60", "61", "62", "63"]
+    
+    let CircleNameStrings=["0", "1", "2", "3", "4", "5", "6", "7",
+                           "8", "9", "10", "11", "12", "13", "14", "15",
+                           "16", "17", "18", "19", "20", "21", "22", "23",
+                           "24", "25", "26", "27", "28", "29", "30", "31",
+                           "32", "33", "34", "35", "36", "37", "38", "39",
+                           "40", "41", "42", "43", "44", "45", "46", "47",
+                           "48", "49", "50", "51", "52", "53", "54", "55",
+                           "56", "57", "58", "59", "60", "61", "62", "63"]
+    
+    let DamageNameStrings=["0", "1", "2", "3", "4", "5", "6", "7",
+                           "8", "9", "10", "11", "12", "13", "14", "15",
+                           "16", "17", "18", "19", "20", "21", "22", "23",
+                           "24", "25", "26", "27", "28", "29", "30", "31",
+                           "32", "33", "34", "35", "36", "37", "38", "39",
+                           "40", "41", "42", "43", "44", "45", "46", "47",
+                           "48", "49", "50", "51", "52", "53", "54", "55",
+                           "56", "57", "58", "59", "60", "61", "62", "63"]
     
     // Computed Core Stats
     var blobLevel:Int=0
@@ -155,6 +199,10 @@ class BlobClass
     let LIGHTMAX:CGFloat=0.75
     let LIGHTBASE:CGFloat=2.75
     
+    let SPECIALCOOLBASE:Double=2.0
+    let SPECIALCOOLMIN:Double=2
+    let SPECIALCOOLMAX:Double=6
+    
     
     // Core stat constants
     let NUMCORESTATS:Int=3
@@ -181,6 +229,8 @@ class BlobClass
     struct SpecialAttacks
     {
         public static let ELECTRICWAVE:Int=3
+        public static let SONICWAVE:Int=15
+        public static let VIRUSLAUNCH:Int=48
         
     } // struct SpecialAttacks
     
@@ -233,6 +283,7 @@ class BlobClass
             DNA.append(c)
         } // for each gene
         
+
         
         // decode the genes to stats
         
@@ -499,8 +550,8 @@ class BlobClass
         jitterAction=tripToDec(trip: getGene(num: 47))
 
         // blobSeed1 - gene 48
-        // blobSeed2 - gene 49
-        // blobSeed3 - gene 50
+        // blobSeed2 - gene 49      These 3 genes supply the random seed for
+        // blobSeed3 - gene 50      procedurally generated textures.
         
         // Blob light falloff - gene 51
         let blobLightFalloffDec=tripToDec(trip: getGene(num: 51))
@@ -526,7 +577,16 @@ class BlobClass
         let elecResistDec=tripToDec(trip: getGene(num: 56))
         electricalResist=CGFloat(elecResistDec)/75
         
+        // Sonic Resistance - gene 57
+        let sonicResistDec=tripToDec(trip: getGene(num: 57))
+        sonicResist=CGFloat(sonicResistDec)/75
         
+        // Special Attack 1 Cooldown - gene 58
+        let spec1CoolDec=tripToDec(trip: getGene(num: 58))
+        let spec1CoolRatio=Double(spec1CoolDec)/63
+        let spec1CoolRange=(spec1CoolRatio*(SPECIALCOOLMAX-SPECIALCOOLMIN))+SPECIALCOOLMIN
+        special1Cool=spec1CoolRange+SPECIALCOOLBASE
+        print("Special 1 Cooldown: \(special1Cool)")
         
         
         //////////////////////////////////////////////
@@ -780,6 +840,7 @@ class BlobClass
             }
             DNA.append(c)
         } // for each gene
+        
         
         
         // decode the genes to stats
@@ -1070,6 +1131,16 @@ class BlobClass
         let elecResistDec=tripToDec(trip: getGene(num: 56))
         electricalResist=CGFloat(elecResistDec)/75
         
+        // Sonic Resistance - gene 57
+        let sonicResistDec=tripToDec(trip: getGene(num: 57))
+        sonicResist=CGFloat(sonicResistDec)/75
+        
+        // Special Attack 1 Cooldown - gene 58
+        let spec1CoolDec=tripToDec(trip: getGene(num: 58))
+        let spec1CoolRatio=Double(spec1CoolDec)/63
+        let spec1CoolRange=(spec1CoolRatio*(SPECIALCOOLMAX-SPECIALCOOLMIN))+SPECIALCOOLMIN
+        special1Cool=spec1CoolRange+SPECIALCOOLBASE
+        print("Special 1 Cooldown: \(special1Cool)")
         
         //////////////////////////////////////////////
         // END OF GENE SEQUENCE //////////////////////
@@ -1283,6 +1354,18 @@ class BlobClass
 
         
     } // init(scene)
+    
+    public func generateName() -> String
+    {
+        var retName:String=""
+        
+        retName += SpriteNameStrings[blobStyle]
+        retName += SpecialNameStrings[special1]
+        
+        
+        
+        return retName
+    }
     
     private func getColor2Action(dec: Int) -> SKAction
     {
@@ -1815,6 +1898,7 @@ class BlobClass
         let maxBlobScale = blobBaseSize * 1.1
         sprite.removeAllActions()
 
+
         
         // Color | Red Channel - gene 1
         let colorGene=getGene(num: 1)
@@ -2102,6 +2186,16 @@ class BlobClass
         let elecResistDec=tripToDec(trip: getGene(num: 56))
         electricalResist=CGFloat(elecResistDec)/75
         
+        // Sonic Resistance - gene 57
+        let sonicResistDec=tripToDec(trip: getGene(num: 57))
+        sonicResist=CGFloat(sonicResistDec)/75
+        
+        // Special Attack 1 Cooldown - gene 58
+        let spec1CoolDec=tripToDec(trip: getGene(num: 58))
+        let spec1CoolRatio=Double(spec1CoolDec)/63
+        let spec1CoolRange=(spec1CoolRatio*(SPECIALCOOLMAX-SPECIALCOOLMIN))+SPECIALCOOLMIN
+        special1Cool=spec1CoolRange+SPECIALCOOLBASE
+        print("Special 1 Cooldown: \(special1Cool)")
         
         /////////////////////////////////////////////
         // End of gene sequence
@@ -2565,6 +2659,9 @@ class BlobClass
         case DamageType.Electrical:
             damage=blobDamage*against.electricalResist
             
+        case DamageType.Sonic:
+            damage=blobDamage*against.sonicResist
+            
         default:
             damage=blobDamage
             print("Error - Invalid damage type")
@@ -2579,7 +2676,7 @@ class BlobClass
         
         if specialAttack1 == SpecialAttacks.ELECTRICWAVE         // change to electric wave
         {
-            if -lastSpecialAttack1.timeIntervalSinceNow > specialAttack1Cool
+            if -lastSpecialAttack1.timeIntervalSinceNow > special1Cool
             {
                 let wave=SKSpriteNode(imageNamed: "electricWave")
                 //wave.position=self.sprite.position
@@ -2599,7 +2696,62 @@ class BlobClass
             
         } // if special is electric wave
         
+        if specialAttack1 == SpecialAttacks.SONICWAVE         // change to electric wave
+        {
+            if -lastSpecialAttack1.timeIntervalSinceNow > special1Cool
+            {
+                let wave=SKSpriteNode(imageNamed: "sonicWave01")
+                //wave.position=self.sprite.position
+                wave.setScale(sprite.xScale*1.5)
+                wave.name="sonicWave"
+                wave.physicsBody=SKPhysicsBody(circleOfRadius: wave.size.height*0.35)
+                wave.physicsBody!.categoryBitMask=PHYSICSTYPES.SONICWAVE
+                wave.physicsBody!.collisionBitMask=PHYSICSTYPES.NOTHING
+                wave.physicsBody!.contactTestBitMask=PHYSICSTYPES.BLOB
+                sprite.addChild(wave)
+                wave.run(SKAction.rotate(byAngle: CGFloat.pi*8, duration: 1))
+                let waveAction = SKAction.sequence([SKAction.scale(to: 8, duration: 1.0), SKAction.fadeOut(withDuration: 0.1),SKAction.removeFromParent()])
+                wave.run(waveAction)
+                lastSpecialAttack1=NSDate()
+                
+            } // if wave is on cooldown
+            
+        } // if special is electric wave
+  
+        
+        if specialAttack1 == SpecialAttacks.VIRUSLAUNCH         // change to electric wave
+        {
+            if -lastSpecialAttack1.timeIntervalSinceNow > special1Cool
+            {
+                for i in 0...Int(random(min: 1, max: 3.9999))
+                {
+                    let virus=SKSpriteNode(imageNamed: "virus01")
+                    //wave.position=self.sprite.position
+                    virus.setScale(sprite.xScale*1.5)
+                    virus.name="virus"
+                    virus.physicsBody=SKPhysicsBody(circleOfRadius: virus.size.height*0.35)
+                    virus.physicsBody!.categoryBitMask=PHYSICSTYPES.VIRUS
+                    virus.physicsBody!.collisionBitMask=PHYSICSTYPES.NOTHING
+                    virus.physicsBody!.contactTestBitMask=PHYSICSTYPES.BLOB
+                    scene!.addChild(virus)
+                    let angle=sprite.zRotation-CGFloat.pi/2+random(min: -CGFloat.pi/4, max: CGFloat.pi/4)
+                    let dx=cos(angle)*50
+                    let dy=sin(angle)*50
+                    let posx=cos(angle)*190
+                    let posy=sin(angle)*190
+                    virus.position=CGPoint(x: sprite.position.x+posx, y: sprite.position.y+posy)
+                    virus.colorBlendFactor=1.0
+                    virus.color=blobOuterRGB
+                    virus.physicsBody!.applyImpulse(CGVector(dx: dx, dy: dy))
+                    let virusAction=SKAction.sequence([SKAction.wait(forDuration: 10.0),SKAction.removeFromParent()])
+                    virus.run(virusAction)
+                    lastSpecialAttack1=NSDate()
+                } // for each virus
+            } // if wave is on cooldown
+            
+        } // if special is electric wave
     } // func checkSpecialAttacks
+    
     
     public func update()
     {
