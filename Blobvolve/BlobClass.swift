@@ -231,6 +231,7 @@ class BlobClass
         public static let ELECTRICWAVE:Int=3
         public static let SONICWAVE:Int=15
         public static let VIRUSLAUNCH:Int=48
+        public static let LIGHTNINGBOLT:Int=33
         
     } // struct SpecialAttacks
     
@@ -2679,7 +2680,7 @@ class BlobClass
     func checkSpecialAttacks()
     {
         
-        if specialAttack1 == SpecialAttacks.ELECTRICWAVE         // change to electric wave
+        if specialAttack1 == SpecialAttacks.ELECTRICWAVE
         {
             if -lastSpecialAttack1.timeIntervalSinceNow > special1Cool
             {
@@ -2701,7 +2702,7 @@ class BlobClass
             
         } // if special is electric wave
         
-        if specialAttack1 == SpecialAttacks.SONICWAVE         // change to electric wave
+        if specialAttack1 == SpecialAttacks.SONICWAVE
         {
             if -lastSpecialAttack1.timeIntervalSinceNow > special1Cool
             {
@@ -2723,6 +2724,54 @@ class BlobClass
             
         } // if special is electric wave
   
+        if specialAttack1 == SpecialAttacks.LIGHTNINGBOLT         
+        {
+            if -lastSpecialAttack1.timeIntervalSinceNow > special1Cool
+            {
+                let bolt=SKSpriteNode(imageNamed: "lightningBolt01")
+                //wave.position=self.sprite.position
+    
+                // get distance and angle to enemy
+                let dx=enemy!.sprite.position.x-sprite.position.x
+                let dy=enemy!.sprite.position.y-sprite.position.y
+                let dist = hypot(dy, dx)
+                let angle = atan2(dy, dx) - sprite.zRotation
+                
+                let distanceRatio:CGFloat=dist/258
+                
+                
+                
+                print("Distance: \(dist)")
+                print("Angle: \(angle)")
+                let posx=cos(angle)*(140+(bolt.size.width/2))
+                let posy=sin(angle)*(140+(bolt.size.width/2))
+                bolt.zRotation=angle
+                bolt.position=CGPoint(x: posx, y: posy)
+                
+                bolt.name="LightningBolt"
+                bolt.physicsBody=SKPhysicsBody(rectangleOf: bolt.size)
+                bolt.physicsBody!.categoryBitMask=PHYSICSTYPES.LIGHTNING
+                bolt.physicsBody!.collisionBitMask=PHYSICSTYPES.NOTHING
+                bolt.physicsBody!.contactTestBitMask=PHYSICSTYPES.BLOB
+                bolt.physicsBody!.pinned=true
+                bolt.physicsBody!.allowsRotation=false
+                bolt.physicsBody!.mass=0
+                bolt.zPosition=sprite.zPosition+10
+                
+                bolt.setScale(1.5)
+                sprite.addChild(bolt)
+                
+                let flickerAction=SKAction.sequence([SKAction.fadeOut(withDuration: 0.1), SKAction.fadeIn(withDuration: 0.1), SKAction.wait(forDuration: 0.1)])
+                bolt.run(SKAction.repeatForever(flickerAction))
+                
+                let boltAction = SKAction.sequence([SKAction.wait(forDuration: 0.8),SKAction.removeFromParent()])
+                bolt.run(boltAction)
+                lastSpecialAttack1=NSDate()
+                
+            } // if wave is on cooldown
+            
+        } // if special is electric wave
+        
         
         if specialAttack1 == SpecialAttacks.VIRUSLAUNCH         // change to electric wave
         {
@@ -2757,7 +2806,7 @@ class BlobClass
         } // if special is electric wave
     } // func checkSpecialAttacks
     
-    
+
     public func update()
     {
        

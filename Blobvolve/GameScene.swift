@@ -24,6 +24,8 @@ struct PHYSICSTYPES
     static let ELECTRICWAVE:    UInt32=0b00001000
     static let SONICWAVE:       UInt32=0b00010000
     static let VIRUS:           UInt32=0b00100000
+    static let LIGHTNING:       UInt32=0b01000000
+    
     
     
     static let EVERYTHING: UInt32=UInt32.max
@@ -475,7 +477,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             sparks!.position=contact.contactPoint
         } // if contact with another blob
         
-         if (firstBody.categoryBitMask & PHYSICSTYPES.BLOB != 0) && (secondBody.categoryBitMask & PHYSICSTYPES.ELECTRICWAVE != 0)
+         if (firstBody.categoryBitMask & PHYSICSTYPES.BLOB != 0) && (secondBody.categoryBitMask & PHYSICSTYPES.LIGHTNING != 0)
         {
             let parent=secondBody.node!.parent
             
@@ -491,6 +493,24 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 print("Hit blob1")
             }
 
+        } // if Lightning hits a blob
+        
+        if (firstBody.categoryBitMask & PHYSICSTYPES.BLOB != 0) && (secondBody.categoryBitMask & PHYSICSTYPES.ELECTRICWAVE != 0)
+        {
+            let parent=secondBody.node!.parent
+            
+            if parent!.name=="blob00" && firstBody.node!.name=="blob01"
+            {
+                
+                blob2!.health -= blob!.blobDamage*blob2!.electricalResist
+                print("Hit blob2")
+            }
+            else if parent!.name=="blob01" && firstBody.node!.name=="blob00"
+            {
+                blob!.health -= blob2!.blobDamage*blob!.electricalResist
+                print("Hit blob1")
+            }
+            
         } // if Electric Wave hits a blob
         
         if (firstBody.categoryBitMask & PHYSICSTYPES.BLOB != 0) && (secondBody.categoryBitMask & PHYSICSTYPES.VIRUS != 0)
@@ -966,12 +986,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
             else if gameState==GAMESTATES.BREED
             {
-                gameState=GAMESTATES.FIGHT
-                blob!.speed=0
-                blob2!.speed=0
-                cam.run(SKAction.scale(to: 2.0, duration: 0.5))
-                blob!.lastSpecialAttack1=NSDate()
-                blob2!.lastSpecialAttack1=NSDate()
+ 
+                startBattle()
             }
         case 4:
             if showHUD
@@ -1131,6 +1147,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             {
                 saveFrame.isHidden=true
             }
+            
+        case 41:        // ; - set blob special attacks - testing
+            blob!.replaceGene(at: 52, with: "BRG")
+            blob2!.replaceGene(at: 52, with: "RRY")
+            blob!.resetSprite()
+            blob2!.resetSprite()
+            drawDNAStrand()
             
         case 43:
             scrollLeftPressed=true
@@ -1578,6 +1601,19 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         
     } // func checkBlobHealth
+    
+    func startBattle()
+    {
+        gameState=GAMESTATES.FIGHT
+        blob!.speed=0
+        blob2!.speed=0
+        cam.run(SKAction.scale(to: 2.0, duration: 0.5))
+        blob!.lastSpecialAttack1=NSDate()
+        blob2!.lastSpecialAttack1=NSDate()  
+        blob!.enemy=blob2!
+        blob2!.enemy=blob!
+        
+    } // func startBattle
     
     func endBattle()
     {
