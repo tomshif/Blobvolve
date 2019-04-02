@@ -1150,7 +1150,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
         case 41:        // ; - set blob special attacks - testing
             blob!.replaceGene(at: 52, with: "BRG")
-            blob2!.replaceGene(at: 52, with: "RRY")
+            blob2!.replaceGene(at: 52, with: "RYY")
             blob!.resetSprite()
             blob2!.resetSprite()
             drawDNAStrand()
@@ -1592,9 +1592,19 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     func checkBlobHealth()
     {
-        if (blob!.health <= 0) || (blob2!.health <= 0)
+        if (blob!.health <= 0)
         {
             gameState=GAMESTATES.BREED
+            showHUD=true
+            cam.position = .zero
+            selected=1
+            endBattle()
+        }
+        
+        if blob2!.health <= 0
+        {
+            gameState=GAMESTATES.BREED
+            selected=0
             showHUD=true
             cam.position = .zero
             endBattle()
