@@ -119,6 +119,7 @@ class BlobClass
     var electricalResist:CGFloat=0
     var sonicResist:CGFloat=0
     var special1Cool:Double=0
+    var lastCloudDamage=NSDate()
     
     
     var GeneStrings=["Size", "RGB-R", "RGB-G", "RGB-B", "PlsSpd", "Alpha", "Sp1Ang", "Sp1Dst", "Sp1Alpha", "Sp1RGB", "Sp1Size", "Sp1Rot", "Spec1Typ", "Spec2Typ", "Sp1Shp", "CrcShp", "CrcRGB", "CrcAlpha", "CrcAct", "Sprite", "Spec1RGB", "OuterShp", "OuterRGB", "OutAct", "MoveSpd", "Spk1Typ", "Spk1Ang", "Spk1Rot", "Out2Prsnt", "Out2Shp", "Out2RGB", "Out2Act", "Health", "Spk1RGB", "Damage", "Color2%", "Color2RGB", "Color2Act", "OutClr2%", "OutClr2RGB", "OutColor3%", "OutColor3RGB", "SpriteRot", "Out1GapOn","Out1GapDist", "Out2GapOn","Out2GapDist", "Jitter", "ProcSeed1", "ProcSeed2", "ProcSeed3", "LightFall", "SpAttack-1", "PoisonResist", "PrimAtkType", "PhysResist", "ElecResist", "SonicResist", "Spec1Cool"]

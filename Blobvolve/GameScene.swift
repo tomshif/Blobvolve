@@ -119,7 +119,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     let BREEDCOST:Int=5
     let BREEDCOSTBASE:Int=200
     var MOVEBOUNDARY:CGFloat=0
-    
+    let CLOUDINTERVAL:Double=1
     
     var selected:Int=0
     
@@ -467,9 +467,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         {
             let blob1Dam=blob!.getStandardDamage(against: blob2!)
             let blob2Dam=blob2!.getStandardDamage(against: blob!)
-            blob!.health -= blob2Dam
+            blob!.health -= blob1Dam
             damageLabel(blobNum: 0, Amount: blob1Dam)
-            blob2!.health -= blob1Dam
+            blob2!.health -= blob2Dam
             damageLabel(blobNum: 1, Amount: blob2Dam)
             
             print("Blob 1 damage: \(blob1Dam)")
@@ -619,6 +619,37 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
     } // func didBegin -- physics contact
     
+    func checkCloudDamage()
+    {
+        for node in blob!.sprite.physicsBody!.allContactedBodies()
+        {
+            if node.categoryBitMask==PHYSICSTYPES.POISONCLOUD
+            {
+                if node.node!.name!.contains("1") && -blob!.lastCloudDamage.timeIntervalSinceNow > CLOUDINTERVAL
+                {
+                    let damage=(blob2!.blobDamage*blob!.poisonResist)/2
+                    damageLabel(blobNum: 0, Amount: damage)
+                    blob!.health -= damage
+                    blob!.lastCloudDamage=NSDate()
+                } // if
+            } // if it's a poison cloud
+        } // for each node
+        
+        for node in blob2!.sprite.physicsBody!.allContactedBodies()
+        {
+            if node.categoryBitMask==PHYSICSTYPES.POISONCLOUD
+            {
+                if node.node!.name!.contains("0") && -blob2!.lastCloudDamage.timeIntervalSinceNow > CLOUDINTERVAL
+                {
+                    let damage=(blob!.blobDamage*blob2!.poisonResist)/2
+                    damageLabel(blobNum: 1, Amount: damage)
+                    blob2!.health -= damage
+                    blob2!.lastCloudDamage=NSDate()
+                } // if
+            } // if it's a poison cloud
+        } // for each node
+    } // func checkCloudDamage()
+    
     func damageLabel(blobNum: Int, Amount: CGFloat)
     {
         if blobNum==0
@@ -641,7 +672,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         {
             let blob2Damage=SKLabelNode(text: "Blob2Damage")
             
-            blob2Damage.fontColor=NSColor.red
+            blob2Damage.fontColor=NSColor.systemBlue
             blob2Damage.fontName="Arial-BoldMT"
             blob2Damage.fontSize=64
             blob2Damage.alpha=0
@@ -1220,8 +1251,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
             
         case 41:        // ; - set blob special attacks - testing
-            blob!.replaceGene(at: 52, with: "RYY")
-            blob2!.replaceGene(at: 52, with: "BRG")
+            blob!.replaceGene(at: 52, with: "YRY")
+            blob2!.replaceGene(at: 52, with: "RRR")
             blob!.resetSprite()
             blob2!.resetSprite()
             drawDNAStrand()
@@ -1717,6 +1748,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         
     }
+    
+    
     override func update(_ currentTime: TimeInterval) {
         // Called before each frame is rendered
         checkKeys()
@@ -1749,6 +1782,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             baby!.sprite.isHidden=true
             blob!.update()
             blob2!.update()
+            checkCloudDamage()
             baby!.sprite.position=CGPoint(x: -5000, y: -5000)
             checkBlobHealth()
             blob1Name.isHidden=true
