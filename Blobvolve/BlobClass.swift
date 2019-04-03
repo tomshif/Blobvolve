@@ -25,6 +25,10 @@ class BlobClass
     let GENECOUNT:Int=59
     let GENESIZE:Int=3
     
+    var blobID:Int=0
+    
+    
+    
     var coreStats=[Int]()
     
     var sprite=SKSpriteNode()
@@ -228,10 +232,12 @@ class BlobClass
     
     struct SpecialAttacks
     {
-        public static let ELECTRICWAVE:Int=3
-        public static let SONICWAVE:Int=15
-        public static let VIRUSLAUNCH:Int=48
-        public static let LIGHTNINGBOLT:Int=33
+        public static let ELECTRICWAVE:Int=3        // RRY
+        public static let SONICWAVE:Int=15          // RYY
+        public static let LIGHTNINGBOLT:Int=33      // BRG
+        public static let VIRUSLAUNCH:Int=48        // YRR
+        public static let POISONCLOUD:Int=51        // YRY
+
         
     } // struct SpecialAttacks
     
@@ -2724,6 +2730,35 @@ class BlobClass
             
         } // if special is electric wave
   
+        if specialAttack1 == SpecialAttacks.POISONCLOUD
+        {
+            if -lastSpecialAttack1.timeIntervalSinceNow > special1Cool
+            {
+                let cloud=SKSpriteNode(imageNamed: "cloud01")
+                //wave.position=self.sprite.position
+                cloud.setScale(sprite.xScale*2.5)
+                cloud.name="ElectricWave"
+                cloud.physicsBody=SKPhysicsBody(circleOfRadius: cloud.size.height*0.35)
+                cloud.physicsBody!.categoryBitMask=PHYSICSTYPES.POISONCLOUD
+                cloud.physicsBody!.collisionBitMask=PHYSICSTYPES.NOTHING
+                cloud.physicsBody!.contactTestBitMask=PHYSICSTYPES.BLOB
+                cloud.position=sprite.position
+                cloud.colorBlendFactor=1.0
+                cloud.color=NSColor.green
+                cloud.name="poisonCloud\(blobID)"
+                scene!.addChild(cloud)
+                cloud.run(SKAction.repeatForever(SKAction.rotate(byAngle: CGFloat.pi*16, duration: 1.5)))
+                cloud.run(SKAction.repeatForever(SKAction.sequence([SKAction.fadeAlpha(to: 0.5, duration: 0.5),SKAction.fadeAlpha(to: 1.0, duration: 0.5)])))
+                cloud.run(SKAction.sequence([SKAction.wait(forDuration: 6.0),SKAction.fadeOut(withDuration: 0.5), SKAction.removeFromParent()]))
+
+                //cloud.run(waveAction)
+                lastSpecialAttack1=NSDate()
+                
+            } // if wave is on cooldown
+            
+        } // if special is electric wave
+        
+        
         if specialAttack1 == SpecialAttacks.LIGHTNINGBOLT         
         {
             if -lastSpecialAttack1.timeIntervalSinceNow > special1Cool

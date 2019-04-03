@@ -18,16 +18,15 @@ func ^^ (radix: Int, power: Int) -> Int {
 
 struct PHYSICSTYPES
 {
-    static let NOTHING:         UInt32=0b00000001
-    static let BLOB:            UInt32=0b00000010
-    static let WALL:            UInt32=0b00000100
-    static let ELECTRICWAVE:    UInt32=0b00001000
-    static let SONICWAVE:       UInt32=0b00010000
-    static let VIRUS:           UInt32=0b00100000
-    static let LIGHTNING:       UInt32=0b01000000
-    
-    
-    
+    static let NOTHING:         UInt32=0b0000000000000001
+    static let BLOB:            UInt32=0b0000000000000010
+    static let WALL:            UInt32=0b0000000000000100
+    static let ELECTRICWAVE:    UInt32=0b0000000000001000
+    static let SONICWAVE:       UInt32=0b0000000000010000
+    static let VIRUS:           UInt32=0b0000000000100000
+    static let LIGHTNING:       UInt32=0b0000000001000000
+    static let POISONCLOUD:     UInt32=0b0000000010000000
+
     static let EVERYTHING: UInt32=UInt32.max
 } // PHYSICSTYPES
 
@@ -152,6 +151,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         blob=BlobClass(theScene: self)
         blob2=BlobClass(theScene: self)
         baby=BlobClass(theScene: self)
+        
+        blob!.blobID=0
+        blob2!.blobID=1
         
         strandOffset = -size.width*0.4
 
@@ -294,8 +296,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         addChild(blob!.sprite)
         addChild(blob2!.sprite)
         addChild(baby!.sprite)
-        blob!.sprite.name="blob00"
-        blob2!.sprite.name="blob01"
+        blob!.sprite.name="blob0"
+        blob2!.sprite.name="blob1"
         
         blob!.sprite.position.x = -size.width*0.35
         blob2!.sprite.position.x = size.width*0.35
@@ -437,11 +439,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             print("Angle to center: \(angle)")
             let dx=cos(angle)*500
             let dy=sin(angle)*500
-            if (firstBody.node!.name! == "blob01")
+            if (firstBody.node!.name! == "blob0")
             {
                 blob!.speed=0
             }
-            else if firstBody.node!.name!=="blob02"
+            else if firstBody.node!.name!=="blob1"
             {
                 blob2!.speed=0
             }
@@ -481,13 +483,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         {
             let parent=secondBody.node!.parent
             
-            if parent!.name=="blob00" && firstBody.node!.name=="blob01"
+            if parent!.name=="blob0" && firstBody.node!.name=="blob1"
             {
                 
                 blob2!.health -= blob!.blobDamage*blob2!.electricalResist
                 print("Hit blob2")
             }
-            else if parent!.name=="blob01" && firstBody.node!.name=="blob00"
+            else if parent!.name=="blob1" && firstBody.node!.name=="blob0"
             {
                 blob!.health -= blob2!.blobDamage*blob!.electricalResist
                 print("Hit blob1")
@@ -499,13 +501,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         {
             let parent=secondBody.node!.parent
             
-            if parent!.name=="blob00" && firstBody.node!.name=="blob01"
+            if parent!.name=="blob0" && firstBody.node!.name=="blob1"
             {
                 
                 blob2!.health -= blob!.blobDamage*blob2!.electricalResist
                 print("Hit blob2")
             }
-            else if parent!.name=="blob01" && firstBody.node!.name=="blob00"
+            else if parent!.name=="blob1" && firstBody.node!.name=="blob0"
             {
                 blob!.health -= blob2!.blobDamage*blob!.electricalResist
                 print("Hit blob1")
@@ -517,7 +519,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         {
             let parent=secondBody.node!.parent
             
-            if firstBody.node!.name=="blob01"
+            if firstBody.node!.name=="blob1"
             {
                 let posx=contact.contactPoint.x-blob2!.sprite.position.x
                 let posy=contact.contactPoint.y-blob2!.sprite.position.y
@@ -531,7 +533,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 //blob2!.health -= blob!.blobDamage*blob2!.electricalResist
                 print("Virus Hit blob2")
             }
-            else if firstBody.node!.name=="blob00"
+            else if firstBody.node!.name=="blob0"
             {
                 let posx=contact.contactPoint.x-blob!.sprite.position.x
                 let posy=contact.contactPoint.y-blob!.sprite.position.y
@@ -553,7 +555,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         {
             let parent=secondBody.node!.parent
             
-            if parent!.name=="blob00" && firstBody.node!.name=="blob01"
+            if parent!.name=="blob0" && firstBody.node!.name=="blob1"
             {
                 
                 blob2!.health -= blob!.blobDamage*blob2!.sonicResist
@@ -566,7 +568,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 blob2!.speed=0
                 blob2!.sprite.physicsBody!.applyImpulse(CGVector(dx: vecx, dy: vecy))
             }
-            else if parent!.name=="blob01" && firstBody.node!.name=="blob00"
+            else if parent!.name=="blob1" && firstBody.node!.name=="blob0"
             {
                 blob!.health -= blob2!.blobDamage*blob!.sonicResist
                 print("Sonic wave resist: \(blob!.sonicResist)")
@@ -578,10 +580,24 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 blob!.speed=0
                 blob!.sprite.physicsBody!.applyImpulse(CGVector(dx: vecx, dy: vecy))
             } // if parent
-            
-            
-            
+        
         } // if sonic wave hits a blob
+        
+        if (firstBody.categoryBitMask & PHYSICSTYPES.BLOB != 0) && (secondBody.categoryBitMask & PHYSICSTYPES.POISONCLOUD != 0)
+        {
+            if secondBody.node!.name!.contains("1") && firstBody.node!.name!.contains("0")
+            {
+                print("Blob 0 hit poison cloud")
+                blob!.health -= blob2!.blobDamage*blob!.poisonResist
+            }
+            else if secondBody.node!.name!.contains("0") && firstBody.node!.name!.contains("1")
+            {
+                print("Blob 2 hit poison cloud")
+                blob2!.health -= blob!.blobDamage*blob2!.poisonResist
+            }
+            
+            
+        } // if blob hits poison cloud
         
     } // func didBegin -- physics contact
     
@@ -1149,8 +1165,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
             
         case 41:        // ; - set blob special attacks - testing
-            blob!.replaceGene(at: 52, with: "BRG")
-            blob2!.replaceGene(at: 52, with: "RYY")
+            blob!.replaceGene(at: 52, with: "YRY")
+            blob2!.replaceGene(at: 52, with: "BRG")
             blob!.resetSprite()
             blob2!.resetSprite()
             drawDNAStrand()
