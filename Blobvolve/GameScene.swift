@@ -94,13 +94,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var blob1Name=SKLabelNode(text: "")
     var blob2Name=SKLabelNode(text: "")
     var babyName=SKLabelNode(text: "")
+
+    
     
     let clutterPath = Bundle.main.path(
         forResource: "screenClutter", ofType: "sks")
     
     let clutterNode=SKEmitterNode(fileNamed: "screenClutter")
     
-
+    let damageLabelAction=SKAction.sequence([SKAction.fadeIn(withDuration: 0.1), SKAction.wait(forDuration: 2.0), SKAction.fadeOut(withDuration: 0.3)])
     
     var lastMoneyGain=NSDate()
     
@@ -170,7 +172,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         frame1.name="frame"
         cam.addChild(frame1)
         
-        
+
         
         // init saves arrays
         for _ in 0..<9
@@ -466,7 +468,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             let blob1Dam=blob!.getStandardDamage(against: blob2!)
             let blob2Dam=blob2!.getStandardDamage(against: blob!)
             blob!.health -= blob2Dam
+            damageLabel(blobNum: 0, Amount: blob1Dam)
             blob2!.health -= blob1Dam
+            damageLabel(blobNum: 1, Amount: blob2Dam)
+            
             print("Blob 1 damage: \(blob1Dam)")
             print("Blob 2 damage: \(blob2Dam)")
             let sparks=SKEmitterNode(fileNamed: "wallSparks")
@@ -485,13 +490,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
             if parent!.name=="blob0" && firstBody.node!.name=="blob1"
             {
-                
-                blob2!.health -= blob!.blobDamage*blob2!.electricalResist
+                let damage = blob!.blobDamage*blob2!.electricalResist
+                blob2!.health -= damage
+                damageLabel(blobNum: 1, Amount: damage)
                 print("Hit blob2")
             }
             else if parent!.name=="blob1" && firstBody.node!.name=="blob0"
             {
-                blob!.health -= blob2!.blobDamage*blob!.electricalResist
+                let damage=blob2!.blobDamage*blob!.electricalResist
+                blob!.health -= damage
+                damageLabel(blobNum: 0, Amount: damage)
                 print("Hit blob1")
             }
 
@@ -503,13 +511,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
             if parent!.name=="blob0" && firstBody.node!.name=="blob1"
             {
-                
-                blob2!.health -= blob!.blobDamage*blob2!.electricalResist
+                let damage=blob!.blobDamage*blob2!.electricalResist
+                blob2!.health -= damage
+                damageLabel(blobNum: 1, Amount: damage)
                 print("Hit blob2")
             }
             else if parent!.name=="blob1" && firstBody.node!.name=="blob0"
             {
-                blob!.health -= blob2!.blobDamage*blob!.electricalResist
+                let damage = blob2!.blobDamage*blob!.electricalResist
+                blob!.health -= damage
+                damageLabel(blobNum: 0, Amount: damage)
                 print("Hit blob1")
             }
             
@@ -557,8 +568,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
             if parent!.name=="blob0" && firstBody.node!.name=="blob1"
             {
-                
-                blob2!.health -= blob!.blobDamage*blob2!.sonicResist
+                let damage=blob!.blobDamage*blob2!.sonicResist
+                blob2!.health -= damage
+                damageLabel(blobNum: 1, Amount: damage)
                 print("Sonic wave resist: \(blob2!.sonicResist)")
                 let dx=blob2!.sprite.position.x-contact.contactPoint.x
                 let dy=blob2!.sprite.position.y-contact.contactPoint.y
@@ -570,7 +582,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
             else if parent!.name=="blob1" && firstBody.node!.name=="blob0"
             {
-                blob!.health -= blob2!.blobDamage*blob!.sonicResist
+                let damage=blob2!.blobDamage*blob!.sonicResist
+                blob!.health -= damage
+                damageLabel(blobNum: 0, Amount: damage)
                 print("Sonic wave resist: \(blob!.sonicResist)")
                 let dx=blob!.sprite.position.x-contact.contactPoint.x
                 let dy=blob!.sprite.position.y-contact.contactPoint.y
@@ -588,12 +602,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             if secondBody.node!.name!.contains("1") && firstBody.node!.name!.contains("0")
             {
                 print("Blob 0 hit poison cloud")
-                blob!.health -= blob2!.blobDamage*blob!.poisonResist
+                let damage = blob2!.blobDamage*blob!.poisonResist
+                blob!.health -= damage
+                damageLabel(blobNum: 0, Amount: damage)
             }
             else if secondBody.node!.name!.contains("0") && firstBody.node!.name!.contains("1")
             {
                 print("Blob 2 hit poison cloud")
-                blob2!.health -= blob!.blobDamage*blob2!.poisonResist
+                let damage=blob!.blobDamage*blob2!.poisonResist
+                blob2!.health -= damage
+                damageLabel(blobNum: 1, Amount: damage)
             }
             
             
@@ -601,10 +619,47 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
     } // func didBegin -- physics contact
     
+    func damageLabel(blobNum: Int, Amount: CGFloat)
+    {
+        if blobNum==0
+        {
+            let blob1Damage=SKLabelNode(text: "Blob1Damage")
+            blob1Damage.fontColor=NSColor.red
+            blob1Damage.fontName="Arial-BoldMT"
+            blob1Damage.fontSize=64
+            blob1Damage.alpha=0
+            blob1Damage.zPosition=blob!.sprite.zPosition+10
+            addChild(blob1Damage)
+
+            blob1Damage.text=String(format:"-%2.0f",Amount)
+            blob1Damage.position.x=blob!.sprite.position.x
+            blob1Damage.position.y=blob!.sprite.position.y + 160
+            blob1Damage.run(SKAction.moveBy(x: random(min: -60, max: 60), y: random(min: 160, max: 200), duration: 2.0))
+            blob1Damage.run(damageLabelAction)
+        } // if blob 0
+        if blobNum==1
+        {
+            let blob2Damage=SKLabelNode(text: "Blob2Damage")
+            
+            blob2Damage.fontColor=NSColor.red
+            blob2Damage.fontName="Arial-BoldMT"
+            blob2Damage.fontSize=64
+            blob2Damage.alpha=0
+            blob2Damage.zPosition=blob2!.sprite.zPosition+10
+            addChild(blob2Damage)
+            blob2Damage.text=String(format:"-%2.0f",Amount)
+            blob2Damage.position.x=blob2!.sprite.position.x
+            blob2Damage.position.y=blob2!.sprite.position.y + 160
+            blob2Damage.run(SKAction.moveBy(x: random(min: -60, max: 60), y: random(min: 160, max: 200), duration: 2.0))
+            blob2Damage.run(damageLabelAction)
+        } // if blob 1
+        
+    } // func damageLabel()
+    
     func genNewArena()
     {
         
-        let arenaColor=NSColor(calibratedRed: random(min: 0.5, max: 1.0), green: random(min: 0.5, max: 1.0), blue: random(min: 0.5, max: 1.0), alpha: 1.0)
+        let arenaColor=NSColor(calibratedRed: random(min: 0.25, max: 1.0), green: random(min: 0.25, max: 1.0), blue: random(min: 0.25, max: 1.0), alpha: 1.0)
         
         clutterNode!.particleColor=arenaColor
         arenaBorder.color=arenaColor
@@ -615,7 +670,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let floorNum=Int(random(min: 1, max: 9.99999999))
         arenaFloor.texture=SKTexture(imageNamed: "octofloor0\(floorNum)")
   
-    }
+    } // func genNewArena
     
     /*
     func tripToDec(trip: String) -> Int
@@ -879,11 +934,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 baby!.sprite.isHidden=true
                 
             } // if node is DNA
-            if thisNode.name!.contains("blob00")
+            if thisNode.name!.contains("blob0")
             {
                 selected=0
             }
-            else if thisNode.name!.contains("blob01")
+            else if thisNode.name!.contains("blob1")
             {
                 selected=1
             }
@@ -1165,7 +1220,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
             
         case 41:        // ; - set blob special attacks - testing
-            blob!.replaceGene(at: 52, with: "YRY")
+            blob!.replaceGene(at: 52, with: "RYY")
             blob2!.replaceGene(at: 52, with: "BRG")
             blob!.resetSprite()
             blob2!.resetSprite()
