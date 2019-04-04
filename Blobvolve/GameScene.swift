@@ -76,6 +76,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     var myLight=SKLightNode()
     
+    var UIscoutingReportBG=SKSpriteNode(imageNamed: "UIscoutingReportBG")
+    var UISRBlob0Name=SKLabelNode(text: "Blob1Name")
+    var UISRBlob1Name=SKLabelNode(text: "Blob1Name")
+    
+    
     var saves=[String]()
     var savesPreview=[SKTexture]()
     var save01=SKSpriteNode(imageNamed: "blob00")
@@ -95,6 +100,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var blob2Name=SKLabelNode(text: "")
     var babyName=SKLabelNode(text: "")
 
+    var battleName1=SKLabelNode(text: "")
+    var battleName2=SKLabelNode(text: "")
+    
     
     
     let clutterPath = Bundle.main.path(
@@ -150,6 +158,25 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         //myLight.run(SKAction.repeatForever(lightAction))
         
         
+        
+        // setup UI pieces
+        
+        cam.addChild(UIscoutingReportBG)
+        UIscoutingReportBG.zPosition=100
+        
+        UISRBlob0Name.position.x = -size.width*0.25
+        UISRBlob1Name.position.x = size.width*0.25
+        UISRBlob0Name.position.y = size.height*0.28
+        UISRBlob1Name.position.y = size.height*0.28
+        UISRBlob0Name.fontColor=NSColor.cyan
+        UISRBlob1Name.fontColor=NSColor.cyan
+        UISRBlob0Name.zPosition=101
+        UISRBlob1Name.zPosition=101
+        
+        UIscoutingReportBG.addChild(UISRBlob0Name)
+        UIscoutingReportBG.addChild(UISRBlob1Name)
+        UIscoutingReportBG.isHidden=true
+        
         blob=BlobClass(theScene: self)
         blob2=BlobClass(theScene: self)
         baby=BlobClass(theScene: self)
@@ -159,7 +186,26 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         strandOffset = -size.width*0.4
 
-
+        battleName1.position.x = -size.width*0.38
+        battleName1.position.y = size.height*0.4
+        battleName1.fontColor=NSColor.red
+        battleName1.fontName="Arial-BoldMT"
+        battleName1.fontSize=22
+        battleName1.text="Blob1Name"
+        battleName1.name="battleUI-Blob0"
+        battleName1.alpha=CGFloat.leastNonzeroMagnitude
+        cam.addChild(battleName1)
+        
+        battleName2.position.x = size.width*0.38
+        battleName2.position.y = size.height*0.4
+        battleName2.fontColor=NSColor.blue
+        battleName2.fontName="Arial-BoldMT"
+        battleName2.fontSize=22
+        battleName2.text="Blob2Name"
+        battleName2.name="battleUI-Blob1"
+        battleName2.alpha=CGFloat.leastNonzeroMagnitude
+        cam.addChild(battleName2)
+        
 
         clutterNode!.name="clutterNode"
         clutterNode!.targetNode=scene
@@ -310,11 +356,140 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         drawDNAStrand()
         
         blob!.age=1.0
-        
+        redrawScoutScreen()
         drawArenaEdge()
     } // didMove()
     
+    func redrawScoutScreen()
+    {
+        // remove stars
+        for node in UIscoutingReportBG.children
+        {
+            if node.name != nil
+            {
+                if node.name!.contains("star")
+                {
+                    node.removeFromParent()
+                }
+            } // if not nil
+        } // for each node
+        
+        UISRBlob0Name.text=blob!.generateName()
+        UISRBlob1Name.text=blob2!.generateName()
+        
 
+        
+        // Speed
+        let speedRatio1=CGFloat(blob!.tripToDec(trip: blob!.getGene(num: 24)))/63
+        let speedStars1=Int(5*speedRatio1)-1
+        let speedRatio2=CGFloat(blob2!.tripToDec(trip: blob2!.getGene(num: 24)))/63
+        let speedStars2=Int(5*speedRatio2)-1
+        
+        if speedStars1 > -1
+        {
+            for i in 0...speedStars1
+            {
+                let star=SKSpriteNode(imageNamed: "UIstar")
+                star.setScale(0.5)
+                star.position.y=size.height*0.125
+                star.position.x = (-CGFloat(i)*(star.size.width*1.5))-size.width*0.2
+                star.zPosition=101
+                star.name="UISRstar"
+                UIscoutingReportBG.addChild(star)
+            } // for speed
+        }
+        if speedStars2 > -1
+        {
+            for i in 0...speedStars2
+            {
+                let star2=SKSpriteNode(imageNamed: "UIstar")
+                star2.setScale(0.5)
+                star2.position.y=size.height*0.125
+                star2.position.x = (CGFloat(i)*(star2.size.width*1.5))+size.width*0.2
+                star2.zPosition=101
+                star2.name="UISRstar"
+                UIscoutingReportBG.addChild(star2)
+            } // for speedh
+        }
+        // Damage
+        let damRatio1=CGFloat(blob!.tripToDec(trip: blob!.getGene(num: 34))) / 63
+        let damStars1=Int(5*damRatio1)-1
+        let damRatio2=CGFloat(blob2!.tripToDec(trip: blob2!.getGene(num: 34))) / 63
+        let damStars2=Int(5*damRatio2)-1
+        
+        print("Damage: \(blob!.tripToDec(trip: blob!.getGene(num: 34)))")
+        print("Stars: \(damStars1)")
+        print("Damage Ratio: \(damRatio1)")
+        
+        if damStars1 > -1
+        {
+            for i in 0...damStars1
+            {
+                let star=SKSpriteNode(imageNamed: "UIstar")
+                star.setScale(0.5)
+                star.position.y=size.height*0.06
+                star.position.x = (-CGFloat(i)*(star.size.width*1.5))-size.width*0.2
+                star.zPosition=101
+                star.name="UISRstar"
+                UIscoutingReportBG.addChild(star)
+                print("*")
+            } // for damage1
+        } // if we have stars
+        if damStars2 > -1
+        {
+            for i in 0...damStars2
+            {
+                let star2=SKSpriteNode(imageNamed: "UIstar")
+                star2.setScale(0.5)
+                star2.position.y=size.height*0.06
+                star2.position.x = (CGFloat(i)*(star2.size.width*1.5))+size.width*0.2
+                star2.zPosition=101
+                star2.name="UISRstar"
+                UIscoutingReportBG.addChild(star2)
+            } // for damage2
+        } // if we have stars
+        
+        // health
+        let healthRatio1=CGFloat(blob!.tripToDec(trip: blob!.getGene(num: 32))) / 63
+        let healthStars1=Int(5*healthRatio1)-1
+        let healthRatio2=CGFloat(blob2!.tripToDec(trip: blob2!.getGene(num: 32))) / 63
+        let healthStars2=Int(5*healthRatio2)-1
+        
+
+        
+        if healthStars1 > -1
+        {
+            for i in 0...healthStars1
+            {
+                let star=SKSpriteNode(imageNamed: "UIstar")
+                star.setScale(0.5)
+                star.position.y = -size.height*0.015
+                star.position.x = (-CGFloat(i)*(star.size.width*1.5))-size.width*0.2
+                star.zPosition=101
+                star.name="UISRstar"
+                UIscoutingReportBG.addChild(star)
+                print("*")
+            } // for damage1
+        } // if we have stars
+        if healthStars2 > -1
+        {
+            for i in 0...healthStars2
+            {
+                let star2=SKSpriteNode(imageNamed: "UIstar")
+                star2.setScale(0.5)
+                star2.position.y = -size.height*0.015
+                star2.position.x = (CGFloat(i)*(star2.size.width*1.5))+size.width*0.2
+                star2.zPosition=101
+                star2.name="UISRstar"
+                UIscoutingReportBG.addChild(star2)
+            } // for damage2
+        } // if we have stars
+        
+        
+    } // func drawScoutScreen
+    
+    
+    
     func toDNA(code: String) -> String
     {
         var coded:String=""
@@ -465,12 +640,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
         if (firstBody.node!.name!.contains("blob")) && (secondBody.node!.name!.contains("blob"))
         {
-            let blob1Dam=blob!.getStandardDamage(against: blob2!)
-            let blob2Dam=blob2!.getStandardDamage(against: blob!)
-            blob!.health -= blob1Dam
-            damageLabel(blobNum: 0, Amount: blob1Dam)
-            blob2!.health -= blob2Dam
-            damageLabel(blobNum: 1, Amount: blob2Dam)
+            let blob1Dam=(blob!.getStandardDamage(against: blob2!)/2)+(blob!.getVelocity()/400*blob!.getStandardDamage(against: blob2!))
+            let blob2Dam=(blob2!.getStandardDamage(against: blob!)/2) + (blob2!.getVelocity()/400*blob2!.getStandardDamage(against: blob!))
+            blob!.health -= blob2Dam
+            damageLabel(blobNum: 0, Amount: blob2Dam, Resist: blob2!.getEnemyResist(against: blob2!))
+            blob2!.health -= blob1Dam
+            damageLabel(blobNum: 1, Amount: blob1Dam, Resist: blob!.getEnemyResist(against: blob!))
             
             print("Blob 1 damage: \(blob1Dam)")
             print("Blob 2 damage: \(blob2Dam)")
@@ -482,6 +657,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             sparks!.particleColor=NSColor.red
             sparks!.run(sparkAction)
             sparks!.position=contact.contactPoint
+            
+            let dx1=contact.contactPoint.x - firstBody.node!.position.x
+            let dy1=contact.contactPoint.y - firstBody.node!.position.y
+            let ang1=atan2(dy1, dx1)
+            
+            
+            let dx2=contact.contactPoint.x - secondBody.node!.position.x
+            let dy2=contact.contactPoint.y - secondBody.node!.position.y
+            let ang2=atan2(dy2, dx2)
+            
+            firstBody.applyImpulse(CGVector(dx: -dx1*1, dy: -dy1*1))
+            secondBody.applyImpulse(CGVector(dx: -dx2*1, dy: -dy2*1))
         } // if contact with another blob
         
          if (firstBody.categoryBitMask & PHYSICSTYPES.BLOB != 0) && (secondBody.categoryBitMask & PHYSICSTYPES.LIGHTNING != 0)
@@ -492,14 +679,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             {
                 let damage = blob!.blobDamage*blob2!.electricalResist
                 blob2!.health -= damage
-                damageLabel(blobNum: 1, Amount: damage)
+                damageLabel(blobNum: 1, Amount: damage, Resist: blob2!.electricalResist)
                 print("Hit blob2")
             }
             else if parent!.name=="blob1" && firstBody.node!.name=="blob0"
             {
                 let damage=blob2!.blobDamage*blob!.electricalResist
                 blob!.health -= damage
-                damageLabel(blobNum: 0, Amount: damage)
+                damageLabel(blobNum: 0, Amount: damage, Resist: blob!.electricalResist)
                 print("Hit blob1")
             }
 
@@ -513,14 +700,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             {
                 let damage=blob!.blobDamage*blob2!.electricalResist
                 blob2!.health -= damage
-                damageLabel(blobNum: 1, Amount: damage)
+                damageLabel(blobNum: 1, Amount: damage, Resist: blob2!.electricalResist)
                 print("Hit blob2")
             }
             else if parent!.name=="blob1" && firstBody.node!.name=="blob0"
             {
                 let damage = blob2!.blobDamage*blob!.electricalResist
                 blob!.health -= damage
-                damageLabel(blobNum: 0, Amount: damage)
+                damageLabel(blobNum: 0, Amount: damage, Resist: blob!.electricalResist)
                 print("Hit blob1")
             }
             
@@ -570,7 +757,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             {
                 let damage=blob!.blobDamage*blob2!.sonicResist
                 blob2!.health -= damage
-                damageLabel(blobNum: 1, Amount: damage)
+                damageLabel(blobNum: 1, Amount: damage, Resist:blob2!.sonicResist)
                 print("Sonic wave resist: \(blob2!.sonicResist)")
                 let dx=blob2!.sprite.position.x-contact.contactPoint.x
                 let dy=blob2!.sprite.position.y-contact.contactPoint.y
@@ -584,7 +771,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             {
                 let damage=blob2!.blobDamage*blob!.sonicResist
                 blob!.health -= damage
-                damageLabel(blobNum: 0, Amount: damage)
+                damageLabel(blobNum: 0, Amount: damage, Resist: blob!.sonicResist)
                 print("Sonic wave resist: \(blob!.sonicResist)")
                 let dx=blob!.sprite.position.x-contact.contactPoint.x
                 let dy=blob!.sprite.position.y-contact.contactPoint.y
@@ -610,7 +797,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 if node.node!.name!.contains("1") && -blob!.lastCloudDamage.timeIntervalSinceNow > CLOUDINTERVAL
                 {
                     let damage=(blob2!.blobDamage*blob!.poisonResist)/2
-                    damageLabel(blobNum: 0, Amount: damage)
+                    damageLabel(blobNum: 0, Amount: damage, Resist: blob2!.poisonResist)
                     blob!.health -= damage
                     blob!.lastCloudDamage=NSDate()
                 } // if
@@ -624,7 +811,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 if node.node!.name!.contains("0") && -blob2!.lastCloudDamage.timeIntervalSinceNow > CLOUDINTERVAL
                 {
                     let damage=(blob!.blobDamage*blob2!.poisonResist)/2
-                    damageLabel(blobNum: 1, Amount: damage)
+                    damageLabel(blobNum: 1, Amount: damage, Resist: blob2!.poisonResist)
                     blob2!.health -= damage
                     blob2!.lastCloudDamage=NSDate()
                 } // if
@@ -632,7 +819,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         } // for each node
     } // func checkCloudDamage()
     
-    func damageLabel(blobNum: Int, Amount: CGFloat)
+    func damageLabel(blobNum: Int, Amount: CGFloat, Resist: CGFloat)
     {
         if blobNum==0
         {
@@ -645,7 +832,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             blob1Damage.zPosition=blob!.sprite.zPosition+10
             addChild(blob1Damage)
 
-            blob1Damage.text=String(format:"-%2.0f",Amount)
+            blob1Damage.text=String(format:"-%2.0f (%2.0f%% Resist)",Amount, (Resist*100))
+            print("Blob 1 Resist: \(Resist*100)")
             blob1Damage.position.x=blob!.sprite.position.x
             blob1Damage.position.y=blob!.sprite.position.y + 160
             blob1Damage.run(SKAction.moveBy(x: random(min: -60, max: 60), y: random(min: 250, max: 300), duration: 2.0))
@@ -662,7 +850,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             blob2Damage.zPosition=blob2!.sprite.zPosition+10
             blob2Damage.name="BlobDamage"
             addChild(blob2Damage)
-            blob2Damage.text=String(format:"-%2.0f",Amount)
+            blob2Damage.text=String(format:"-%2.0f (%2.0f%% Resist)",Amount, (Resist*100))
+            print("Blob 2 Resist: \(Resist*100)")
             blob2Damage.position.x=blob2!.sprite.position.x
             blob2Damage.position.y=blob2!.sprite.position.y + 160
             blob2Damage.run(SKAction.moveBy(x: random(min: -60, max: 60), y: random(min: 250, max: 300), duration: 2.0))
@@ -724,6 +913,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     */
     func drawDNAStrand()
     {
+        redrawScoutScreen()
         //remove existing DNA Strand
         for node in frame2.children
         {
@@ -926,7 +1116,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
         for thisNode in self.nodes(at: pos)
         {
-            if thisNode.name!.contains("DNA")
+            if thisNode.name != nil
+            {
+             if thisNode.name!.contains("DNA")
             {
                 let theName=thisNode.name!
                 var start=theName.index(theName.startIndex, offsetBy: 3)
@@ -1010,6 +1202,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     } // if blob 2
                 } // if click on save #2
             }
+            } // if the name isn't nil
         } // for each node
     } // touchDown
     
@@ -1115,7 +1308,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             {
                 zoomOutPressed=true
             }
-        case 29:
+            
+        case 28:        // 8 - toggle scouting report
+            if UIscoutingReportBG.isHidden
+            {
+                redrawScoutScreen()
+                UIscoutingReportBG.isHidden=false
+            }
+            else
+            {
+                UIscoutingReportBG.isHidden=true
+            }
+        case 29:        // 0 - toggle gene names
             if showGeneName
             {
                 showGeneName = false
@@ -1235,7 +1439,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
             
         case 41:        // ; - set blob special attacks - testing
-            blob!.replaceGene(at: 52, with: "YRY")
+            blob!.replaceGene(at: 52, with: "RYY")
             blob2!.replaceGene(at: 52, with: "BRG")
             blob!.resetSprite()
             blob2!.resetSprite()
@@ -1309,6 +1513,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 blob2!.resetSprite()
                 print("Blob 1 name: \(blob!.generateName())")
                 print("Blob 2 name: \(blob2!.generateName())")
+                redrawScoutScreen()
             }
             else
             {
@@ -1450,7 +1655,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if zoomOutPressed
         {
             let zoom=cam.xScale
-            if zoom < 2.0
+            if zoom < 2.5
             {
                 cam.setScale(zoom+0.01)
             }
@@ -1700,6 +1905,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     func startBattle()
     {
+        UIscoutingReportBG.isHidden=true
         gameState=GAMESTATES.FIGHT
         blob!.speed=0
         blob2!.speed=0
@@ -1708,6 +1914,20 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         blob2!.lastSpecialAttack1=NSDate()  
         blob!.enemy=blob2!
         blob2!.enemy=blob!
+        battleName1.text=blob!.generateName()
+        battleName2.text=blob2!.generateName()
+        for node in cam.children
+        {
+            if node.name != nil
+            {
+                if node.name!.contains("battleUI")
+                {
+                    print("Found node \(node.name)")
+                    node.alpha=1
+                    
+                }
+            }
+        } // for each node
         
     } // func startBattle
     
@@ -1715,19 +1935,37 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     {
         blob!.health = blob!.blobHealth
         blob2!.health=blob2!.blobHealth
+
+        for node in cam.children
+        {
+            if node.name != nil
+            {
+                if node.name!.contains("battleUI")
+                {
+                    node.alpha=CGFloat.leastNonzeroMagnitude
+                }
+            }
+        } // for each node
         
         for node in blob!.sprite.children
         {
-            if node.name!.contains("Virus")
+            if node.name != nil
             {
-                node.removeFromParent()
+                if node.name!.contains("Spec")
+                {
+                    node.removeFromParent()
+                }
+                
             }
         }
         for node in blob2!.sprite.children
         {
-            if node.name!.contains("Virus")
+            if node.name != nil
             {
-                node.removeFromParent()
+                if node.name!.contains("Spec")
+                {
+                    node.removeFromParent()
+                }
             }
         }
         
@@ -1748,6 +1986,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         } // for - remove special nodes
     } // func endBattle()
     
+    func updateCam()
+    {
+        
+        let midx=(blob!.sprite.position.x + blob2!.sprite.position.x)/2
+        let midy=(blob!.sprite.position.y + blob2!.sprite.position.y)/2
+        cam.position=CGPoint(x: midx, y: midy)
+    }
     
     override func update(_ currentTime: TimeInterval) {
         // Called before each frame is rendered
@@ -1778,6 +2023,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         case GAMESTATES.FIGHT:
             showHUD=false
             updateUI()
+            updateCam()
             baby!.sprite.isHidden=true
             blob!.update()
             blob2!.update()

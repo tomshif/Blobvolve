@@ -211,8 +211,8 @@ class BlobClass
     
     // Core stat constants
     let NUMCORESTATS:Int=3
-    let MOVESPEEDBASE:CGFloat=15
-    let MOVESPEEDLEVEL:CGFloat=0.75
+    let MOVESPEEDBASE:CGFloat=75
+    let MOVESPEEDLEVEL:CGFloat=3.75
     let HEALTHBASE:CGFloat=100
     let HEALTHLEVEL:CGFloat=7.5
     let DAMAGEBASE:CGFloat=12.5
@@ -2572,6 +2572,11 @@ class BlobClass
         
     }
     
+    func getVelocity()->CGFloat
+    {
+        return hypot(sprite.physicsBody!.velocity.dy, sprite.physicsBody!.velocity.dx)
+    
+    }
     
     func wander()
     {
@@ -2594,23 +2599,30 @@ class BlobClass
         
         // decide what to do with speed
         let chance=random(min: 0, max: 1)
-        if chance > 0.75
+        if chance > 0.92 && getVelocity() < moveSpeed
         {
-            speed += 0.1
+            //speed += 0.1
+            let dx=cos(sprite.zRotation)*80
+            let dy=sin(sprite.zRotation)*80
+            sprite.physicsBody!.applyImpulse(CGVector(dx: dx, dy: dy))
+            print("Speed \(getVelocity())")
+            print("Max: \(moveSpeed)")
         }
-        else if chance > 0.5
+        /*
+        else if chance > 0.65 && getVelocity() > 0
         {
             speed -= 0.1
         }
+        
         if speed > moveSpeed
         {
             speed=moveSpeed
         }
-        if speed > 0
+        if speed < 0
         {
-            moveSpeed=0
+            speed=0
         }
-        
+        */
         
     } // func wander
     
@@ -2664,16 +2676,16 @@ class BlobClass
         switch primaryDamageType
         {
         case DamageType.Poison:
-            damage=blobDamage*against.poisonResist
+            damage=self.blobDamage*against.poisonResist
             
         case DamageType.Physical:
-            damage=blobDamage*against.physicalResist
+            damage=self.blobDamage*against.physicalResist
             
         case DamageType.Electrical:
-            damage=blobDamage*against.electricalResist
+            damage=self.blobDamage*against.electricalResist
             
         case DamageType.Sonic:
-            damage=blobDamage*against.sonicResist
+            damage=self.blobDamage*against.sonicResist
             
         default:
             damage=blobDamage
@@ -2684,6 +2696,31 @@ class BlobClass
         
     } // func getStandardDamage
     
+    func getEnemyResist(against: BlobClass) -> CGFloat
+    {
+        var resist:CGFloat=0
+        switch primaryDamageType
+        {
+        case DamageType.Poison:
+            resist=against.poisonResist
+            
+        case DamageType.Physical:
+            resist=against.physicalResist
+            
+        case DamageType.Electrical:
+            resist=against.electricalResist
+            
+        case DamageType.Sonic:
+            resist=against.sonicResist
+            
+        default:
+            resist = -1
+            print("Error - Invalid damage type")
+        } // switch
+        
+        return resist
+        
+    }
     func checkSpecialAttacks()
     {
         
@@ -2738,7 +2775,6 @@ class BlobClass
                 let cloud=SKSpriteNode(imageNamed: "cloud01")
                 //wave.position=self.sprite.position
                 cloud.setScale(sprite.xScale*2.5)
-                cloud.name="ElectricWave"
                 cloud.physicsBody=SKPhysicsBody(circleOfRadius: cloud.size.height*0.35)
                 cloud.physicsBody!.categoryBitMask=PHYSICSTYPES.POISONCLOUD
                 cloud.physicsBody!.collisionBitMask=PHYSICSTYPES.NOTHING
