@@ -2694,7 +2694,7 @@ class BlobClass
                 let wave=SKSpriteNode(imageNamed: "electricWave")
                 //wave.position=self.sprite.position
                 wave.setScale(sprite.xScale*1.5)
-                wave.name="ElectricWave"
+                wave.name="SpecElectricWave"
                 wave.physicsBody=SKPhysicsBody(circleOfRadius: wave.size.height*0.35)
                 wave.physicsBody!.categoryBitMask=PHYSICSTYPES.ELECTRICWAVE
                 wave.physicsBody!.collisionBitMask=PHYSICSTYPES.NOTHING
@@ -2716,7 +2716,7 @@ class BlobClass
                 let wave=SKSpriteNode(imageNamed: "sonicWave01")
                 //wave.position=self.sprite.position
                 wave.setScale(sprite.xScale*1.5)
-                wave.name="sonicWave"
+                wave.name="SpecsonicWave"
                 wave.physicsBody=SKPhysicsBody(circleOfRadius: wave.size.height*0.35)
                 wave.physicsBody!.categoryBitMask=PHYSICSTYPES.SONICWAVE
                 wave.physicsBody!.collisionBitMask=PHYSICSTYPES.NOTHING
@@ -2746,7 +2746,7 @@ class BlobClass
                 cloud.position=sprite.position
                 cloud.colorBlendFactor=1.0
                 cloud.color=NSColor.green
-                cloud.name="poisonCloud\(blobID)"
+                cloud.name="SpecpoisonCloud\(blobID)"
                 scene!.addChild(cloud)
                 cloud.run(SKAction.repeatForever(SKAction.rotate(byAngle: CGFloat.pi*16, duration: 1.5)))
                 cloud.run(SKAction.repeatForever(SKAction.sequence([SKAction.fadeAlpha(to: 0.5, duration: 0.5),SKAction.fadeAlpha(to: 1.0, duration: 0.5)])))
@@ -2784,7 +2784,7 @@ class BlobClass
                 bolt.zRotation=angle
                 bolt.position=CGPoint(x: posx, y: posy)
                 
-                bolt.name="LightningBolt"
+                bolt.name="SpecLightningBolt"
                 bolt.physicsBody=SKPhysicsBody(rectangleOf: bolt.size)
                 bolt.physicsBody!.categoryBitMask=PHYSICSTYPES.LIGHTNING
                 bolt.physicsBody!.collisionBitMask=PHYSICSTYPES.NOTHING
@@ -2818,7 +2818,7 @@ class BlobClass
                     let virus=SKSpriteNode(imageNamed: "virus01")
                     //wave.position=self.sprite.position
                     virus.setScale(sprite.xScale*1.5)
-                    virus.name="virus"
+                    virus.name="Specvirus"
                     virus.physicsBody=SKPhysicsBody(circleOfRadius: virus.size.height*0.35)
                     virus.physicsBody!.categoryBitMask=PHYSICSTYPES.VIRUS
                     virus.physicsBody!.collisionBitMask=PHYSICSTYPES.NOTHING
