@@ -886,8 +886,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             let dy2=contact.contactPoint.y - secondBody.node!.position.y
 
             
-            firstBody.applyImpulse(CGVector(dx: -dx1*1, dy: -dy1*1))
-            secondBody.applyImpulse(CGVector(dx: -dx2*1, dy: -dy2*1))
+            firstBody.applyImpulse(CGVector(dx: -dx1*2, dy: -dy1*2))
+            secondBody.applyImpulse(CGVector(dx: -dx2*2, dy: -dy2*2))
         } // if contact with another blob
         
          if (firstBody.categoryBitMask & PHYSICSTYPES.BLOB != 0) && (secondBody.categoryBitMask & PHYSICSTYPES.LIGHTNING != 0)
@@ -2211,6 +2211,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let midx=(blob!.sprite.position.x + blob2!.sprite.position.x)/2
         let midy=(blob!.sprite.position.y + blob2!.sprite.position.y)/2
         cam.position=CGPoint(x: midx, y: midy)
+        
+        let dx=blob!.sprite.position.x - blob2!.sprite.position.x
+        let dy=blob!.sprite.position.y - blob2!.sprite.position.y
+        let dist=hypot(dy, dx)
+        let distRatio=dist/900
+        cam.setScale(distRatio+1.5)
     }
     
     override func update(_ currentTime: TimeInterval) {
