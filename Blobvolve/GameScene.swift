@@ -371,13 +371,43 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 {
                     node.removeFromParent()
                 }
+                if node.name!.contains("level")
+                {
+                    node.removeFromParent()
+                }
+                if node.name!.contains("Icon")
+                {
+                    node.removeFromParent()
+                }
             } // if not nil
         } // for each node
+        
         
         UISRBlob0Name.text=blob!.generateName()
         UISRBlob1Name.text=blob2!.generateName()
         
+        let level1=SKLabelNode(text: "\(blob!.computeLevel())")
+        let level2=SKLabelNode(text: "\(blob2!.computeLevel())")
 
+        
+        
+        level1.position.x = -size.width*0.25
+        level1.position.y = size.height*0.215
+        level1.fontColor=NSColor.cyan
+        level1.fontName="Arial-BoldMT"
+        level1.fontSize=30
+        level1.zPosition=110
+        level1.name="UIlevelName0"
+        UIscoutingReportBG.addChild(level1)
+        
+        level2.position.x = size.width*0.25
+        level2.position.y = size.height*0.215
+        level2.fontColor=NSColor.cyan
+        level2.fontName="Arial-BoldMT"
+        level2.fontSize=30
+        level2.zPosition=110
+        level2.name="UIlevelName1"
+        UIscoutingReportBG.addChild(level2)
         
         // Speed
         let speedRatio1=CGFloat(blob!.tripToDec(trip: blob!.getGene(num: 24)))/63
@@ -485,6 +515,197 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             } // for damage2
         } // if we have stars
         
+        
+        // Attacks
+        
+        
+        // Defenses
+        
+        // Sonic
+        let sonicIcon=SKSpriteNode(imageNamed: "sonicIcon")
+        sonicIcon.position.x = -size.width*0.2
+        sonicIcon.position.y = -size.height*0.2
+        sonicIcon.zPosition=101
+        sonicIcon.setScale(0.5)
+        sonicIcon.colorBlendFactor=1.0
+        sonicIcon.name="UISRsonicIcon"
+        UIscoutingReportBG.addChild(sonicIcon)
+        let sonic1=blob!.sonicResist
+        if sonic1 > 0.66
+        {
+            sonicIcon.color=NSColor.red
+        }
+        else if sonic1 > 0.33
+        {
+            sonicIcon.color=NSColor.yellow
+        }
+        else
+        {
+            sonicIcon.color=NSColor.green
+        }
+        
+        let sonicIcon2=SKSpriteNode(imageNamed: "sonicIcon")
+        sonicIcon2.position.x = size.width*0.2
+        sonicIcon2.position.y = -size.height*0.2
+        sonicIcon2.zPosition=101
+        sonicIcon2.setScale(0.5)
+        sonicIcon2.colorBlendFactor=1.0
+        sonicIcon2.name="UISRsonicIcon"
+        UIscoutingReportBG.addChild(sonicIcon2)
+        let sonic2=blob2!.sonicResist
+        if sonic2 > 0.66
+        {
+            sonicIcon2.color=NSColor.red
+        }
+        else if sonic2 > 0.33
+        {
+            sonicIcon2.color=NSColor.yellow
+        }
+        else
+        {
+            sonicIcon2.color=NSColor.green
+        }
+        
+        // Physical
+        let physicalIcon=SKSpriteNode(imageNamed: "physicalIcon")
+        physicalIcon.setScale(0.5)
+        physicalIcon.position.x = -size.width*0.2 - physicalIcon.size.width
+        physicalIcon.position.y = -size.height*0.2
+        physicalIcon.zPosition=101
+        
+        physicalIcon.colorBlendFactor=1.0
+        physicalIcon.name="UISRphysicalIcon"
+        UIscoutingReportBG.addChild(physicalIcon)
+        let phys1=blob!.physicalResist
+        if phys1 > 0.66
+        {
+            physicalIcon.color=NSColor.red
+        }
+        else if phys1 > 0.33
+        {
+            physicalIcon.color=NSColor.yellow
+        }
+        else
+        {
+            physicalIcon.color=NSColor.green
+        }
+        
+        let physicalIcon2=SKSpriteNode(imageNamed: "physicalIcon")
+        physicalIcon2.setScale(0.5)
+        physicalIcon2.position.x = size.width*0.2 + physicalIcon2.size.width
+        physicalIcon2.position.y = -size.height*0.2
+        physicalIcon2.zPosition=101
+
+        physicalIcon2.colorBlendFactor=1.0
+        physicalIcon2.name="UISRphysicalIcon2"
+        UIscoutingReportBG.addChild(physicalIcon2)
+        let phys2=blob2!.physicalResist
+        if phys2 > 0.66
+        {
+            physicalIcon2.color=NSColor.red
+        }
+        else if phys2 > 0.33
+        {
+            physicalIcon2.color=NSColor.yellow
+        }
+        else
+        {
+            physicalIcon2.color=NSColor.green
+        }
+        
+        // Electrical
+        let electricalIcon=SKSpriteNode(imageNamed: "electricalIcon")
+        electricalIcon.setScale(0.5)
+        electricalIcon.position.x = -size.width*0.2 - 2*electricalIcon.size.width
+        electricalIcon.position.y = -size.height*0.2
+        electricalIcon.zPosition=101
+        
+        electricalIcon.colorBlendFactor=1.0
+        electricalIcon.name="UISRelectricalIcon"
+        UIscoutingReportBG.addChild(electricalIcon)
+        let elec=blob!.electricalResist
+        if elec > 0.66
+        {
+            electricalIcon.color=NSColor.red
+        }
+        else if elec > 0.33
+        {
+            electricalIcon.color=NSColor.yellow
+        }
+        else
+        {
+            electricalIcon.color=NSColor.green
+        }
+        
+        let electricalIcon2=SKSpriteNode(imageNamed: "electricalIcon")
+        electricalIcon2.setScale(0.5)
+        electricalIcon2.position.x = size.width*0.2 + 2*electricalIcon2.size.width
+        electricalIcon2.position.y = -size.height*0.2
+        electricalIcon2.zPosition=101
+        
+        electricalIcon2.colorBlendFactor=1.0
+        electricalIcon2.name="UISRelectricalIcon2"
+        UIscoutingReportBG.addChild(electricalIcon2)
+        let elec2=blob2!.electricalResist
+        if elec2 > 0.66
+        {
+            electricalIcon2.color=NSColor.red
+        }
+        else if elec2 > 0.33
+        {
+            electricalIcon2.color=NSColor.yellow
+        }
+        else
+        {
+            electricalIcon2.color=NSColor.green
+        }
+        
+        // Poison
+        let poisonIcon=SKSpriteNode(imageNamed: "poisonIcon")
+        poisonIcon.setScale(0.5)
+        poisonIcon.position.x = -size.width*0.2 - 3*electricalIcon.size.width
+        poisonIcon.position.y = -size.height*0.2
+        poisonIcon.zPosition=101
+        
+        poisonIcon.colorBlendFactor=1.0
+        poisonIcon.name="UISRpoisonIcon"
+        UIscoutingReportBG.addChild(poisonIcon)
+        let poison=blob!.poisonResist
+        if poison > 0.66
+        {
+            poisonIcon.color=NSColor.red
+        }
+        else if poison > 0.33
+        {
+            poisonIcon.color=NSColor.yellow
+        }
+        else
+        {
+            poisonIcon.color=NSColor.green
+        }
+        
+        let poisonIcon2=SKSpriteNode(imageNamed: "poisonIcon")
+        poisonIcon2.setScale(0.5)
+        poisonIcon2.position.x = size.width*0.2 + 3*poisonIcon2.size.width
+        poisonIcon2.position.y = -size.height*0.2
+        poisonIcon2.zPosition=101
+        
+        poisonIcon2.colorBlendFactor=1.0
+        poisonIcon2.name="UISRpoisonIcon2"
+        UIscoutingReportBG.addChild(poisonIcon2)
+        let poison2=blob2!.poisonResist
+        if poison2 > 0.66
+        {
+            poisonIcon2.color=NSColor.red
+        }
+        else if poison2 > 0.33
+        {
+            poisonIcon2.color=NSColor.yellow
+        }
+        else
+        {
+            poisonIcon2.color=NSColor.green
+        }
         
     } // func drawScoutScreen
     
@@ -640,12 +861,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
         if (firstBody.node!.name!.contains("blob")) && (secondBody.node!.name!.contains("blob"))
         {
-            let blob1Dam=(blob!.getStandardDamage(against: blob2!)/2)+(blob!.getVelocity()/400*blob!.getStandardDamage(against: blob2!))
-            let blob2Dam=(blob2!.getStandardDamage(against: blob!)/2) + (blob2!.getVelocity()/400*blob2!.getStandardDamage(against: blob!))
+            let blob1Dam=(blob!.getStandardDamage(against: blob2!)/2)+(blob!.getVelocity()/300*blob!.getStandardDamage(against: blob2!))
+            let blob2Dam=(blob2!.getStandardDamage(against: blob!)/2) + (blob2!.getVelocity()/300*blob2!.getStandardDamage(against: blob!))
             blob!.health -= blob2Dam
-            damageLabel(blobNum: 0, Amount: blob2Dam, Resist: blob2!.getEnemyResist(against: blob2!))
+            damageLabel(blobNum: 0, Amount: blob2Dam, Resist: blob2!.getEnemyResist(against: blob!))
             blob2!.health -= blob1Dam
-            damageLabel(blobNum: 1, Amount: blob1Dam, Resist: blob!.getEnemyResist(against: blob!))
+            damageLabel(blobNum: 1, Amount: blob1Dam, Resist: blob!.getEnemyResist(against: blob2!))
             
             print("Blob 1 damage: \(blob1Dam)")
             print("Blob 2 damage: \(blob2Dam)")
@@ -660,12 +881,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
             let dx1=contact.contactPoint.x - firstBody.node!.position.x
             let dy1=contact.contactPoint.y - firstBody.node!.position.y
-            let ang1=atan2(dy1, dx1)
-            
-            
+
             let dx2=contact.contactPoint.x - secondBody.node!.position.x
             let dy2=contact.contactPoint.y - secondBody.node!.position.y
-            let ang2=atan2(dy2, dx2)
+
             
             firstBody.applyImpulse(CGVector(dx: -dx1*1, dy: -dy1*1))
             secondBody.applyImpulse(CGVector(dx: -dx2*1, dy: -dy2*1))
@@ -797,10 +1016,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 if node.node!.name!.contains("1") && -blob!.lastCloudDamage.timeIntervalSinceNow > CLOUDINTERVAL
                 {
                     let damage=(blob2!.blobDamage*blob!.poisonResist)/2
-                    damageLabel(blobNum: 0, Amount: damage, Resist: blob2!.poisonResist)
+                    damageLabel(blobNum: 0, Amount: damage, Resist: blob!.poisonResist)
                     blob!.health -= damage
                     blob!.lastCloudDamage=NSDate()
-                } // if
+                } // if dropped by blob 1
             } // if it's a poison cloud
         } // for each node
         
@@ -814,7 +1033,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     damageLabel(blobNum: 1, Amount: damage, Resist: blob2!.poisonResist)
                     blob2!.health -= damage
                     blob2!.lastCloudDamage=NSDate()
-                } // if
+                } // if dropped by blob 0
             } // if it's a poison cloud
         } // for each node
     } // func checkCloudDamage()
@@ -832,7 +1051,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             blob1Damage.zPosition=blob!.sprite.zPosition+10
             addChild(blob1Damage)
 
-            blob1Damage.text=String(format:"-%2.0f (%2.0f%% Resist)",Amount, (Resist*100))
+            blob1Damage.text=String(format:"-%2.0f (%2.0f%% Resist)",Amount, 100-(Resist*100))
             print("Blob 1 Resist: \(Resist*100)")
             blob1Damage.position.x=blob!.sprite.position.x
             blob1Damage.position.y=blob!.sprite.position.y + 160
@@ -850,7 +1069,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             blob2Damage.zPosition=blob2!.sprite.zPosition+10
             blob2Damage.name="BlobDamage"
             addChild(blob2Damage)
-            blob2Damage.text=String(format:"-%2.0f (%2.0f%% Resist)",Amount, (Resist*100))
+            blob2Damage.text=String(format:"-%2.0f (%2.0f%% Resist)",Amount, 100-(Resist*100))
             print("Blob 2 Resist: \(Resist*100)")
             blob2Damage.position.x=blob2!.sprite.position.x
             blob2Damage.position.y=blob2!.sprite.position.y + 160

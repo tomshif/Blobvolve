@@ -136,7 +136,7 @@ class BlobClass
     let SpecialNameStrings=["tuso", "pila", "craya", "vol", "rint", "cren", "quol", "sentin",
                            "olin", "hecta", "brin", "rine", "jant", "an", "lin", "crost",
                            "tine", "crax", "lus", "lux", "fino", "vert", "wax", "liso",
-                           "rix", "plus", "blo", "fiz", "fix", "yerx", "nit", "dil",
+                           "rix", "plus", "on", "fiz", "fix", "yerx", "nit", "dil",
                            "lino", "bine", "cone", "rian", "tom", "poda", "dum", "ate",
                            "ion", "list", "nido", "wuda", "fige", "cus", "drom", "cos",
                            "fera", "fer", "phora", "hida", "blox", "nima", "taso", "jin",
@@ -177,7 +177,7 @@ class BlobClass
     // Constants
 
     let UPDATEAGE:CGFloat=0.001
-    
+    let RESISTDIVISOR:CGFloat=63
     let BLOBPHYSICSSIZE:CGFloat=120
     
     let NUMBLOBTEXTURES:Int=40
@@ -211,8 +211,8 @@ class BlobClass
     
     // Core stat constants
     let NUMCORESTATS:Int=3
-    let MOVESPEEDBASE:CGFloat=75
-    let MOVESPEEDLEVEL:CGFloat=3.75
+    let MOVESPEEDBASE:CGFloat=100
+    let MOVESPEEDLEVEL:CGFloat=5.75
     let HEALTHBASE:CGFloat=100
     let HEALTHLEVEL:CGFloat=7.5
     let DAMAGEBASE:CGFloat=12.5
@@ -572,7 +572,7 @@ class BlobClass
         
         // Poison Resistance - gene 53
         let poisonResistDec=tripToDec(trip: getGene(num: 53))
-        poisonResist=CGFloat(poisonResistDec)/75
+        poisonResist=CGFloat(poisonResistDec)/RESISTDIVISOR
         
         // Primary Attack Damage Type - gene 54
         let primDamTypeDec=tripToDec(trip: getGene(num: 54))
@@ -580,15 +580,15 @@ class BlobClass
         
         // Physical Resistance - gene 55
         let physicalResistDec=tripToDec(trip: getGene(num: 55))
-        physicalResist=CGFloat(physicalResistDec)/75
+        physicalResist=CGFloat(physicalResistDec)/RESISTDIVISOR
         
         // Electrical Resistance - gene 56
         let elecResistDec=tripToDec(trip: getGene(num: 56))
-        electricalResist=CGFloat(elecResistDec)/75
+        electricalResist=CGFloat(elecResistDec)/RESISTDIVISOR
         
         // Sonic Resistance - gene 57
         let sonicResistDec=tripToDec(trip: getGene(num: 57))
-        sonicResist=CGFloat(sonicResistDec)/75
+        sonicResist=CGFloat(sonicResistDec)/RESISTDIVISOR
         
         // Special Attack 1 Cooldown - gene 58
         let spec1CoolDec=tripToDec(trip: getGene(num: 58))
@@ -1127,7 +1127,7 @@ class BlobClass
         
         // Poison Resistance - gene 53
         let poisonResistDec=tripToDec(trip: getGene(num: 53))
-        poisonResist=CGFloat(poisonResistDec)/75
+        poisonResist=CGFloat(poisonResistDec)/RESISTDIVISOR
         
         // Primary Attack Damage Type - gene 54
         let primDamTypeDec=tripToDec(trip: getGene(num: 54))
@@ -1135,15 +1135,15 @@ class BlobClass
         
         // Physical Resistance - gene 55
         let physicalResistDec=tripToDec(trip: getGene(num: 55))
-        physicalResist=CGFloat(physicalResistDec)/75
+        physicalResist=CGFloat(physicalResistDec)/RESISTDIVISOR
         
         // Electrical Resistance - gene 56
         let elecResistDec=tripToDec(trip: getGene(num: 56))
-        electricalResist=CGFloat(elecResistDec)/75
+        electricalResist=CGFloat(elecResistDec)/RESISTDIVISOR
         
         // Sonic Resistance - gene 57
         let sonicResistDec=tripToDec(trip: getGene(num: 57))
-        sonicResist=CGFloat(sonicResistDec)/75
+        sonicResist=CGFloat(sonicResistDec)/RESISTDIVISOR
         
         // Special Attack 1 Cooldown - gene 58
         let spec1CoolDec=tripToDec(trip: getGene(num: 58))
@@ -2185,7 +2185,7 @@ class BlobClass
         
         // Poison Resistance - gene 53
         let poisonResistDec=tripToDec(trip: getGene(num: 53))
-        poisonResist=CGFloat(poisonResistDec)/75
+        poisonResist=CGFloat(poisonResistDec)/RESISTDIVISOR
         
         // Primary Attack Damage Type - gene 54
         let primDamTypeDec=tripToDec(trip: getGene(num: 54))
@@ -2193,15 +2193,15 @@ class BlobClass
         
         // Physical Resistance - gene 55
         let physicalResistDec=tripToDec(trip: getGene(num: 55))
-        physicalResist=CGFloat(physicalResistDec)/75
+        physicalResist=CGFloat(physicalResistDec)/RESISTDIVISOR
         
         // Electrical Resistance - gene 56
         let elecResistDec=tripToDec(trip: getGene(num: 56))
-        electricalResist=CGFloat(elecResistDec)/75
+        electricalResist=CGFloat(elecResistDec)/RESISTDIVISOR
         
         // Sonic Resistance - gene 57
         let sonicResistDec=tripToDec(trip: getGene(num: 57))
-        sonicResist=CGFloat(sonicResistDec)/75
+        sonicResist=CGFloat(sonicResistDec)/RESISTDIVISOR
         
         // Special Attack 1 Cooldown - gene 58
         let spec1CoolDec=tripToDec(trip: getGene(num: 58))
