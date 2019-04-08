@@ -19,8 +19,12 @@ class BlobClass
     struct STATE
     {
         static let WANDER:Int = 0
+        static let PURSUE:Int = 2
+        static let FLEE:Int=4
+
         
-    }
+    } // struct STATE
+    
     //Genetic Constants
     let GENECOUNT:Int=59
     let GENESIZE:Int=3
@@ -45,6 +49,7 @@ class BlobClass
     var age:CGFloat=0.5
     var bornTime=NSDate()
     var growthTime:Double=0
+    var lastStateChange=NSDate()
     
     var currentState:Int=0
     var lastWanderTurn=NSDate()
@@ -204,17 +209,20 @@ class BlobClass
     let LIGHTMAX:CGFloat=0.75
     let LIGHTBASE:CGFloat=2.75
     
+    let TURNRATE:CGFloat=0.02
+    
     let SPECIALCOOLBASE:Double=2.0
     let SPECIALCOOLMIN:Double=2
     let SPECIALCOOLMAX:Double=6
     
+    let STATECHANGETIME:Double=5
     
     // Core stat constants
     let NUMCORESTATS:Int=3
     let MOVESPEEDBASE:CGFloat=100
     let MOVESPEEDLEVEL:CGFloat=5.75
     let HEALTHBASE:CGFloat=100
-    let HEALTHLEVEL:CGFloat=7.5
+    let HEALTHLEVEL:CGFloat=4.5
     let DAMAGEBASE:CGFloat=12.5
     let DAMAGELEVEL:CGFloat=2.5
     let OUTERMAXDIST:CGFloat=0.8
@@ -258,6 +266,7 @@ class BlobClass
         coreStats.append(24)
         coreStats.append(32)
         coreStats.append(34)
+        
         
         /*
         // fill spot texture array
@@ -2605,8 +2614,7 @@ class BlobClass
             let dx=cos(sprite.zRotation)*80
             let dy=sin(sprite.zRotation)*80
             sprite.physicsBody!.applyImpulse(CGVector(dx: dx, dy: dy))
-            print("Speed \(getVelocity())")
-            print("Max: \(moveSpeed)")
+
         }
         /*
         else if chance > 0.65 && getVelocity() > 0
@@ -2637,11 +2645,11 @@ class BlobClass
         {
             if sprite.zRotation-turnToAngle > 0 || sprite.zRotation-turnToAngle < -CGFloat.pi
             {
-                sprite.zRotation -= 0.01
+                sprite.zRotation -= TURNRATE
             }
             if sprite.zRotation-turnToAngle < 0 || sprite.zRotation-turnToAngle >= CGFloat.pi
             {
-                sprite.zRotation += 0.01
+                sprite.zRotation += TURNRATE
             }
             
         } // if we're turning
@@ -2878,6 +2886,26 @@ class BlobClass
         } // if special is electric wave
     } // func checkSpecialAttacks
     
+    func pursue()
+    {
+        // get angle to opponent
+        if enemy != nil
+        {
+            let dx=enemy!.sprite.position.x-sprite.position.x
+            let dy=enemy!.sprite.position.y-sprite.position.y
+            let ang=atan2(dy, dx)
+            turnToAngle=ang
+            isTurning=true
+            //print("Pursue Angle: \(ang)")
+            if getVelocity() < moveSpeed
+            {
+                let dx=cos(sprite.zRotation)*10
+                let dy=sin(sprite.zRotation)*10
+                sprite.physicsBody!.applyImpulse(CGVector(dx: dx, dy: dy))
+            } // if we're less than max speed
+            
+        } // if our enemy is not nil
+    } // func pursue
 
     public func update()
     {
@@ -2895,11 +2923,34 @@ class BlobClass
             //sprite.yScale=blobSize
         }
         
+        if -lastStateChange.timeIntervalSinceNow > STATECHANGETIME
+        {
+            let chance=Int(random(min: 1, max: 2.99999999))
+            switch chance
+            {
+            case 1:
+                currentState=STATE.WANDER
+                print("State: Wander")
+            case 2:
+                currentState=STATE.PURSUE
+                print("State: Pursue")
+            default:
+                print("Error changing state - Invalid State")
+            } // switch chance
+            lastStateChange=NSDate()
+        } // if it's time to change states
+        
         switch currentState
         {
         case STATE.WANDER:
             doTurn()
             wander()
+            updatePosition()
+            checkSpecialAttacks()
+            
+        case STATE.PURSUE:
+            doTurn()
+            pursue()
             updatePosition()
             checkSpecialAttacks()
         default:

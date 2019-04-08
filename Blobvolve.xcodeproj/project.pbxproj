@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		F470C931224F967E00FBB983 /* wallSparks.sks in Resources */ = {isa = PBXBuildFile; fileRef = F470C930224F967E00FBB983 /* wallSparks.sks */; };
+		F470C94B225A5FF500FBB983 /* GeneList.rtf in Resources */ = {isa = PBXBuildFile; fileRef = F470C94A225A5FF500FBB983 /* GeneList.rtf */; };
 		F4AB150A224BC221001F14A6 /* driftEffect.sks in Resources */ = {isa = PBXBuildFile; fileRef = F4AB1509224BC221001F14A6 /* driftEffect.sks */; };
 		F4D136742217639800CE24A3 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4D136732217639800CE24A3 /* AppDelegate.swift */; };
 		F4D136762217639800CE24A3 /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = F4D136752217639800CE24A3 /* GameScene.sks */; };
@@ -46,6 +47,7 @@
 
 /* Begin PBXFileReference section */
 		F470C930224F967E00FBB983 /* wallSparks.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = wallSparks.sks; sourceTree = "<group>"; };
+		F470C94A225A5FF500FBB983 /* GeneList.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = GeneList.rtf; sourceTree = "<group>"; };
 		F4AB1509224BC221001F14A6 /* driftEffect.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = driftEffect.sks; sourceTree = "<group>"; };
 		F4D136702217639800CE24A3 /* Blobvolve.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Blobvolve.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F4D136732217639800CE24A3 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -97,6 +99,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		F470C949225A5FB100FBB983 /* Notes */ = {
+			isa = PBXGroup;
+			children = (
+				F470C94A225A5FF500FBB983 /* GeneList.rtf */,
+			);
+			path = Notes;
+			sourceTree = "<group>";
+		};
 		F4D136672217639800CE24A3 = {
 			isa = PBXGroup;
 			children = (
@@ -120,6 +130,7 @@
 		F4D136722217639800CE24A3 /* Blobvolve */ = {
 			isa = PBXGroup;
 			children = (
+				F470C949225A5FB100FBB983 /* Notes */,
 				F4D136732217639800CE24A3 /* AppDelegate.swift */,
 				F4D136752217639800CE24A3 /* GameScene.sks */,
 				F4D136772217639800CE24A3 /* Actions.sks */,
@@ -269,6 +280,7 @@
 				F4D1367E221763A200CE24A3 /* Assets.xcassets in Resources */,
 				F4FD45B7221A1E5600E8D307 /* smokeEffect01.sks in Resources */,
 				F470C931224F967E00FBB983 /* wallSparks.sks in Resources */,
+				F470C94B225A5FF500FBB983 /* GeneList.rtf in Resources */,
 				F4FD45BB221B25C000E8D307 /* fireFlyEffect.sks in Resources */,
 				F4D136782217639800CE24A3 /* Actions.sks in Resources */,
 				F4FD45B9221B09B500E8D307 /* magicEffect.sks in Resources */,

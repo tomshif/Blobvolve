@@ -768,6 +768,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         arenaEdge.physicsBody!.categoryBitMask=PHYSICSTYPES.WALL
         arenaEdge.physicsBody!.contactTestBitMask=PHYSICSTYPES.BLOB
         arenaEdge.physicsBody!.isDynamic=false
+        arenaEdge.alpha=CGFloat.leastNonzeroMagnitude
         arenaEdge.name="wall"
         arenaBorder.addChild(arenaEdge)
         
@@ -777,6 +778,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         let right=arenaEdge.copy() as! SKShapeNode
         right.zRotation=CGFloat.pi/2
+        right.alpha=CGFloat.leastNonzeroMagnitude
         right.position.x = 760
         right.position.y = -320
         arenaBorder.addChild(right)
@@ -785,30 +787,35 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         left.zRotation=CGFloat.pi/2
         left.position.x = -740
         left.position.y = -320
+        left.alpha=CGFloat.leastNonzeroMagnitude
         arenaBorder.addChild(left)
         
         let topleft=arenaEdge.copy() as! SKShapeNode
         topleft.zRotation=CGFloat.pi/4
         topleft.position.x = -740
         topleft.position.y = 300
+        topleft.alpha=CGFloat.leastNonzeroMagnitude
         arenaBorder.addChild(topleft)
         
         let bottomright=arenaEdge.copy() as! SKShapeNode
         bottomright.zRotation = -3*CGFloat.pi/4
         bottomright.position.x = 740
         bottomright.position.y = -300
+        bottomright.alpha=CGFloat.leastNonzeroMagnitude
         arenaBorder.addChild(bottomright)
         
         let topright=arenaEdge.copy() as! SKShapeNode
         topright.zRotation = 3*CGFloat.pi/4
         topright.position.x = 760
         topright.position.y = 320
+        topright.alpha=CGFloat.leastNonzeroMagnitude
         arenaBorder.addChild(topright)
         
         let bottomleft=arenaEdge.copy() as! SKShapeNode
         bottomleft.zRotation = -CGFloat.pi/4
         bottomleft.position.x = -760
         bottomleft.position.y = -320
+        bottomleft.alpha=CGFloat.leastNonzeroMagnitude
         arenaBorder.addChild(bottomleft)
     } // func drawArenaEdge
     
@@ -861,15 +868,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
         if (firstBody.node!.name!.contains("blob")) && (secondBody.node!.name!.contains("blob"))
         {
-            let blob1Dam=(blob!.getStandardDamage(against: blob2!)/2)+(blob!.getVelocity()/300*blob!.getStandardDamage(against: blob2!))
-            let blob2Dam=(blob2!.getStandardDamage(against: blob!)/2) + (blob2!.getVelocity()/300*blob2!.getStandardDamage(against: blob!))
+            let blob1Dam=(blob!.getStandardDamage(against: blob2!)/3)+(blob!.getVelocity()/250*blob!.getStandardDamage(against: blob2!))
+            let blob2Dam=(blob2!.getStandardDamage(against: blob!)/3) + (blob2!.getVelocity()/250*blob2!.getStandardDamage(against: blob!))
             blob!.health -= blob2Dam
             damageLabel(blobNum: 0, Amount: blob2Dam, Resist: blob2!.getEnemyResist(against: blob!))
             blob2!.health -= blob1Dam
             damageLabel(blobNum: 1, Amount: blob1Dam, Resist: blob!.getEnemyResist(against: blob2!))
             
             print("Blob 1 damage: \(blob1Dam)")
+            print("Blob 1 speed: \(blob!.getVelocity())")
             print("Blob 2 damage: \(blob2Dam)")
+            print("Blob 2 speed: \(blob2!.getVelocity())")
             let sparks=SKEmitterNode(fileNamed: "wallSparks")
             let sparkAction=SKAction.sequence([SKAction.wait(forDuration: 0.5), SKAction.removeFromParent()])
             addChild(sparks!)
@@ -1581,6 +1590,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     
                 }
                 blob!.resetSprite()
+                redrawScoutScreen()
             } // if not saving
             else
             {
@@ -1607,6 +1617,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     blob2!.sprite.texture=createProcTexture()
                     
                 }
+                redrawScoutScreen()
             } // if not saving
             else
             {
