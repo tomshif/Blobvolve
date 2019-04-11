@@ -868,16 +868,22 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
         if (firstBody.node!.name!.contains("blob")) && (secondBody.node!.name!.contains("blob"))
         {
-            let blob1Dam=(blob!.getStandardDamage(against: blob2!)/3)+(blob!.getVelocity()/250*blob!.getStandardDamage(against: blob2!))
-            let blob2Dam=(blob2!.getStandardDamage(against: blob!)/3) + (blob2!.getVelocity()/250*blob2!.getStandardDamage(against: blob!))
+            let blob1BaseDam=(blob!.getStandardDamage(against: blob2!)/3)
+            let blob2BaseDam=(blob2!.getStandardDamage(against: blob!)/3)
+            
+            let blob1SpeedDamage=(blob!.getVelocity()/250*blob!.getStandardDamage(against: blob2!))
+            let blob2SpeedDamage=(blob2!.getVelocity()/250*blob2!.getStandardDamage(against: blob!))
+            
+            let blob1Dam=blob1BaseDam+blob1SpeedDamage
+            let blob2Dam=blob2BaseDam+blob2SpeedDamage
             blob!.health -= blob2Dam
             damageLabel(blobNum: 0, Amount: blob2Dam, Resist: blob2!.getEnemyResist(against: blob!))
             blob2!.health -= blob1Dam
             damageLabel(blobNum: 1, Amount: blob1Dam, Resist: blob!.getEnemyResist(against: blob2!))
             
-            print("Blob 1 damage: \(blob1Dam)")
+            print("Blob 1 damage: \(blob1BaseDam) + \(blob1SpeedDamage)")
             print("Blob 1 speed: \(blob!.getVelocity())")
-            print("Blob 2 damage: \(blob2Dam)")
+            print("Blob 2 damage: \(blob2BaseDam) + \(blob2SpeedDamage)")
             print("Blob 2 speed: \(blob2!.getVelocity())")
             let sparks=SKEmitterNode(fileNamed: "wallSparks")
             let sparkAction=SKAction.sequence([SKAction.wait(forDuration: 0.5), SKAction.removeFromParent()])
