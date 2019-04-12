@@ -82,6 +82,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     
     var saves=[String]()
+    var blobSave=[BlobClass]()
+    
+    
     var savesPreview=[SKTexture]()
     var save01=SKSpriteNode(imageNamed: "blob00")
     var save02=SKSpriteNode(imageNamed: "blob00")
@@ -358,6 +361,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         blob!.age=1.0
         redrawScoutScreen()
         drawArenaEdge()
+        
+        // Init blob save array
+        for i in 0..<10
+        {
+            var tempBlob=BlobClass(theScene: self)
+            blobSave.append(tempBlob)
+        }
     } // didMove()
     
     func redrawScoutScreen()
@@ -1390,15 +1400,28 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 {
                     if selected==0
                     {
-                        blob!.DNA=saves[0]
-                        blob!.resetSprite()
+                        //blob!.DNA=saves[0]
+                        blob!.sprite.removeFromParent()
+                        
+                        let tempBlob=BlobClass(theScene: self)
+                        tempBlob.DNA=blobSave[0].DNA
+                        tempBlob.resetSprite()
+                        tempBlob.sprite=blobSave[0].sprite
+                        blob=tempBlob
+                        addChild(blob!.sprite)
+                        
+                        
+                        blob!.sprite.position=CGPoint(x: -size.height*0.40, y: 0)
+                        
                         drawDNAStrand()
                     } // if blob 1
                     else if selected==1
                     {
+                        blob2!.sprite.removeFromParent()
                         blob2!.DNA=saves[0]
+                        addChild(blob2!.sprite)
                         blob2!.resetSprite()
-                        
+                        blob2!.sprite.position=CGPoint(x: size.height*0.40, y: 0)
                         drawDNAStrand()
                         
                     } // if blob 2
@@ -1600,8 +1623,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             } // if not saving
             else
             {
-                saves[0]=baby!.DNA
-                print(saves[0])
+                let tempBlob=BlobClass(theScene: self)
+                tempBlob.DNA=baby!.DNA
+                tempBlob.resetSprite()
+                tempBlob.sprite=baby!.sprite
+                blobSave[0]=tempBlob
+                print("blobSave[0].dna = \(blobSave[0].DNA)")
+                //saves[0]=baby!.DNA
+                
                 self.isPaused=true
                 let temp=self.view!.texture(from: baby!.sprite)
                 self.isPaused=false
