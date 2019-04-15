@@ -26,7 +26,7 @@ class BlobClass
     } // struct STATE
     
     //Genetic Constants
-    let GENECOUNT:Int=59
+    let GENECOUNT:Int=60
     let GENESIZE:Int=3
     
     var blobID:Int=0
@@ -58,6 +58,7 @@ class BlobClass
     var turnToAngle:CGFloat=0
     var speed:CGFloat=0
     var health:CGFloat=0
+    var lastTrailDrop=NSDate()
     
     var enemy:BlobClass?
     
@@ -125,9 +126,10 @@ class BlobClass
     var sonicResist:CGFloat=0
     var special1Cool:Double=0
     var lastCloudDamage=NSDate()
+    var trailType:Int=0
     
     
-    var GeneStrings=["Size", "RGB-R", "RGB-G", "RGB-B", "PlsSpd", "Alpha", "Sp1Ang", "Sp1Dst", "Sp1Alpha", "Sp1RGB", "Sp1Size", "Sp1Rot", "Spec1Typ", "Spec2Typ", "Sp1Shp", "CrcShp", "CrcRGB", "CrcAlpha", "CrcAct", "Sprite", "Spec1RGB", "OuterShp", "OuterRGB", "OutAct", "MoveSpd", "Spk1Typ", "Spk1Ang", "Spk1Rot", "Out2Prsnt", "Out2Shp", "Out2RGB", "Out2Act", "Health", "Spk1RGB", "Damage", "Color2%", "Color2RGB", "Color2Act", "OutClr2%", "OutClr2RGB", "OutColor3%", "OutColor3RGB", "SpriteRot", "Out1GapOn","Out1GapDist", "Out2GapOn","Out2GapDist", "Jitter", "ProcSeed1", "ProcSeed2", "ProcSeed3", "LightFall", "SpAttack-1", "PoisonResist", "PrimAtkType", "PhysResist", "ElecResist", "SonicResist", "Spec1Cool"]
+    var GeneStrings=["Size", "RGB-R", "RGB-G", "RGB-B", "PlsSpd", "Alpha", "Sp1Ang", "Sp1Dst", "Sp1Alpha", "Sp1RGB", "Sp1Size", "Sp1Rot", "Spec1Typ", "Spec2Typ", "Sp1Shp", "CrcShp", "CrcRGB", "CrcAlpha", "CrcAct", "Sprite", "Spec1RGB", "OuterShp", "OuterRGB", "OutAct", "MoveSpd", "Spk1Typ", "Spk1Ang", "Spk1Rot", "Out2Prsnt", "Out2Shp", "Out2RGB", "Out2Act", "Health", "Spk1RGB", "Damage", "Color2%", "Color2RGB", "Color2Act", "OutClr2%", "OutClr2RGB", "OutColor3%", "OutColor3RGB", "SpriteRot", "Out1GapOn","Out1GapDist", "Out2GapOn","Out2GapDist", "Jitter", "ProcSeed1", "ProcSeed2", "ProcSeed3", "LightFall", "SpAttack-1", "PoisonResist", "PrimAtkType", "PhysResist", "ElecResist", "SonicResist", "Spec1Cool", "TrailType"]
     
     let SpriteNameStrings=["An", "Po", "Ca", "Bac", "Al", "Ra", "Car", "Min",
                            "Mol", "He", "Hai", "Vil", "Yun", "Chlo", "Pri", "Cis",
@@ -214,6 +216,7 @@ class BlobClass
     let SPECIALCOOLBASE:Double=2.0
     let SPECIALCOOLMIN:Double=2
     let SPECIALCOOLMAX:Double=6
+    let TRAILDROP:Double=0.25
     
     let STATECHANGETIME:Double=5
     
@@ -605,6 +608,9 @@ class BlobClass
         let spec1CoolRange=(spec1CoolRatio*(SPECIALCOOLMAX-SPECIALCOOLMIN))+SPECIALCOOLMIN
         special1Cool=spec1CoolRange+SPECIALCOOLBASE
         print("Special 1 Cooldown: \(special1Cool)")
+        
+        // Trail Type - gene 59
+        trailType=tripToDec(trip: getGene(num: 59))
         
         
         //////////////////////////////////////////////
@@ -1160,6 +1166,10 @@ class BlobClass
         let spec1CoolRange=(spec1CoolRatio*(SPECIALCOOLMAX-SPECIALCOOLMIN))+SPECIALCOOLMIN
         special1Cool=spec1CoolRange+SPECIALCOOLBASE
         print("Special 1 Cooldown: \(special1Cool)")
+        
+        // Trail Type - gene 59
+        trailType=tripToDec(trip: getGene(num: 59))
+        
         
         //////////////////////////////////////////////
         // END OF GENE SEQUENCE //////////////////////
@@ -1903,6 +1913,7 @@ class BlobClass
     public func resetSprite()
     {
         
+        //sprite.removeAllChildren()
         sprite.setScale(1.0)
         speed=0
         
@@ -2218,6 +2229,10 @@ class BlobClass
         let spec1CoolRange=(spec1CoolRatio*(SPECIALCOOLMAX-SPECIALCOOLMIN))+SPECIALCOOLMIN
         special1Cool=spec1CoolRange+SPECIALCOOLBASE
         print("Special 1 Cooldown: \(special1Cool)")
+        
+        // Trail Type - gene 59
+        trailType=tripToDec(trip: getGene(num: 59))
+        
         
         /////////////////////////////////////////////
         // End of gene sequence
@@ -2907,6 +2922,40 @@ class BlobClass
         } // if our enemy is not nil
     } // func pursue
 
+    private func updateTrail()
+    {
+        if -lastTrailDrop.timeIntervalSinceNow > TRAILDROP
+        {
+            switch trailType
+            {
+            case 0: // Tiny versions of itself
+                let drop=sprite.copy() as! SKSpriteNode
+                drop.setScale(0.1)
+                drop.position=self.sprite.position
+                drop.zPosition=sprite.zPosition-0.3
+                let dropAction=SKAction.sequence([SKAction.fadeOut(withDuration: 2), SKAction.removeFromParent()])
+                drop.run(dropAction)
+                drop.physicsBody=nil
+                drop.name="drop"
+                drop.removeAllChildren()
+                scene!.addChild(drop)
+            default:
+                let drop=SKShapeNode(circleOfRadius: sprite.size.height/8)
+                drop.fillColor=NSColor.white
+                drop.alpha=0.4
+                drop.position=sprite.position
+                drop.zPosition=sprite.zPosition-0.2
+                scene!.addChild(drop)
+                let dropAction=SKAction.sequence([SKAction.fadeOut(withDuration: 2), SKAction.removeFromParent()])
+                drop.run(dropAction)
+            } // switch trailType
+            
+            
+            lastTrailDrop=NSDate()
+        } // if it's time to drop another trail
+        
+    } // func updateTrail
+    
     public func update()
     {
        
@@ -2945,12 +2994,14 @@ class BlobClass
         case STATE.WANDER:
             doTurn()
             wander()
+            updateTrail()
             updatePosition()
             checkSpecialAttacks()
             
         case STATE.PURSUE:
             doTurn()
             pursue()
+            updateTrail()
             updatePosition()
             checkSpecialAttacks()
         default:

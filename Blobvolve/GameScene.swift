@@ -1354,6 +1354,69 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }// if baby isn't hidden
     } // func drawDNAStrand
     
+    func saveInto(slot: Int)
+    {
+        
+        let tempBlob=BlobClass(theScene: self)
+        tempBlob.DNA=baby!.DNA
+        tempBlob.resetSprite()
+        tempBlob.sprite=baby!.sprite.copy() as! SKSpriteNode
+        blobSave[slot]=tempBlob
+        //print("blobSave[0].dna = \(blobSave[0].DNA)")
+        //saves[0]=baby!.DNA
+        
+        self.isPaused=true
+        let temp=self.view!.texture(from: baby!.sprite)
+        self.isPaused=false
+        savesPreview[slot]=temp!
+        switch slot
+        {
+        case 0:
+            save01.texture=savesPreview[slot]
+        case 1:
+            save02.texture=savesPreview[slot]
+        case 2:
+            save03.texture=savesPreview[slot]
+        default:
+            print("Invalid save slot.")
+        }
+        
+        
+    } // func saveInto
+    
+    func loadFrom(slot: Int)
+    {
+        print("Loading into slot \(selected)")
+        //blob!.DNA=saves[0]
+        
+        
+        let tempBlob=BlobClass(theScene: self)
+        tempBlob.DNA=blobSave[slot].DNA
+        tempBlob.resetSprite()
+        tempBlob.sprite=blobSave[slot].sprite.copy() as! SKSpriteNode
+        tempBlob.sprite.isHidden=false
+        tempBlob.sprite.name="blob\(selected)"
+        tempBlob.blobID=selected
+        if selected==0
+        {
+            blob!.sprite.removeFromParent()
+            blob=tempBlob
+            addChild(blob!.sprite)
+        }
+        else
+        {
+            blob2!.sprite.removeFromParent()
+            blob2=tempBlob
+            addChild(blob2!.sprite)
+        }
+        
+        
+        
+        blob!.sprite.position=CGPoint(x: -size.height*0.40, y: 0)
+        
+        drawDNAStrand()
+        
+    } //
 
     
     func touchDown(atPoint pos : CGPoint) {
@@ -1385,11 +1448,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 baby!.sprite.isHidden=true
                 
             } // if node is DNA
-            if thisNode.name!.contains("blob0")
+            
+            if thisNode.name!.contains("blob0") && saveFrame.isHidden
             {
                 selected=0
             }
-            else if thisNode.name!.contains("blob1")
+            else if thisNode.name!.contains("blob1") && saveFrame.isHidden
             {
                 selected=1
             }
@@ -1398,65 +1462,28 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             {
                 if thisNode.name!.contains("save01")
                 {
-                    if selected==0
-                    {
-                        //blob!.DNA=saves[0]
-                        blob!.sprite.removeFromParent()
-                        
-                        let tempBlob=BlobClass(theScene: self)
-                        tempBlob.DNA=blobSave[0].DNA
-                        tempBlob.resetSprite()
-                        tempBlob.sprite=blobSave[0].sprite
-                        blob=tempBlob
-                        addChild(blob!.sprite)
-                        
-                        
-                        blob!.sprite.position=CGPoint(x: -size.height*0.40, y: 0)
-                        
-                        drawDNAStrand()
-                    } // if blob 1
-                    else if selected==1
-                    {
-                        blob2!.sprite.removeFromParent()
-                        blob2!.DNA=saves[0]
-                        addChild(blob2!.sprite)
-                        blob2!.resetSprite()
-                        blob2!.sprite.position=CGPoint(x: size.height*0.40, y: 0)
-                        drawDNAStrand()
-                        
-                    } // if blob 2
+                    
+                    loadFrom(slot: 0)
+
+
+                    
+                    /*
+                    blob2!.sprite.removeFromParent()
+                    blob2!.DNA=saves[0]
+                    addChild(blob2!.sprite)
+                    blob2!.resetSprite()
+                    blob2!.sprite.position=CGPoint(x: size.height*0.40, y: 0)
+                    drawDNAStrand()
+                    */
+
                 } // if click on save #1
                 if thisNode.name!.contains("save02")
                 {
-                    if selected==0
-                    {
-                        blob!.DNA=saves[1]
-                        blob!.resetSprite()
-                        drawDNAStrand()
-                    } // if blob 1
-                    else if selected==1
-                    {
-                        blob2!.DNA=saves[1]
-                        blob2!.resetSprite()
-                        drawDNAStrand()
-                        
-                    } // if blob 2
+                    loadFrom(slot: 1)
                 } // if click on save #2
                 if thisNode.name!.contains("save03")
                 {
-                    if selected==0
-                    {
-                        blob!.DNA=saves[2]
-                        blob!.resetSprite()
-                        drawDNAStrand()
-                    } // if blob 1
-                    else if selected==1
-                    {
-                        blob2!.DNA=saves[2]
-                        blob2!.resetSprite()
-                        drawDNAStrand()
-                        
-                    } // if blob 2
+                    loadFrom(slot: 2)
                 } // if click on save #2
             }
             } // if the name isn't nil
@@ -1623,19 +1650,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             } // if not saving
             else
             {
-                let tempBlob=BlobClass(theScene: self)
-                tempBlob.DNA=baby!.DNA
-                tempBlob.resetSprite()
-                tempBlob.sprite=baby!.sprite
-                blobSave[0]=tempBlob
-                print("blobSave[0].dna = \(blobSave[0].DNA)")
-                //saves[0]=baby!.DNA
-                
-                self.isPaused=true
-                let temp=self.view!.texture(from: baby!.sprite)
-                self.isPaused=false
-                savesPreview[0]=temp!
-                save01.texture=savesPreview[0]
+                saveInto(slot: 0)
                 
             }
         case 19:
@@ -1656,24 +1671,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             } // if not saving
             else
             {
-                saves[1]=baby!.DNA
-                print(saves[1])
-                self.isPaused=true
-                let temp=self.view!.texture(from: baby!.sprite)
-                self.isPaused=false
-                savesPreview[1]=temp!
-                save02.texture=savesPreview[1]
+                saveInto(slot: 1)
             }
         case 20:
             if !saveFrame.isHidden
             {
-                saves[2]=baby!.DNA
-                print(saves[2])
-                self.isPaused=true
-                let temp=self.view!.texture(from: baby!.sprite)
-                self.isPaused=false
-                savesPreview[2]=temp!
-                save03.texture=savesPreview[2]
+                saveInto(slot: 2)
             }
             
 
