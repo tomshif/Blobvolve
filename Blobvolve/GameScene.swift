@@ -2249,6 +2249,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 {
                     node.removeFromParent()
                 }
+                else if node.name!.contains("drop")
+                {
+                    node.removeFromParent()
+                }
             } // if the node isn't nil
             
         } // for - remove special nodes

@@ -2928,7 +2928,7 @@ class BlobClass
         {
             switch trailType
             {
-            case 0: // Tiny versions of itself
+            case 0-4: // Tiny versions of itself
                 let drop=sprite.copy() as! SKSpriteNode
                 drop.setScale(0.1)
                 drop.position=self.sprite.position
@@ -2939,15 +2939,99 @@ class BlobClass
                 drop.name="drop"
                 drop.removeAllChildren()
                 scene!.addChild(drop)
-            default:
+                
+            case 15-17:
                 let drop=SKShapeNode(circleOfRadius: sprite.size.height/8)
-                drop.fillColor=NSColor.white
+                drop.fillColor=NSColor(calibratedRed: random(min: 0.2, max: 1.0), green: random(min: 0.2, max: 1.0), blue: random(min: 0.2, max: 1.0), alpha: 1.0)
                 drop.alpha=0.4
+                drop.name="drop"
                 drop.position=sprite.position
                 drop.zPosition=sprite.zPosition-0.2
                 scene!.addChild(drop)
                 let dropAction=SKAction.sequence([SKAction.fadeOut(withDuration: 2), SKAction.removeFromParent()])
                 drop.run(dropAction)
+                
+            case 20-22:
+                let drop=SKShapeNode(circleOfRadius: sprite.size.height/8)
+                drop.fillColor=NSColor(calibratedRed: spriteRed, green: spriteGreen, blue: spriteBlue, alpha: 1.0)
+                drop.alpha=0.4
+                drop.name="drop"
+                drop.position=sprite.position
+                drop.zPosition=sprite.zPosition-0.2
+                scene!.addChild(drop)
+                let dropAction=SKAction.sequence([SKAction.fadeOut(withDuration: 2), SKAction.removeFromParent()])
+                drop.run(dropAction)
+                
+            case 35-36:
+                let drop=SKShapeNode(circleOfRadius: sprite.size.height/12)
+                drop.fillColor=blobOuterRGB
+                drop.alpha=0.4
+                drop.name="drop"
+                drop.position=sprite.position
+                drop.zPosition=sprite.zPosition-0.2
+                scene!.addChild(drop)
+                let dropAction=SKAction.sequence([SKAction.fadeOut(withDuration: 2), SKAction.removeFromParent()])
+                drop.run(dropAction)
+                
+            case 39:
+                let drop=SKShapeNode(circleOfRadius: sprite.size.height/20)
+                drop.fillColor=NSColor.white
+                drop.alpha=0.4
+                drop.position=sprite.position
+                drop.zPosition=sprite.zPosition-0.2
+                scene!.addChild(drop)
+                drop.name="drop"
+                let dropAction=SKAction.sequence([SKAction.fadeOut(withDuration: 3), SKAction.removeFromParent()])
+                let dropMove=SKAction.move(by: CGVector(dx: random(min: -150, max: 150), dy: random(min: -150, max: 150)), duration: 3.0)
+                drop.run(dropMove)
+                drop.run(dropAction)
+                
+            case 41:
+                let drop=SKSpriteNode(imageNamed: "blobCircle16")
+                drop.colorBlendFactor=1.0
+                drop.color=NSColor.white
+                drop.alpha=0.4
+                drop.name="drop"
+                drop.position=sprite.position
+                drop.zPosition=sprite.zPosition-0.2
+                scene!.addChild(drop)
+                let dropAction=SKAction.sequence([SKAction.fadeOut(withDuration: 3), SKAction.removeFromParent()])
+                
+            case 47:
+                let drop=SKSpriteNode(imageNamed: "blobCircle24")
+                drop.colorBlendFactor=1.0
+                drop.color=blobCircleRGB
+                drop.alpha=0.4
+                drop.name="drop"
+                drop.position=sprite.position
+                drop.zPosition=sprite.zPosition-0.2
+                scene!.addChild(drop)
+                let dropAction=SKAction.sequence([SKAction.fadeOut(withDuration: 3), SKAction.removeFromParent()])
+                let dropSpin=SKAction.rotate(byAngle: CGFloat.pi*2, duration: 0.5)
+                drop.run(SKAction.repeatForever(dropSpin))
+                drop.run(dropAction)
+
+            case 51:
+                let drop=SKSpriteNode(imageNamed: "blobCircle29")
+                drop.colorBlendFactor=1.0
+                drop.setScale(0.2)
+                drop.color=blobCircleRGB
+                drop.alpha=0.4
+                drop.name="drop"
+                drop.position=sprite.position
+                drop.zPosition=sprite.zPosition-0.2
+                scene!.addChild(drop)
+                let dropAction=SKAction.sequence([SKAction.fadeOut(withDuration: 3), SKAction.removeFromParent()])
+                let dropSpin=SKAction.rotate(byAngle: -CGFloat.pi*2, duration: 0.5)
+                let dropColor=SKAction.sequence([SKAction.colorize(with: NSColor.white, colorBlendFactor: 1.0, duration: 0.5), SKAction.colorize(with: blobCircleRGB, colorBlendFactor: 1.0, duration: 0.25)])
+                let dropMove=SKAction.move(by: CGVector(dx: random(min: -150, max: 150), dy: random(min: -150, max: 150)), duration: 2)
+                drop.run(SKAction.repeatForever(dropColor))
+                drop.run(SKAction.repeatForever(dropSpin))
+                drop.run(dropMove)
+                drop.run(dropAction)
+                
+            default:
+                break
             } // switch trailType
             
             
