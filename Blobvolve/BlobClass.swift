@@ -1925,6 +1925,7 @@ class BlobClass
         
         growthTime=Double((computeLevel()*0)+1)
         
+        
         // reset size - gene 0
         let sizeString=getGene(num: 0)
         let sizeCoded=sizeString
@@ -2423,7 +2424,8 @@ class BlobClass
     
 
         
-    }
+    } // func updateSprite
+    
     
     public func genNewDNA()
     {
@@ -2948,6 +2950,24 @@ class BlobClass
                 drop.name="drop"
                 drop.removeAllChildren()
                 scene!.addChild(drop)
+              
+                
+            case 9-13:
+                let drop=SKSpriteNode(imageNamed: "blobCircle06")
+                drop.colorBlendFactor=1.0
+                drop.setScale(0.2)
+                drop.color=NSColor.init(calibratedRed: self.spriteRed, green: spriteGreen, blue: spriteBlue, alpha: 1.0)
+                drop.alpha=1
+                drop.name="drop"
+                drop.position=sprite.position
+                drop.zPosition=sprite.zPosition-0.2
+                scene!.addChild(drop)
+                let dropAction=SKAction.sequence([SKAction.fadeOut(withDuration: Double(trailLength)), SKAction.removeFromParent()])
+                
+                let dropMove=SKAction.move(by: CGVector(dx: random(min: -150, max: 150), dy: random(min: -150, max: 150)), duration: Double(trailLength))
+                
+                drop.run(dropMove)
+                drop.run(dropAction)
                 
             case 15-17:
                 let drop=SKShapeNode(circleOfRadius: sprite.size.height/8)
@@ -2971,6 +2991,39 @@ class BlobClass
                 let dropAction=SKAction.sequence([SKAction.fadeOut(withDuration: Double(trailLength)), SKAction.removeFromParent()])
                 drop.run(dropAction)
                 
+            case 25-26:
+                let drop=SKSpriteNode(imageNamed: "blobCircle00")
+                drop.colorBlendFactor=1.0
+                
+                drop.color=blobCircleRGB
+                drop.alpha=0.4
+                drop.name="drop"
+                drop.position=sprite.position
+                drop.zPosition=sprite.zPosition-0.2
+                scene!.addChild(drop)
+                let dropGrow=SKAction.scale(by: 3.0, duration: Double(trailLength))
+                let dropAction=SKAction.sequence([SKAction.fadeOut(withDuration: Double(trailLength)), SKAction.removeFromParent()])
+                let dropSpin=SKAction.rotate(byAngle: CGFloat.pi*2, duration: 0.5)
+                drop.run(SKAction.repeatForever(dropSpin))
+                drop.run(dropAction)
+                drop.run(dropGrow)
+                
+            case 28-30:
+                let drop=SKSpriteNode(imageNamed: "blobCircle00")
+                drop.colorBlendFactor=1.0
+                
+                drop.color=blobOuterRGB
+                drop.alpha=0.4
+                drop.name="drop"
+                drop.position=sprite.position
+                drop.zPosition=sprite.zPosition-0.2
+                scene!.addChild(drop)
+                let dropGrow=SKAction.scale(by: 3.0, duration: Double(trailLength))
+                let dropAction=SKAction.sequence([SKAction.fadeOut(withDuration: Double(trailLength)), SKAction.removeFromParent()])
+                let dropSpin=SKAction.rotate(byAngle: CGFloat.pi*2, duration: 0.5)
+                drop.run(SKAction.repeatForever(dropSpin))
+                drop.run(dropAction)
+                drop.run(dropGrow)
             case 35-36:
                 let drop=SKShapeNode(circleOfRadius: sprite.size.height/12)
                 drop.fillColor=blobOuterRGB
@@ -3070,6 +3123,8 @@ class BlobClass
                 drop.run(SKAction.repeatForever(dropSpin))
                 drop.run(dropMove)
                 drop.run(dropAction)
+                
+
                 
             default:
                 break
