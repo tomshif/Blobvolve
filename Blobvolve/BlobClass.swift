@@ -26,7 +26,7 @@ class BlobClass
     } // struct STATE
     
     //Genetic Constants
-    let GENECOUNT:Int=60
+    let GENECOUNT:Int=61
     let GENESIZE:Int=3
     
     var blobID:Int=0
@@ -127,9 +127,9 @@ class BlobClass
     var special1Cool:Double=0
     var lastCloudDamage=NSDate()
     var trailType:Int=0
+    var trailLength:CGFloat=0
     
-    
-    var GeneStrings=["Size", "RGB-R", "RGB-G", "RGB-B", "PlsSpd", "Alpha", "Sp1Ang", "Sp1Dst", "Sp1Alpha", "Sp1RGB", "Sp1Size", "Sp1Rot", "Spec1Typ", "Spec2Typ", "Sp1Shp", "CrcShp", "CrcRGB", "CrcAlpha", "CrcAct", "Sprite", "Spec1RGB", "OuterShp", "OuterRGB", "OutAct", "MoveSpd", "Spk1Typ", "Spk1Ang", "Spk1Rot", "Out2Prsnt", "Out2Shp", "Out2RGB", "Out2Act", "Health", "Spk1RGB", "Damage", "Color2%", "Color2RGB", "Color2Act", "OutClr2%", "OutClr2RGB", "OutColor3%", "OutColor3RGB", "SpriteRot", "Out1GapOn","Out1GapDist", "Out2GapOn","Out2GapDist", "Jitter", "ProcSeed1", "ProcSeed2", "ProcSeed3", "LightFall", "SpAttack-1", "PoisonResist", "PrimAtkType", "PhysResist", "ElecResist", "SonicResist", "Spec1Cool", "TrailType"]
+    var GeneStrings=["Size", "RGB-R", "RGB-G", "RGB-B", "PlsSpd", "Alpha", "Sp1Ang", "Sp1Dst", "Sp1Alpha", "Sp1RGB", "Sp1Size", "Sp1Rot", "Spec1Typ", "Spec2Typ", "Sp1Shp", "CrcShp", "CrcRGB", "CrcAlpha", "CrcAct", "Sprite", "Spec1RGB", "OuterShp", "OuterRGB", "OutAct", "MoveSpd", "Spk1Typ", "Spk1Ang", "Spk1Rot", "Out2Prsnt", "Out2Shp", "Out2RGB", "Out2Act", "Health", "Spk1RGB", "Damage", "Color2%", "Color2RGB", "Color2Act", "OutClr2%", "OutClr2RGB", "OutColor3%", "OutColor3RGB", "SpriteRot", "Out1GapOn","Out1GapDist", "Out2GapOn","Out2GapDist", "Jitter", "ProcSeed1", "ProcSeed2", "ProcSeed3", "LightFall", "SpAttack-1", "PoisonResist", "PrimAtkType", "PhysResist", "ElecResist", "SonicResist", "Spec1Cool", "TrailType", "TrailLength"]
     
     let SpriteNameStrings=["An", "Po", "Ca", "Bac", "Al", "Ra", "Car", "Min",
                            "Mol", "He", "Hai", "Vil", "Yun", "Chlo", "Pri", "Cis",
@@ -611,6 +611,9 @@ class BlobClass
         
         // Trail Type - gene 59
         trailType=tripToDec(trip: getGene(num: 59))
+        
+        // Trail Length - gene 60
+        trailLength=(CGFloat(tripToDec(trip: getGene(num: 60)))/63)*5.0+2.0
         
         
         //////////////////////////////////////////////
@@ -1169,6 +1172,9 @@ class BlobClass
         
         // Trail Type - gene 59
         trailType=tripToDec(trip: getGene(num: 59))
+        
+        // Trail Length - gene 60
+        trailLength=(CGFloat(tripToDec(trip: getGene(num: 60)))/63)*5.0+2.0
         
         
         //////////////////////////////////////////////
@@ -2233,6 +2239,9 @@ class BlobClass
         // Trail Type - gene 59
         trailType=tripToDec(trip: getGene(num: 59))
         
+        // Trail Length - gene 60
+        trailLength=(CGFloat(tripToDec(trip: getGene(num: 60)))/63)*5.0+2.0
+        
         
         /////////////////////////////////////////////
         // End of gene sequence
@@ -2933,7 +2942,7 @@ class BlobClass
                 drop.setScale(0.1)
                 drop.position=self.sprite.position
                 drop.zPosition=sprite.zPosition-0.3
-                let dropAction=SKAction.sequence([SKAction.fadeOut(withDuration: 2), SKAction.removeFromParent()])
+                let dropAction=SKAction.sequence([SKAction.fadeOut(withDuration: Double(trailLength)), SKAction.removeFromParent()])
                 drop.run(dropAction)
                 drop.physicsBody=nil
                 drop.name="drop"
@@ -2948,7 +2957,7 @@ class BlobClass
                 drop.position=sprite.position
                 drop.zPosition=sprite.zPosition-0.2
                 scene!.addChild(drop)
-                let dropAction=SKAction.sequence([SKAction.fadeOut(withDuration: 2), SKAction.removeFromParent()])
+                let dropAction=SKAction.sequence([SKAction.fadeOut(withDuration: Double(trailLength)), SKAction.removeFromParent()])
                 drop.run(dropAction)
                 
             case 20-22:
@@ -2959,7 +2968,7 @@ class BlobClass
                 drop.position=sprite.position
                 drop.zPosition=sprite.zPosition-0.2
                 scene!.addChild(drop)
-                let dropAction=SKAction.sequence([SKAction.fadeOut(withDuration: 2), SKAction.removeFromParent()])
+                let dropAction=SKAction.sequence([SKAction.fadeOut(withDuration: Double(trailLength)), SKAction.removeFromParent()])
                 drop.run(dropAction)
                 
             case 35-36:
@@ -2970,7 +2979,7 @@ class BlobClass
                 drop.position=sprite.position
                 drop.zPosition=sprite.zPosition-0.2
                 scene!.addChild(drop)
-                let dropAction=SKAction.sequence([SKAction.fadeOut(withDuration: 2), SKAction.removeFromParent()])
+                let dropAction=SKAction.sequence([SKAction.fadeOut(withDuration: Double(trailLength)), SKAction.removeFromParent()])
                 drop.run(dropAction)
                 
             case 39:
@@ -2981,8 +2990,8 @@ class BlobClass
                 drop.zPosition=sprite.zPosition-0.2
                 scene!.addChild(drop)
                 drop.name="drop"
-                let dropAction=SKAction.sequence([SKAction.fadeOut(withDuration: 3), SKAction.removeFromParent()])
-                let dropMove=SKAction.move(by: CGVector(dx: random(min: -150, max: 150), dy: random(min: -150, max: 150)), duration: 3.0)
+                let dropAction=SKAction.sequence([SKAction.fadeOut(withDuration: Double(trailLength)), SKAction.removeFromParent()])
+                let dropMove=SKAction.move(by: CGVector(dx: random(min: -150, max: 150), dy: random(min: -150, max: 150)), duration: Double(trailLength))
                 drop.run(dropMove)
                 drop.run(dropAction)
                 
@@ -2995,8 +3004,21 @@ class BlobClass
                 drop.position=sprite.position
                 drop.zPosition=sprite.zPosition-0.2
                 scene!.addChild(drop)
-                let dropAction=SKAction.sequence([SKAction.fadeOut(withDuration: 3), SKAction.removeFromParent()])
-                
+                let dropAction=SKAction.sequence([SKAction.fadeOut(withDuration: Double(trailLength)), SKAction.removeFromParent()])
+                drop.run(dropAction)
+               
+            case 43-46:
+                let drop=SKShapeNode(circleOfRadius: random(min: sprite.size.height/16, max: sprite.size.height/8))
+                drop.fillColor=NSColor.white
+                drop.alpha=0.15
+                drop.position=sprite.position
+                drop.zPosition=sprite.zPosition-0.2
+                scene!.addChild(drop)
+                drop.name="drop"
+                let dropAction=SKAction.sequence([SKAction.fadeOut(withDuration: Double(trailLength)), SKAction.removeFromParent()])
+                let dropMove=SKAction.move(by: CGVector(dx: random(min: -150, max: 150), dy: random(min: -150, max: 150)), duration: Double(trailLength))
+                drop.run(dropMove)
+                drop.run(dropAction)
             case 47:
                 let drop=SKSpriteNode(imageNamed: "blobCircle24")
                 drop.colorBlendFactor=1.0
@@ -3006,7 +3028,7 @@ class BlobClass
                 drop.position=sprite.position
                 drop.zPosition=sprite.zPosition-0.2
                 scene!.addChild(drop)
-                let dropAction=SKAction.sequence([SKAction.fadeOut(withDuration: 3), SKAction.removeFromParent()])
+                let dropAction=SKAction.sequence([SKAction.fadeOut(withDuration: Double(trailLength)), SKAction.removeFromParent()])
                 let dropSpin=SKAction.rotate(byAngle: CGFloat.pi*2, duration: 0.5)
                 drop.run(SKAction.repeatForever(dropSpin))
                 drop.run(dropAction)
@@ -3021,7 +3043,7 @@ class BlobClass
                 drop.position=sprite.position
                 drop.zPosition=sprite.zPosition-0.2
                 scene!.addChild(drop)
-                let dropAction=SKAction.sequence([SKAction.fadeOut(withDuration: 3), SKAction.removeFromParent()])
+                let dropAction=SKAction.sequence([SKAction.fadeOut(withDuration: Double(trailLength)), SKAction.removeFromParent()])
                 let dropSpin=SKAction.rotate(byAngle: -CGFloat.pi*2, duration: 0.5)
                 let dropColor=SKAction.sequence([SKAction.colorize(with: NSColor.white, colorBlendFactor: 1.0, duration: 0.5), SKAction.colorize(with: blobCircleRGB, colorBlendFactor: 1.0, duration: 0.25)])
                 let dropMove=SKAction.move(by: CGVector(dx: random(min: -150, max: 150), dy: random(min: -150, max: 150)), duration: 2)
@@ -3030,8 +3052,28 @@ class BlobClass
                 drop.run(dropMove)
                 drop.run(dropAction)
                 
+            case 53:
+                let drop=SKSpriteNode(imageNamed: "blobCircle29")
+                drop.colorBlendFactor=1.0
+                drop.setScale(0.2)
+                drop.color=blobCircleRGB
+                drop.alpha=0.7
+                drop.name="drop"
+                drop.position=sprite.position
+                drop.zPosition=sprite.zPosition-0.2
+                scene!.addChild(drop)
+                let dropAction=SKAction.sequence([SKAction.fadeOut(withDuration: Double(trailLength)), SKAction.removeFromParent()])
+                let dropSpin=SKAction.rotate(byAngle: -CGFloat.pi*2, duration: 0.5)
+                let dropColor=SKAction.sequence([SKAction.colorize(with: NSColor.white, colorBlendFactor: 1.0, duration: 0.5), SKAction.colorize(with: blobCircleRGB, colorBlendFactor: 1.0, duration: 0.25)])
+                let dropMove=SKAction.move(by: CGVector(dx: random(min: -150, max: 150), dy: random(min: -150, max: 150)), duration: Double(trailLength))
+                drop.run(SKAction.repeatForever(dropColor))
+                drop.run(SKAction.repeatForever(dropSpin))
+                drop.run(dropMove)
+                drop.run(dropAction)
+                
             default:
                 break
+
             } // switch trailType
             
             
