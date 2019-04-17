@@ -2937,9 +2937,11 @@ class BlobClass
     {
         if -lastTrailDrop.timeIntervalSinceNow > TRAILDROP
         {
+            print("Trail: \(trailType)")
             switch trailType
             {
-            case 0-4: // Tiny versions of itself
+                
+            case 0...4: // Tiny versions of itself
                 let drop=sprite.copy() as! SKSpriteNode
                 drop.setScale(0.1)
                 drop.position=self.sprite.position
@@ -2952,7 +2954,7 @@ class BlobClass
                 scene!.addChild(drop)
               
                 
-            case 9-13:
+            case 9...13:
                 let drop=SKSpriteNode(imageNamed: "blobCircle06")
                 drop.colorBlendFactor=1.0
                 drop.setScale(0.2)
@@ -2969,7 +2971,7 @@ class BlobClass
                 drop.run(dropMove)
                 drop.run(dropAction)
                 
-            case 15-17:
+            case 15...17:
                 let drop=SKShapeNode(circleOfRadius: sprite.size.height/8)
                 drop.fillColor=NSColor(calibratedRed: random(min: 0.2, max: 1.0), green: random(min: 0.2, max: 1.0), blue: random(min: 0.2, max: 1.0), alpha: 1.0)
                 drop.alpha=0.4
@@ -2980,7 +2982,7 @@ class BlobClass
                 let dropAction=SKAction.sequence([SKAction.fadeOut(withDuration: Double(trailLength)), SKAction.removeFromParent()])
                 drop.run(dropAction)
                 
-            case 20-22:
+            case 20...22:
                 let drop=SKShapeNode(circleOfRadius: sprite.size.height/8)
                 drop.fillColor=NSColor(calibratedRed: spriteRed, green: spriteGreen, blue: spriteBlue, alpha: 1.0)
                 drop.alpha=0.4
@@ -2991,7 +2993,7 @@ class BlobClass
                 let dropAction=SKAction.sequence([SKAction.fadeOut(withDuration: Double(trailLength)), SKAction.removeFromParent()])
                 drop.run(dropAction)
                 
-            case 25-26:
+            case 25...26:
                 let drop=SKSpriteNode(imageNamed: "blobCircle00")
                 drop.colorBlendFactor=1.0
                 
@@ -3008,7 +3010,7 @@ class BlobClass
                 drop.run(dropAction)
                 drop.run(dropGrow)
                 
-            case 28-30:
+            case 28...30:
                 let drop=SKSpriteNode(imageNamed: "blobCircle00")
                 drop.colorBlendFactor=1.0
                 
@@ -3024,7 +3026,7 @@ class BlobClass
                 drop.run(SKAction.repeatForever(dropSpin))
                 drop.run(dropAction)
                 drop.run(dropGrow)
-            case 35-36:
+            case 35...36:
                 let drop=SKShapeNode(circleOfRadius: sprite.size.height/12)
                 drop.fillColor=blobOuterRGB
                 drop.alpha=0.4
@@ -3060,7 +3062,7 @@ class BlobClass
                 let dropAction=SKAction.sequence([SKAction.fadeOut(withDuration: Double(trailLength)), SKAction.removeFromParent()])
                 drop.run(dropAction)
                
-            case 43-46:
+            case 43...46:
                 let drop=SKShapeNode(circleOfRadius: random(min: sprite.size.height/16, max: sprite.size.height/8))
                 drop.fillColor=NSColor.white
                 drop.alpha=0.15
