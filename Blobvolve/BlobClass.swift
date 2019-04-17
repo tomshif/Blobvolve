@@ -3131,13 +3131,11 @@ class BlobClass
                 drop.run(dropMove)
                 drop.run(dropAction)
                 
-
-                
-            default:
+            case 56:
                 let drop=SKSpriteNode(imageNamed: "blobCircle00")
                 drop.colorBlendFactor=1.0
                 
-                drop.color=blobOuterRGB
+                drop.color=special1RGB
                 drop.alpha=0.25
                 drop.name="drop"
                 drop.position=sprite.position
@@ -3151,6 +3149,9 @@ class BlobClass
                 drop.run(SKAction.repeatForever(dropSpin))
                 drop.run(dropAction)
                 drop.run(dropGrow)
+                
+            default:
+                break
 
             } // switch trailType
             
