@@ -2974,6 +2974,7 @@ class BlobClass
             case 15...17:
                 let drop=SKShapeNode(circleOfRadius: sprite.size.height/8)
                 drop.fillColor=NSColor(calibratedRed: random(min: 0.2, max: 1.0), green: random(min: 0.2, max: 1.0), blue: random(min: 0.2, max: 1.0), alpha: 1.0)
+                drop.strokeColor=NSColor.black
                 drop.alpha=0.4
                 drop.name="drop"
                 drop.position=sprite.position
@@ -2985,6 +2986,8 @@ class BlobClass
             case 20...22:
                 let drop=SKShapeNode(circleOfRadius: sprite.size.height/8)
                 drop.fillColor=NSColor(calibratedRed: spriteRed, green: spriteGreen, blue: spriteBlue, alpha: 1.0)
+                
+                drop.strokeColor=NSColor.black
                 drop.alpha=0.4
                 drop.name="drop"
                 drop.position=sprite.position
@@ -2998,7 +3001,7 @@ class BlobClass
                 drop.colorBlendFactor=1.0
                 
                 drop.color=blobCircleRGB
-                drop.alpha=0.4
+                drop.alpha=0.25
                 drop.name="drop"
                 drop.position=sprite.position
                 drop.zPosition=sprite.zPosition-0.2
@@ -3015,7 +3018,7 @@ class BlobClass
                 drop.colorBlendFactor=1.0
                 
                 drop.color=blobOuterRGB
-                drop.alpha=0.4
+                drop.alpha=0.25
                 drop.name="drop"
                 drop.position=sprite.position
                 drop.zPosition=sprite.zPosition-0.2
@@ -3029,6 +3032,7 @@ class BlobClass
             case 35...36:
                 let drop=SKShapeNode(circleOfRadius: sprite.size.height/12)
                 drop.fillColor=blobOuterRGB
+                drop.strokeColor=NSColor.black
                 drop.alpha=0.4
                 drop.name="drop"
                 drop.position=sprite.position
@@ -3040,6 +3044,7 @@ class BlobClass
             case 39:
                 let drop=SKShapeNode(circleOfRadius: sprite.size.height/20)
                 drop.fillColor=NSColor.white
+                
                 drop.alpha=0.4
                 drop.position=sprite.position
                 drop.zPosition=sprite.zPosition-0.2
@@ -3129,7 +3134,23 @@ class BlobClass
 
                 
             default:
-                break
+                let drop=SKSpriteNode(imageNamed: "blobCircle00")
+                drop.colorBlendFactor=1.0
+                
+                drop.color=blobOuterRGB
+                drop.alpha=0.25
+                drop.name="drop"
+                drop.position=sprite.position
+                drop.zPosition=sprite.zPosition-0.2
+                scene!.addChild(drop)
+                let dropGrow=SKAction.scale(by: 3.0, duration: Double(trailLength))
+                let dropAction=SKAction.sequence([SKAction.fadeOut(withDuration: Double(trailLength)), SKAction.removeFromParent()])
+                let dropSpin=SKAction.rotate(byAngle: CGFloat.pi*2, duration: 0.5)
+                let jitter=SKAction.sequence([SKAction.move(by: CGVector(dx: random(min: -15, max: 15), dy: random(min: -15, max: 15)), duration: 0.25), SKAction.move(by: CGVector(dx: random(min: -15, max: 15), dy: random(min: -15, max: 15)), duration: 0.25) ])
+                drop.run(SKAction.repeatForever(jitter))
+                drop.run(SKAction.repeatForever(dropSpin))
+                drop.run(dropAction)
+                drop.run(dropGrow)
 
             } // switch trailType
             
